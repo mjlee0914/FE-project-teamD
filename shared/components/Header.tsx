@@ -7,17 +7,17 @@ export default function Header() {
     return (
         <header
             className={cn(
-                'backgrop-blur-md sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 transition-all',
+                'backgrop-blur-md sticky top-0 z-50 w-full bg-white/95 transition-all',
             )}
         >
             {/* 기본 모바일: h-14, px-4 / md 이상: h-16, px-6 */}
-            <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:h-16 md:px-6">
+            <div className="max-w-auto mx-auto flex h-14 items-center justify-between border-b px-4 md:h-16 md:px-6">
                 {/* 로고 영역 */}
                 <Link
                     href="/"
                     className="text-lg font-black tracking-tight text-gray-900 transition-colors hover:text-blue-600 md:text-xl"
                 >
-                    Team Sparta
+                    DN Mall
                 </Link>
 
                 {/* 네비게이션 영역 */}
@@ -57,6 +57,28 @@ export default function Header() {
                         </Link>
                     </Button>
                 </nav>
+            </div>
+            <div>
+                <div className="max-w-auto mx-auto flex justify-center gap-15 border-b p-3 md:px-4">
+                    <Link href="">
+                        <span>신상품</span>
+                    </Link>
+                    <Link href="">
+                        <span>베스트셀러</span>
+                    </Link>
+                    <Link href="">
+                        <span>상의</span>
+                    </Link>
+                    <Link href="">
+                        <span>하의</span>
+                    </Link>
+                    <Link href="">
+                        <span>신발</span>
+                    </Link>
+                    <Link href="">
+                        <span className="text-red-600">세일상품</span>
+                    </Link>
+                </div>
             </div>
         </header>
     );
