@@ -56,7 +56,7 @@ export default function Footer() {
                         <ul className="flex flex-wrap gap-4 text-xs text-gray-600 md:flex-col md:gap-1.5">
                             <li>
                                 <Link
-                                    href="/board"
+                                    href="/boards/free"
                                     className="hover:text-blue-600"
                                 >
                                     자유게시판
@@ -64,7 +64,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="/board/notice"
+                                    href="/boards/notice"
                                     className="hover:text-blue-600"
                                 >
                                     공지사항
@@ -72,10 +72,10 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="/board/qna"
+                                    href="/boards/qna"
                                     className="hover:text-blue-600"
                                 >
-                                    고객 Q&A
+                                    고객센터
                                 </Link>
                             </li>
                         </ul>
