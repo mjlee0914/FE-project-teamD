@@ -199,6 +199,7 @@ export default function ProductList() {
                                 alt={product.name}
                                 width={250}
                                 height={250}
+                                unoptimized
                             />
                             <div className="w-[250px] text-left">
                                 {product.name}
