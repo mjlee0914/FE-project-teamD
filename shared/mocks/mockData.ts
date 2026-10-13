@@ -1,7 +1,7 @@
 import { BoardSetting } from '@/domains/boards/types/board.types';
 import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
-
+import { Product } from '@/domains/products/types/product.types';
 // 중첩 카테고리 트리 Mock Data
 
 export const MOCK_CATEGORIES: Category[] = [
@@ -120,5 +120,58 @@ export const MOCK_FILES: FileInfo[] = [
         seq: 0,
         created_at: '2026-10-13T00:00:00Z',
         url: '/files/1',
+    },
+];
+
+export const MOCK_PRODUCTS: Product[] = [
+    {
+        id: 1,
+        name: '모던 오버핏 셔츠',
+        price: 39000,
+        category_id: 'tops',
+        imageUrl: 'https://placehold.co/600x800?text=Shirt',
+        description: '다양한 하의와 편하게 매치할 수 있는 오버핏 셔츠입니다.',
+        isNew: true,
+        viewCount: 128,
+    },
+    {
+        id: 2,
+        name: '데일리 코튼 티셔츠',
+        price: 19900,
+        category_id: 'tops',
+        imageUrl: 'https://placehold.co/600x800?text=T-shirt',
+        description: '부드러운 코튼 소재로 매일 입기 좋은 기본 티셔츠입니다.',
+        isNew: false,
+        viewCount: 246,
+    },
+    {
+        id: 3,
+        name: '스트레이트 데님 팬츠',
+        price: 42000,
+        category_id: 'bottoms',
+        imageUrl: 'https://placehold.co/600x800?text=Jeans',
+        description: '깔끔한 일자 핏으로 캐주얼하게 입기 좋은 데님 팬츠입니다.',
+        isNew: true,
+        viewCount: 93,
+    },
+    {
+        id: 4,
+        name: '베이직 니트 가디건',
+        price: 35900,
+        category_id: 'outer',
+        imageUrl: 'https://placehold.co/600x800?text=Cardigan',
+        description: '간절기에 가볍게 걸치기 좋은 기본 가디건입니다.',
+        isNew: false,
+        viewCount: 175,
+    },
+    {
+        id: 5,
+        name: '클래식 캔버스 스니커즈',
+        price: 49000,
+        category_id: 'shoes',
+        imageUrl: 'https://placehold.co/600x800?text=Sneakers',
+        description: '데일리 룩에 잘 어울리는 심플한 캔버스 스니커즈입니다.',
+        isNew: false,
+        viewCount: 311,
     },
 ];
