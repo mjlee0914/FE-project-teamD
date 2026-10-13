@@ -3,7 +3,6 @@ import discount from './assets/clothes.png';
 import sneakers from './assets/sneakers.png';
 import blackfriday from './assets/blackfriday.png';
 import { Button } from '@/shared/components/ui/button';
-
 export default function EventBanner() {
     return (
         <>
