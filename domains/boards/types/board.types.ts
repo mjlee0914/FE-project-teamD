@@ -7,6 +7,7 @@ export type BoardType = 'list' | 'faq' | 'qna' | 'gallery';
 // 게시판 인터페이스(규격)
 export interface BoardSetting {
     id: string; // notice, qna, review 등
+    eyebrow: string;
     name: string;
     description: string;
     type: BoardType;

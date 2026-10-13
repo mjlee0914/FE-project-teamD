@@ -13,6 +13,7 @@ import {
 export const BOARD_SETTINGS: BoardSetting[] = [
     {
         id: 'notice',
+        eyebrow: 'NOTICE',
         name: '공지사항',
         description: '쇼핑몰 공지 및 배송 안내',
         type: 'list',
@@ -24,6 +25,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
     },
     {
         id: 'promotion',
+        eyebrow: 'EVENT',
         name: '이벤트',
         description: '진행 중인 혜택과 기획전을 만나보세요',
         type: 'gallery',
@@ -34,6 +36,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
     },
     {
         id: 'faq',
+        eyebrow: 'CUSTOMER CENTER',
         name: '자주 묻는 질문',
         description: '궁금한 점을 빠르게 찾아보세요',
         type: 'faq',
@@ -44,6 +47,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
     },
     {
         id: 'qna',
+        eyebrow: 'CUSTOMER CENTER',
         name: '고객 Q&A',
         description: '상품 및 배송 관련 질문 게시판',
         type: 'qna',
@@ -55,6 +59,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
     },
     {
         id: 'free',
+        eyebrow: 'COMMUNITY',
         name: '자유게시판',
         description: '자유롭게 이야기를 나눠요',
         type: 'list',
@@ -64,12 +69,11 @@ export const BOARD_SETTINGS: BoardSetting[] = [
     },
     {
         id: 'lookbook',
+        eyebrow: 'COMMUNITY',
         name: '룩북',
         description: '우리가 입은 가을, 유저들의 스타일링',
         type: 'gallery',
         write_role: 'user',
-        use_category: true,
-        categories: ['남성', '여성', '액세서리'],
         created_at: '2026-10-13T00:00:00Z',
     },
 ];
@@ -195,7 +199,6 @@ export const POSTS: Post[] = [
     {
         id: 'post-8',
         board_id: 'lookbook',
-        category: '여성',
         title: '가을 데일리룩',
         content: '트렌치 코트에 니트를 매치했어요.',
         user_id: 'user-1',
