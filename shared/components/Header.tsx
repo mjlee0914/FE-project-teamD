@@ -11,7 +11,7 @@ export default function Header() {
             )}
         >
             {/* 기본 모바일: h-14, px-4 / md 이상: h-16, px-6 */}
-            <div className="max-w-auto mx-auto flex h-14 items-center justify-between border-b px-4 md:h-16 md:px-6">
+            <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:h-16 md:px-6">
                 {/* 로고 영역 */}
                 <Link
                     href="/"

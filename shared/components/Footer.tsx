@@ -59,7 +59,7 @@ export default function Footer() {
                                     href="/board"
                                     className="hover:text-blue-600"
                                 >
-                                    Lookbook
+                                    자유게시판
                                 </Link>
                             </li>
                             <li>
