@@ -5,9 +5,20 @@ interface PostListProps {
     board: BoardSetting;
     posts: Post[];
     total: number; // 게시물 번호 계산용
+    page: number;
+    pageSize: number;
 }
 
-export default function PostList({ board, posts, total }: PostListProps) {
+export default function PostList({
+    board,
+    posts,
+    total,
+    page,
+    pageSize,
+}: PostListProps) {
+    // 고정글 강조 및 페이징이 연번을 해치지 않게 하기
+    const offset = (page - 1) * pageSize;
+
     if (posts.length === 0) {
         return (
             <p className="text-muted-foreground py-16 text-center text-sm">
@@ -30,8 +41,13 @@ export default function PostList({ board, posts, total }: PostListProps) {
             </thead>
             <tbody>
                 {posts.map((post, i) => (
-                    <tr key={post.id} className="border-b">
-                        <td className="py-3">{total - i}</td>
+                    <tr
+                        key={post.id}
+                        className={`${post.is_pinned ? 'bg-stone-100 font-semibold' : ''} border-b`}
+                    >
+                        <td className="py-3">
+                            {post.is_pinned ? '📌' : total - offset - i}
+                        </td>
                         {board.use_category && <td>{post.category}</td>}
                         <td>{post.title}</td>
                         <td>{post.author_name}</td>

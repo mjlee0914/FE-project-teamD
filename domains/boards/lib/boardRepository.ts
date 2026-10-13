@@ -16,6 +16,7 @@ export interface PostListResult {
     items: Post[];
     total: number;
     page: number;
+    pageSize: number;
     totalPages: number;
 }
 
@@ -66,6 +67,7 @@ export async function getPosts({
         items: filtered.slice(start, start + pageSize),
         total: total,
         page: currentPage,
+        pageSize,
         totalPages,
     };
 }
