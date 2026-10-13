@@ -5,6 +5,7 @@ import { Button } from '@/shared/components/ui/button';
 import { login } from '@/domains/auth/actions/login.action';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginForm() {
     const [error, setError] = useState<string | null>(null);
@@ -33,6 +34,12 @@ export default function LoginForm() {
             <Input id="password" name="password" type="password" />
             {error && <p className="text-sm text-red-600">{error}</p>}
             <Button type="submit">로그인</Button>
+            <p className="text-center text-sm text-gray-500">
+                아직 회원이 아니신가요?{' '}
+                <Link href="/register" className="underline">
+                    회원가입
+                </Link>
+            </p>
         </form>
     );
 }
