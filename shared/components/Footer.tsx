@@ -42,7 +42,7 @@ export default function Footer() {
                             운영시간: 평일 09:00 - 18:00 (주말, 공휴일 휴무)
                         </p>
                         <p className="text-xs text-gray-500">
-                            이메일: inqury@dnmall.com
+                            이메일: inquries@dnmall.com
                         </p>
                         <p className="text-xs text-gray-500">
                             콜센터: 1688-0000
