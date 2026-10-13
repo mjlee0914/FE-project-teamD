@@ -72,9 +72,9 @@ export default function Header() {
                 </div>
             </header>
 
-            <nav className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-md transition-all">
+            <nav className="sticky top-0 z-50 w-full bg-white/70 text-base backdrop-blur-md transition-all">
                 <div>
-                    <div className="max-w-auto mx-auto flex justify-center gap-30 p-3 md:px-4">
+                    <div className="max-w-auto mx-auto flex justify-center gap-30 p-3 text-sm md:px-4">
                         <Link href="">
                             <span>신상품</span>
                         </Link>
