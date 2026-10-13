@@ -12,8 +12,8 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-    title: 'Team Sparta Shopping Mall',
-    description: 'AX1 프론트앤드 프로젝트',
+    title: 'Team D Shopping Mall',
+    description: 'Team Disco Ninja FrontEnd Project',
 };
 
 export default function RootLayout({
