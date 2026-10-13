@@ -1,6 +1,7 @@
 import { getBoard, getPosts } from '@/domains/boards/lib/boardRepository';
 import { notFound } from 'next/navigation';
 import BoardHeader from '@/domains/boards/components/BoardHeader';
+import PostList from '@/domains/boards/components/PostList';
 
 export default async function BoardPage({
     params,
@@ -20,8 +21,16 @@ export default async function BoardPage({
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <BoardHeader board={board} />
-            {/* 객체를 글자로 바꾸고(JSON.stringify) JSON 모양 그대로 출력하기(pre) */}
-            <pre>{JSON.stringify(result, null, 2)}</pre>
+            {board.type === 'list' ? (
+                <PostList
+                    board={board}
+                    posts={result.items}
+                    total={result.total}
+                />
+            ) : (
+                // 객체를 글자로 바꾸고(JSON.stringify) JSON 모양 그대로 출력하기(pre)
+                <pre>{JSON.stringify(result, null, 2)}</pre>
+            )}
         </div>
     );
 }
