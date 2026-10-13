@@ -3,100 +3,81 @@ import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
 
 // 중첩 카테고리 트리 Mock Data
+
 export const MOCK_CATEGORIES: Category[] = [
     {
-        id: 'cat-fashion',
+        id: 'cat-new',
         parent_id: null,
-        name: '패션의류',
+        name: '신상품',
         depth: 1,
         sort_order: 1,
-        children: [
-            {
-                id: 'cat-fashion-top',
-                parent_id: 'cat-fashion',
-                name: '상의',
-                depth: 2,
-                sort_order: 1,
-                children: [
-                    {
-                        id: 'cat-fashion-top-tshirt',
-                        parent_id: 'cat-fashion-top',
-                        name: '티셔츠',
-                        depth: 3,
-                        sort_order: 1,
-                    },
-                    {
-                        id: 'cat-fashion-top-shirt',
-                        parent_id: 'cat-fashion-top',
-                        name: '셔츠/블라우스',
-                        depth: 3,
-                        sort_order: 2,
-                    },
-                ],
-            },
-            {
-                id: 'cat-fashion-bottom',
-                parent_id: 'cat-fashion',
-                name: '하의',
-                depth: 2,
-                sort_order: 2,
-                children: [
-                    {
-                        id: 'cat-fashion-bottom-denim',
-                        parent_id: 'cat-fashion-bottom',
-                        name: '데님팬츠',
-                        depth: 3,
-                        sort_order: 1,
-                    },
-                    {
-                        id: 'cat-fashion-bottom-slacks',
-                        parent_id: 'cat-fashion-bottom',
-                        name: '슬랙스',
-                        depth: 3,
-                        sort_order: 2,
-                    },
-                ],
-            },
-        ],
     },
     {
-        id: 'cat-digital',
+        id: 'cat-best',
         parent_id: null,
-        name: '디지털/가전',
+        name: '베스트셀러',
         depth: 1,
         sort_order: 2,
-        children: [
-            {
-                id: 'cat-digital-pc',
-                parent_id: 'cat-digital',
-                name: '노트북/PC',
-                depth: 2,
-                sort_order: 1,
-            },
-            {
-                id: 'cat-digital-acc',
-                parent_id: 'cat-digital',
-                name: '모바일 주변기기',
-                depth: 2,
-                sort_order: 2,
-            },
-        ],
     },
     {
-        id: 'cat-living',
+        id: 'cat-fashion-top',
         parent_id: null,
-        name: '홈/리빙',
+        name: '상의',
         depth: 1,
         sort_order: 3,
         children: [
             {
-                id: 'cat-living-furniture',
-                parent_id: 'cat-living',
-                name: '가구/인테리어',
+                id: 'cat-fashion-top-tshirt',
+                parent_id: 'cat-fashion-top',
+                name: '티셔츠',
                 depth: 2,
                 sort_order: 1,
             },
+            {
+                id: 'cat-fashion-top-shirt',
+                parent_id: 'cat-fashion-top',
+                name: '셔츠',
+                depth: 2,
+                sort_order: 2,
+            },
         ],
+    },
+    {
+        id: 'cat-fashion-bottom',
+        parent_id: null,
+        name: '하의',
+        depth: 1,
+        sort_order: 4,
+        children: [
+            {
+                id: 'cat-fashion-bottom-denim',
+                parent_id: 'cat-fashion-bottom',
+                name: '데님팬츠',
+                depth: 2,
+                sort_order: 1,
+            },
+            {
+                id: 'cat-fashion-bottom-slacks',
+                parent_id: 'cat-fashion-bottom',
+                name: '슬랙스',
+                depth: 2,
+                sort_order: 2,
+            },
+        ],
+    },
+    {
+        id: 'cat-shoes',
+        parent_id: null,
+        name: '신발',
+        depth: 1,
+        sort_order: 5,
+    },
+    {
+        id: 'cat-sale',
+        parent_id: null,
+        name: '세일상품',
+        depth: 1,
+        sort_order: 6,
     },
 ];
 
