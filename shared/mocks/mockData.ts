@@ -1,3 +1,4 @@
+import { User } from '@/domains/auth/types/auth.types';
 import { BoardSetting } from '@/domains/boards/types/board.types';
 import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
@@ -141,3 +142,19 @@ export const MOCK_FILES: FileInfo[] = [
         url: '/files/1',
     },
 ];
+
+// 로그인 테스트용 회원 관리자, 테스트 Mock Data
+export const MOCK_USERS: User[] = [
+    {
+        id: 1,
+        loginId: 'admin',
+        password: 'admin',
+        name: '관리자',
+    },
+    {
+        id: 2,
+        loginId: 'test',
+        password: 'test',
+        name: '테스터',
+    },
+]; 
