@@ -37,7 +37,7 @@ export interface Post {
 
 // 게시물 인터페이스 - QnA
 export interface QnaAnswer {
-    contents: string;
+    content: string;
     answered_by: string;
     answered_at: string;
 }
