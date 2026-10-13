@@ -19,13 +19,14 @@ export interface BoardSetting {
 }
 
 // 게시물 인터페이스(규격에 대입될 값)
+// Supabase posts 테이블 컬럼명에 맞춤 (전환 시 매핑 최소화)
 export interface Post {
-    id: number;
+    id: string; // DB: UUID (mock은 'post-1' 형태)
     board_id: string;
     category?: string; // use_category가 있는 경우만
     title: string;
     content: string;
-    author_id: string;
+    user_id: string | null; // DB: profiles.id (탈퇴 시 null)
     author_name: string;
     gid: string; // file_info.gid (첨부/본문 이미지 묶음)
     view_count: number;
@@ -33,6 +34,8 @@ export interface Post {
     is_secret?: boolean; // qna 비밀글 여부
     thumbnail_url?: string; // 룩북 섬네일
     created_at: string;
+    updated_at: string;
+    deleted_at: string | null; // 소프트 삭제: null인 글만 노출
     answer?: QnaAnswer; // 답변완료(QnaAnswer 연결) 또는 답변대기
 }
 
@@ -44,10 +47,14 @@ export interface QnaAnswer {
 }
 
 // 게시물 인터페이스 - FaQ
+// 향후 Supabase faqs 테이블로 생성 예정 (posts와 같은 규칙: UUID, 소프트 삭제)
 export interface FaqItem {
-    id: number;
+    id: string; // DB: UUID (mock은 'faq-1' 형태)
     category: string;
     question: string;
     answer: string;
     sort_order: number; // 게시물 수동 정렬
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null; // 소프트 삭제: null인 항목만 노출
 }
