@@ -41,3 +41,12 @@ export interface QnaAnswer {
     answered_by: string;
     answered_at: string;
 }
+
+// 게시물 인터페이스 - FaQ
+export interface FaqItem {
+    id: number;
+    category: string;
+    question: string;
+    answer: string;
+    sort_order: number; // 게시물 수동 정렬
+}
