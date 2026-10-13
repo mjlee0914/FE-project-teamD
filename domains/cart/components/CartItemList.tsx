@@ -24,6 +24,10 @@ export default function CartItemList() {
         );
     }
 
+    function removeCartItem(id: number) {
+        setItems(items.filter((item) => item.product.id !== id));
+    }
+
     return (
         <ul className="mx-auto max-w-5xl px-4">
             {items.map((item) => {
@@ -79,6 +83,14 @@ export default function CartItemList() {
                                 )}
                             </p>
                         </div>
+                        <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            type="button"
+                            onClick={() => removeCartItem(item.product.id)}
+                        >
+                            ×
+                        </Button>
                     </li>
                 );
             })}
