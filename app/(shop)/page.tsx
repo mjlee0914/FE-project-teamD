@@ -7,7 +7,7 @@ import MainBanner from '@/domains/home/components/MainBanner';
 export default function HomePage() {
     return (
         <>
-            <MainBanner>main banner</MainBanner>
+            <MainBanner></MainBanner>
             <PopularProducts>popular products</PopularProducts>
             <EventBanner>event banner</EventBanner>
         </>
