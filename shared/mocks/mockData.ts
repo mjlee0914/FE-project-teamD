@@ -3,6 +3,7 @@ import { BoardSetting } from '@/domains/boards/types/board.types';
 import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
 import { Product } from '@/domains/products/types/product.types';
+import { CartItem } from '@/domains/cart/types/cart.types';
 
 // 중첩 카테고리 트리 Mock Data
 
@@ -192,5 +193,21 @@ export const MOCK_PRODUCTS: Product[] = [
         description: '데일리 룩에 잘 어울리는 심플한 캔버스 스니커즈입니다.',
         isNew: false,
         viewCount: 311,
+    },
+];
+
+// 장바구니 Mock Data
+export const MOCK_CART_ITEMS: CartItem[] = [
+    {
+        product: MOCK_PRODUCTS[0],
+        quantity: 2,
+    },
+    {
+        product: MOCK_PRODUCTS[1],
+        quantity: 1,
+    },
+    {
+        product: MOCK_PRODUCTS[2],
+        quantity: 3,
     },
 ];
