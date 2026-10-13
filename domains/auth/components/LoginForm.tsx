@@ -2,14 +2,36 @@
 
 import { Input } from '@/shared/components/ui/input';
 import { Button } from '@/shared/components/ui/button';
+import { login } from '@/domains/auth/actions/login.action';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+
+    async function handleSubmit(formData: FormData) {
+        const loginId = String(formData.get('loginId'));
+        const password = String(formData.get('password'));
+
+        const message = await login({ loginId, password });
+        setError(message);
+
+        if (message === null) {
+            router.push('/');
+        }
+    }
+
     return (
-        <form className="mx-auto flex max-w-sm flex-col gap-2 py-16">
+        <form
+            action={handleSubmit}
+            className="mx-auto flex max-w-sm flex-col gap-2 py-16"
+        >
             <label htmlFor="loginId">아이디</label>
             <Input id="loginId" name="loginId" />
             <label htmlFor="password">비밀번호</label>
             <Input id="password" name="password" type="password" />
+            {error && <p className="text-sm text-red-600">{error}</p>}
             <Button type="submit">로그인</Button>
         </form>
     );
