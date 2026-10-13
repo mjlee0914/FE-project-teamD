@@ -2,6 +2,7 @@
 
 import { MOCK_USERS } from '@/shared/mocks/mockData';
 import { LoginFormValues } from '@/domains/auth/types/auth.types';
+import { cookies } from 'next/headers';
 
 export async function login(values: LoginFormValues) {
     if (values.loginId === '') {
@@ -19,5 +20,9 @@ export async function login(values: LoginFormValues) {
     if (!user) {
         return '아이디 또는 비밀번호가 일치하지 않습니다.';
     }
+
+    const cookieStore = await cookies();
+    cookieStore.set('userName', user.name);
+
     return null;
 }
