@@ -44,3 +44,6 @@ next-env.d.ts
 
 # specstory
 .specstory
+
+# 개인소스파일폴더
+.personalresource
