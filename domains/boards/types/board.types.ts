@@ -1,3 +1,4 @@
+// 향후 목데이터에 추가 (나중에 정리)
 export type BoardWriteRole = 'all' | 'user' | 'admin';
 
 // 게시판 구분하기 (boradId 아래에 모두 넣을 예정이기 때문)
