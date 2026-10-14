@@ -201,20 +201,20 @@ export default function ProductList() {
                                 height={250}
                                 unoptimized
                             />
-                            <div className="w-[250px] text-left">
+                            <div className="w-62.5 text-left">
                                 {product.name}
                             </div>
-                            <div className="text-bold w-[250px] text-left text-xl">
+                            <div className="text-bold w-62.5 text-left text-xl">
                                 {formatPrice(product.price)}
                             </div>
-                            <div className="w-[250px] text-left text-xs text-gray-400">
+                            <div className="w-62.5 text-left text-xs text-gray-400">
                                 조회수 {product.viewCount}
                             </div>
                         </Link>
                     ))}
                 </section>
                 {/* 페이징 영역 */}
-                <nav className="mt-[30px] flex justify-center">
+                <nav className="mt-7.5 flex justify-center">
                     {totalPage > 0 && (
                         <nav>
                             {Array.from(
