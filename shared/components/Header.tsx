@@ -13,9 +13,8 @@ export default function Header() {
                 )}
             >
                 {/* 기본 모바일: h-14, px-4 / md 이상: h-16, px-6 */}
-                <div className="mx-auto flex h-14 items-center justify-around px-4 md:h-16 md:px-6">
+                <div className="mx-auto flex h-14 items-center justify-around border-b px-4 md:h-16 md:px-6">
                     <nav>
-                        {/* 전체 상품 링크: 2일차에 카테고리 GNB로 확장 */}
                         <Link
                             href="/products"
                             aria-label="전체 상품"
@@ -30,7 +29,7 @@ export default function Header() {
                         href="/"
                         className="text-lg font-black tracking-tight text-gray-900 transition-colors hover:text-blue-600 md:text-xl"
                     >
-                        DN Mall
+                        <span className="text-lg tracking-widest">DN Mall</span>
                     </Link>
 
                     {/* 네비게이션 영역 */}
@@ -53,28 +52,19 @@ export default function Header() {
                         </Link>
 
                         {/* 로그인 버튼 */}
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-9 px-2.5 md:px-3"
+                        <Link
+                            href="/login"
+                            className="flex items-center gap-1.5"
                         >
-                            <Link
-                                href="/login"
-                                className="flex items-center gap-1.5"
-                            >
-                                <LuUser className="h-3.5 w-3.5" />
-                                <span className="text-xs md:text-sm">
-                                    로그인
-                                </span>
-                            </Link>
-                        </Button>
+                            <LuUser className="h-3.5 w-3.5" />
+                        </Link>
                     </nav>
                 </div>
             </header>
 
-            <nav className="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-md transition-all">
+            <nav className="sticky top-0 z-50 w-full bg-white/70 p-0.5 text-base backdrop-blur-md transition-all">
                 <div>
-                    <div className="max-w-auto mx-auto flex justify-center gap-30 p-3 md:px-4">
+                    <div className="max-w-auto mx-auto flex justify-center gap-25 p-3 text-sm md:px-4">
                         <Link href="">
                             <span>신상품</span>
                         </Link>
