@@ -51,7 +51,7 @@ export default function Footer() {
                     {/* 바로가기 링크 */}
                     <div className="space-y-2">
                         <h4 className="text-xs font-semibold tracking-wider text-gray-900 uppercase">
-                            바로가기
+                            SHOP MENU
                         </h4>
                         <ul className="flex flex-wrap gap-4 text-xs text-gray-600 md:flex-col md:gap-1.5">
                             <li>
@@ -59,7 +59,7 @@ export default function Footer() {
                                     href="/boards/free"
                                     className="hover:text-blue-600"
                                 >
-                                    자유게시판
+                                    BOARD
                                 </Link>
                             </li>
                             <li>
@@ -67,23 +67,32 @@ export default function Footer() {
                                     href="/boards/notice"
                                     className="hover:text-blue-600"
                                 >
-                                    공지사항
+                                    NOTICE
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/boards/promotion"
+                                    href="/boards/event"
                                     className="hover:text-blue-600"
                                 >
-                                    이벤트
+                                    EVENT
+                                </Link>
+                            </li>
+
+                            <li>
+                                <Link
+                                    href="/boards/review"
+                                    className="hover:text-blue-600"
+                                >
+                                    REVIEW
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/boards/qna"
+                                    href="/boards/support"
                                     className="hover:text-blue-600"
                                 >
-                                    고객센터
+                                    SUPPORT
                                 </Link>
                             </li>
                         </ul>

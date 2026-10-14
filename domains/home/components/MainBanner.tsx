@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import mainbanner from './assets/mainbanner.png';
-import { Button } from '@/components/ui/button';
-
+import Link from 'next/link';
 export default function MainBanner() {
     return (
         <section className="relative w-full">
@@ -11,18 +10,25 @@ export default function MainBanner() {
                 className="h-auto w-full"
                 sizes="100vw"
             />
-            <div className="absolute inset-0 z-10 flex flex-col justify-center gap-5 bg-black/40 px-6 text-white md:px-12">
+            <div className="absolute inset-0 z-10 flex flex-col justify-end gap-5 bg-black/40 px-6 pb-20 text-white md:px-12">
                 <h1 className="text-3xl font-bold md:text-5xl">
-                    DN 2026 F/W Collection
-                    <br />
-                    오늘의 거리, 나만의 스타일로
+                    2026 DN F/W COLLECTION
                 </h1>
-                <p>
-                    편안한 착용감과 미니멀한 실루엣의 데일리 아이템을 특별
-                    혜택으로 만나보세요.
-                </p>
+
+                <h2 className="pl-2">
+                    선선한 바람과 함께 시작되는 새로운 시즌,
+                    <br />
+                    편안한 착용감의 데일리 아이템을 특별 혜택으로 만나보세요.
+                </h2>
                 <div>
-                    <Button>SHOP NOW</Button>
+                    <Link href="/collection">
+                        <button
+                            type="button"
+                            className="cursor-pointer bg-white pt-2 pr-10 pb-2 pl-10 text-xs text-black hover:bg-gray-300"
+                        >
+                            SHOP NOW
+                        </button>
+                    </Link>
                 </div>
             </div>
         </section>

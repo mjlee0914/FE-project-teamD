@@ -2,7 +2,8 @@ import Image from 'next/image';
 import discount from './assets/clothes.png';
 import sneakers from './assets/sneakers.png';
 import blackfriday from './assets/blackfriday.png';
-import { Button } from '@/shared/components/ui/button';
+import EventSwiper from './EventSwiper';
+
 export default function EventBanner() {
     return (
         <>
@@ -23,7 +24,7 @@ export default function EventBanner() {
                             className="h-100 w-80"
                             sizes="100vw"
                         />
-                        <Button>쿠폰 혜택 보기</Button>
+                        <button>쿠폰 혜택 보기</button>
                     </div>
                     <div>
                         <Image
@@ -33,7 +34,7 @@ export default function EventBanner() {
                             sizes="100vw"
                         />
 
-                        <Button>블랙 프라이데이 세일</Button>
+                        <button>쿠폰 혜택 보기</button>
                     </div>
                     <div className="relative">
                         <Image
@@ -43,10 +44,11 @@ export default function EventBanner() {
                             sizes="100vw"
                         />
 
-                        <Button>스니커즈 둘러보기</Button>
+                        <button>쿠폰 혜택 보기</button>
                     </div>
                 </div>
             </section>
+            <EventSwiper></EventSwiper>
         </>
     );
 }
