@@ -194,13 +194,16 @@ export default function ProductList() {
                             key={product.id}
                             className="flex cursor-pointer flex-col items-center justify-center"
                         >
-                            <Image
-                                src={product.imageUrl}
-                                alt={product.name}
-                                width={250}
-                                height={250}
-                                unoptimized
-                            />
+                            <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100">
+                                <Image
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    fill
+                                    unoptimized
+                                    sizes="(min-width: 1024px) 33vw, 100vw"
+                                    className="object-cover"
+                                />
+                            </div>
                             <div className="w-[250px] text-left">
                                 {product.name}
                             </div>
