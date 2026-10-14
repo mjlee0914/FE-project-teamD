@@ -1,5 +1,6 @@
 'use client';
 
+import ShippingAddress from '@/domains/cart/components/ShippingAddress';
 import { formatPrice } from '@/shared/utils/formatPrice';
 import { MOCK_CART_ITEMS } from '@/shared/mocks/mockData';
 import Image from 'next/image';
@@ -108,13 +109,16 @@ export default function CartItemList() {
                 })}
             </ul>
             {items.length > 0 && (
-                <div className="flex flex-col items-end gap-1 py-6">
-                    <p>상품 금액: {formatPrice(totalPrice)}</p>
-                    <p>배송비: {formatPrice(shippingFee)}</p>
-                    <p className="text-lg font-bold">
-                        총 결제 금액: {formatPrice(finalPrice)}
-                    </p>
-                </div>
+                <>
+                    <ShippingAddress />
+                    <div className="flex flex-col items-end gap-1 py-6">
+                        <p>상품 금액: {formatPrice(totalPrice)}</p>
+                        <p>배송비: {formatPrice(shippingFee)}</p>
+                        <p className="text-lg font-bold">
+                            총 결제 금액: {formatPrice(finalPrice)}
+                        </p>
+                    </div>
+                </>
             )}
         </div>
     );
