@@ -1,5 +1,6 @@
 import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, Post } from '../types/board.types';
+import Link from 'next/link';
 
 interface PostListProps {
     board: BoardSetting;
@@ -49,7 +50,15 @@ export default function PostList({
                             {post.is_pinned ? '📌' : total - offset - i}
                         </td>
                         {board.use_category && <td>{post.category}</td>}
-                        <td>{post.title}</td>
+                        {/* 제목을 클릭하면 해당 게시물로 이동 */}
+                        <td>
+                            <Link
+                                href={`/boards/${board.id}/${post.id}`}
+                                className="hover:underline"
+                            >
+                                {post.title}
+                            </Link>
+                        </td>
                         <td>{post.author_name}</td>
                         <td>{formatDate(post.created_at)}</td>
                         <td className="text-right">{post.view_count}</td>

@@ -1,3 +1,4 @@
+import { experimental_taintObjectReference } from 'react';
 import type { BoardSetting, FaqItem, Post } from '../types/board.types';
 import { store } from './mockStore';
 
@@ -10,6 +11,12 @@ export interface GetPostsParams {
     pageSize?: number;
     q?: string;
     category?: string;
+    // 상품 연동
+    // productId: 특정 상품의 글만 (상품페이지 하단 섹션용)
+    // Q&A 목록의 "상품" 칩은 별도 필터 없이 category === '상품' 으로 거름 (일반/상품 종류 탭은 쓰지 않기로 함)
+    // 주의: 상품페이지에 리뷰·Q&A 섹션이 같이 있으면 page 파라미터가 겹치므로
+    //       섹션별로 reviewPage / qnaPage 처럼 이름을 나눠서 page props로 넘길 것
+    productId?: string;
 }
 
 export interface PostListResult {
@@ -20,7 +27,13 @@ export interface PostListResult {
     totalPages: number;
 }
 
-// supabase 연동 대비 비동기 함수
+// 정렬 규칙 : 고정글이 앞으로 오고 고정 여부가 같으면 최신글이 앞으로
+const byPinnedTheNewest = (a: Post, b: Post) => {
+    if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
+    return b.created_at.localeCompare(a.created_at);
+};
+
+// supabase 연동 대비 비동기 함수로 우선 작성하고 loading.tsx를 넣어서 시연
 
 // 게시물 목록
 export async function getBoard(boardId: string): Promise<BoardSetting | null> {
@@ -34,6 +47,7 @@ export async function getPosts({
     pageSize = DEFAULT_PAGE_SIZE,
     q,
     category,
+    productId,
 }: GetPostsParams): Promise<PostListResult> {
     // 검색어 준비
     const keyword = q?.trim().toLowerCase();
@@ -44,15 +58,18 @@ export async function getPosts({
         .filter((post) => post.board_id === boardId && post.deleted_at === null)
         // 분류가 없거나(조건이 없으면 통과) 분류가 같은 글
         .filter((post) => !category || post.category === category)
+        // 특정 상품의 글
+        .filter((post) => !productId || post.product_id === productId)
         // 키워드 검색
         .filter(
             (post) => !keyword || post.title.toLowerCase().includes(keyword),
         )
-        // 고정 여부가 다르면 고정글이 앞으로, 고정 여부가 같으면 최신글이 앞으로
-        .sort((a, b) => {
-            if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
-            return b.created_at.localeCompare(a.created_at);
-        });
+        // 사용성을 위해서 정렬을 따로 함수로 뺍니다.
+        // .sort((a, b) => {
+        //     if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
+        //     return b.created_at.localeCompare(a.created_at);
+        // });
+        .sort(byPinnedTheNewest);
 
     // 페이지 계산
     const total = filtered.length;
@@ -73,6 +90,8 @@ export async function getPosts({
 }
 
 // 게시물 가져오기
+// 지금은 게시물을 클릭해도 조회수가 올라가지 않고
+// 나중에 Supabase로 갈 때 SQL로 올릴 예정 (지금은 정교하게 하지 않음...)
 export async function getPost(
     boardId: string,
     postId: string,
@@ -85,6 +104,24 @@ export async function getPost(
                 post.deleted_at === null,
         ) ?? null
     );
+}
+
+// 게시물 가져오기 - 이전글 다음글 이동 구현
+export async function getAdjacentPosts(
+    boardId: string,
+    postId: string,
+): Promise<{ prev: Post | null; next: Post | null }> {
+    const list = store.posts
+        .filter((post) => post.board_id === boardId && post.deleted_at === null)
+        .sort(byPinnedTheNewest);
+
+    const index = list.findIndex((post) => post.id === postId);
+
+    // 글이 삭제돼서 못 찾을 때
+    if (index === -1) return { prev: null, next: null };
+
+    // 맨 앞 글이면 앞 글(prev)은 없음 처리
+    return { prev: list[index - 1] ?? null, next: list[index + 1] ?? null };
 }
 
 export async function getFaqs(category?: string): Promise<FaqItem[]> {
