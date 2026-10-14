@@ -12,7 +12,7 @@ export default function EventBanner() {
                         이달의 혜택
                     </h1>
                     <p className="text-s mt-1 text-gray-500">
-                        현재 진행중인 이벤트를 확인하고 혜택을 받아보세요.
+                        쿠폰부터 시즌 세일까지, 진행 중인 혜택을 확인해보세요.
                     </p>
                 </div>
                 <div className="flex items-center justify-center gap-5">
@@ -23,7 +23,7 @@ export default function EventBanner() {
                             className="h-100 w-80"
                             sizes="100vw"
                         />
-                        <Button>Get 30% Off Coupon</Button>
+                        <Button>쿠폰 혜택 보기</Button>
                     </div>
                     <div>
                         <Image
@@ -33,7 +33,7 @@ export default function EventBanner() {
                             sizes="100vw"
                         />
 
-                        <Button>Black Friday Sale</Button>
+                        <Button>블랙 프라이데이 세일</Button>
                     </div>
                     <div className="relative">
                         <Image
@@ -43,7 +43,7 @@ export default function EventBanner() {
                             sizes="100vw"
                         />
 
-                        <Button>Shoes 70% Off</Button>
+                        <Button>스니커즈 둘러보기</Button>
                     </div>
                 </div>
             </section>

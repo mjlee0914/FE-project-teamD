@@ -13,8 +13,9 @@ export default function MainBanner() {
             />
             <div className="absolute inset-0 z-10 flex flex-col justify-center gap-5 bg-black/40 px-6 text-white md:px-12">
                 <h1 className="text-3xl font-bold md:text-5xl">
-                    트렌디한 스타일의 완성, <br />
-                    스파르타 셀렉션
+                    DN 2026 F/W Collection
+                    <br />
+                    오늘의 거리, 나만의 스타일로
                 </h1>
                 <p>
                     편안한 착용감과 미니멀한 실루엣의 데일리 아이템을 특별
