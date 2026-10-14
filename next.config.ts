@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
     experimental: {
         agentFeedback: true,
         authInterrupts: true, // unauthorized() 및 forbidden() 인터럽트 함수 사용을 활성화합니다.
+        taint: true,
     },
     cacheComponents: true,
     partialPrefetching: true,
