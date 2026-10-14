@@ -4,6 +4,9 @@ import BoardHeader from '@/domains/boards/components/BoardHeader';
 import PostList from '@/domains/boards/components/PostList';
 import Pagination from '@/domains/boards/components/Pagination';
 import BoardToolbar from '@/domains/boards/components/BoardToolbar';
+import { getCurrentUser } from '@/domains/boards/lib/currentUser';
+import { canWriteBoard } from '@/domains/boards/lib/permissions';
+import Link from 'next/link';
 
 export default async function BoardPage({
     params,
@@ -29,6 +32,10 @@ export default async function BoardPage({
         category: sp.category,
     });
 
+    // 쓰기 권한이 있을 때만 글쓰기 버튼을 보여 줌
+    const user = await getCurrentUser();
+    const canWrite = canWriteBoard(board, user);
+
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <BoardHeader board={board} />
@@ -52,6 +59,16 @@ export default async function BoardPage({
                         totalPages={result.totalPages}
                         query={{ q: sp.q, category: sp.category }}
                     />
+                    {canWrite && (
+                        <div className="mt-2 flex justify-end">
+                            <Link
+                                href={`/boards/${board.id}/new`}
+                                className="w-[4.5rem] border border-black bg-black py-1.5 text-center text-xs text-white"
+                            >
+                                글쓰기
+                            </Link>
+                        </div>
+                    )}
                 </>
             ) : (
                 // 객체를 글자로 바꾸고(JSON.stringify) JSON 모양 그대로 출력하기(pre)

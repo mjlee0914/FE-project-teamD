@@ -7,10 +7,10 @@ export default function NotFound() {
             <div className="flex min-h-[28rem] flex-col items-center justify-center border bg-stone-100 text-center">
                 <p className="text-3xl">404</p>
                 <h3 className="mt-1.5 mb-1 text-base font-bold">
-                    페이지를 찾을 수 없습니다
+                    페이지를 찾을 수 없습니다.
                 </h3>
                 <p className="mb-3.5 text-xs text-gray-500">
-                    주소가 잘못되었거나 삭제된 페이지입니다
+                    주소가 잘못되었거나 삭제된 페이지입니다.
                 </p>
                 <Link
                     href="/"
