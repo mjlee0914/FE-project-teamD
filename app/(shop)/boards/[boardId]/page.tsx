@@ -3,13 +3,14 @@ import { notFound } from 'next/navigation';
 import BoardHeader from '@/domains/boards/components/BoardHeader';
 import PostList from '@/domains/boards/components/PostList';
 import Pagination from '@/domains/boards/components/Pagination';
+import BoardToolbar from '@/domains/boards/components/BoardToolbar';
 
 export default async function BoardPage({
     params,
     searchParams,
 }: {
     params: Promise<{ boardId: string }>;
-    searchParams: Promise<{ page?: string }>;
+    searchParams: Promise<{ page?: string; q?: string; category?: string }>;
 }) {
     const { boardId } = await params;
     const sp = await searchParams;
@@ -21,13 +22,23 @@ export default async function BoardPage({
     const board = await getBoard(boardId);
     if (!board) notFound();
 
-    const result = await getPosts({ boardId, page });
+    const result = await getPosts({
+        boardId,
+        page,
+        q: sp.q,
+        category: sp.category,
+    });
 
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <BoardHeader board={board} />
             {board.type === 'list' ? (
                 <>
+                    <BoardToolbar
+                        board={board}
+                        q={sp.q}
+                        category={sp.category}
+                    />
                     <PostList
                         board={board}
                         posts={result.items}
@@ -39,6 +50,7 @@ export default async function BoardPage({
                         basePath={`/boards/${board.id}`}
                         page={result.page}
                         totalPages={result.totalPages}
+                        query={{ q: sp.q, category: sp.category }}
                     />
                 </>
             ) : (

@@ -348,7 +348,7 @@ export const POSTS: Post[] = [
         title: '사이즈가 안 맞아요, 교환하고 싶어요',
         content: '주문번호 20261008-001 한 치수 작은 걸로 교환하고 싶습니다.',
         user_id: 'user-1',
-        author_name: '김민지',
+        author_name: '임찬웅',
         gid: 'post-5',
         view_count: 12,
         is_secret: true,
