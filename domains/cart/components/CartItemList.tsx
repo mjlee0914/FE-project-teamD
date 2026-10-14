@@ -9,6 +9,8 @@ import { useState } from 'react';
 
 export default function CartItemList() {
     const [items, setItems] = useState(MOCK_CART_ITEMS);
+    const [payMessage, setPayMessage] = useState<string | null>(null);
+
     function changeQuantity(id: number, amount: number) {
         setItems(
             items.map((item) =>
@@ -34,6 +36,25 @@ export default function CartItemList() {
     );
     const shippingFee = totalPrice === 0 || totalPrice >= 50000 ? 0 : 3000;
     const finalPrice = totalPrice + shippingFee;
+
+    function handlePay(formData: FormData) {
+        const recipient = String(formData.get('recipient'));
+        const phone = String(formData.get('phone'));
+        const address = String(formData.get('address'));
+        const addressDetail = String(formData.get('addressDetail'));
+
+        if (
+            recipient === '' ||
+            phone === '' ||
+            address === '' ||
+            addressDetail === ''
+        ) {
+            setPayMessage('빈칸을 입력해 주세요');
+            return;
+        }
+
+        setPayMessage(`${formatPrice(finalPrice)} 결제 완료!`);
+    }
 
     return (
         <div className="mx-auto max-w-5xl px-4">
@@ -109,7 +130,7 @@ export default function CartItemList() {
                 })}
             </ul>
             {items.length > 0 && (
-                <>
+                <form action={handlePay}>
                     <ShippingAddress />
                     <div className="flex flex-col items-end gap-1 py-6">
                         <p>상품 금액: {formatPrice(totalPrice)}</p>
@@ -118,7 +139,13 @@ export default function CartItemList() {
                             총 결제 금액: {formatPrice(finalPrice)}
                         </p>
                     </div>
-                </>
+                    <Button type="submit" className="w-full">
+                        결제하기
+                    </Button>
+                    {payMessage && (
+                        <p className="py-4 text-center">{payMessage}</p>
+                    )}
+                </form>
             )}
         </div>
     );
