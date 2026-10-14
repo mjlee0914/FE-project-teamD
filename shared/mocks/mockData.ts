@@ -143,15 +143,16 @@ export const MOCK_USERS: User[] = [
 
 // 상품 Mock Data
 export const MOCK_PRODUCTS: Product[] = [
-    {
-        id: 1,
-        name: '모던 오버핏 셔츠',
-        price: 39000,
-        category_id: 'tops',
-        imageUrl: 'https://placehold.co/600x800?text=Shirt',
-        description: '다양한 하의와 편하게 매치할 수 있는 오버핏 셔츠입니다.',
-        isNew: true,
-        viewCount: 128,
+   {
+    id: 1,
+    name: '아노락 재킷',
+    price: 79000,
+    category_id: 'outer',
+    imageUrl: '/products/Black-anorak.png',
+    description:
+        '심플한 디자인에 스트릿 무드를 더한 오버핏 아노락. 여유로운 핏과 깔끔한 실루엣으로 편안하면서도 트렌디한 데일리룩을 완성할 수 있습니다.',
+    isNew: true,
+    viewCount: 349,
     },
     {
         id: 2,
