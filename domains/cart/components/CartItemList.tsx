@@ -6,6 +6,7 @@ import { MOCK_CART_ITEMS } from '@/shared/mocks/mockData';
 import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
 import { useState } from 'react';
+import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
 
 export default function CartItemList() {
     const [items, setItems] = useState(MOCK_CART_ITEMS);
@@ -149,6 +150,7 @@ export default function CartItemList() {
                     )}
                 </form>
             )}
+            <RecommendedProducts />
         </div>
     );
 }
