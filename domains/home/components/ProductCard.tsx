@@ -13,7 +13,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="group relative flex flex-col justify-center p-3.5 hover:border-gray-200 hover:shadow-2xl">
             <Link
                 href={`/products/${product.id}`}
-                className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-50"
+                className="relative aspect-square w-full overflow-hidden bg-gray-50"
             >
                 <Image
                     src={product.imageUrl}
