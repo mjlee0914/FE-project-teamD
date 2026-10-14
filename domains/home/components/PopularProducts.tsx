@@ -2,7 +2,7 @@ import ProductGrid from './ProductGrid';
 import { MOCK_PRODUCTS } from '@/shared/mocks/mockData';
 
 export default function PopularProducts() {
-    const recommendedProducts = MOCK_PRODUCTS.slice(2, 5);
+    const recommendedProducts = MOCK_PRODUCTS.slice(0, 3);
     return (
         <>
             <section className="p-20">
