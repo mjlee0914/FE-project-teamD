@@ -3,17 +3,21 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import { MOCK_PRODUCTS } from '@/shared/mocks/mockData';
 
 export default function ProductPage() {
-    // 임시 상품 정보
-    const product = {
-        name: '아노락 재킷',
-        originalPrice: 89000,
-        price: 79000,
-        description:
-            '미니멀한 디자인에 트렌디한 스트릿 감성을 더한 오버핏 아노락입니다.여유로운 실루엣과 깔끔한 후드 디테일이 특징이며, 편안하면서도 감각적인 스타일을 연출할 수 있습니다.',
-    };
+    // URL에서 상품 ID 가져오기
+    const params = useParams<{ id: string }>();
 
+    // ID에 맞는 상품 찾기
+    const product = MOCK_PRODUCTS.find(
+        (item) => item.id === Number(params.id)
+    );
+
+    // 상품이 없을 때
+    if (!product) {
+        return <div>상품을 찾을 수 없습니다.</div>;
+    }
     // 사용자가 선택한 옵션 저장
     const [color, setColor] = useState('블랙');
     const [size, setSize] = useState('');
@@ -53,9 +57,6 @@ export default function ProductPage() {
 
                     {/* 가격 */}
                     <div className="mt-5 flex items-center gap-3">
-                        <span className="text-sm text-gray-400 line-through">
-                            {product.originalPrice.toLocaleString()}원
-                        </span>
 
                         <span className="text-xl font-semibold">
                             {product.price.toLocaleString()}원
