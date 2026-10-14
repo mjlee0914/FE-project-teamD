@@ -67,7 +67,7 @@ export default function CartItemList() {
                 {items.map((item) => {
                     return (
                         <li
-                            className="flex items-center gap-6 border-b py-1"
+                            className="flex items-center gap-6 border-b py-4"
                             key={item.product.id}
                         >
                             <Image
@@ -130,7 +130,7 @@ export default function CartItemList() {
                 })}
             </ul>
             {items.length > 0 && (
-                <form action={handlePay}>
+                <form action={handlePay} className="mt-10">
                     <ShippingAddress />
                     <div className="flex flex-col items-end gap-1 py-6">
                         <p>상품 금액: {formatPrice(totalPrice)}</p>
@@ -139,11 +139,13 @@ export default function CartItemList() {
                             총 결제 금액: {formatPrice(finalPrice)}
                         </p>
                     </div>
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="h-12 w-full text-base">
                         결제하기
                     </Button>
                     {payMessage && (
-                        <p className="py-4 text-center">{payMessage}</p>
+                        <p className="py-4 text-center text-red-600">
+                            {payMessage}
+                        </p>
                     )}
                 </form>
             )}
