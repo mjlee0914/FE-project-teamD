@@ -59,6 +59,9 @@ export default function CartItemList() {
 
     return (
         <div className="mx-auto max-w-5xl px-4">
+            <h1 className="mb-6 text-center text-2xl font-bold">
+                장바구니({items.length})
+            </h1>
             {items.length === 0 && (
                 <p className="py-20 text-center text-gray-500">
                     장바구니가 비었습니다.
