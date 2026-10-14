@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { BoardSetting } from '../types/board.types';
 
 interface BoardToolbarProps {
-    board: BoardToolbarProps;
+    board: BoardSetting;
     q?: string;
     category?: string;
 }
@@ -13,7 +13,7 @@ export default function BoardToolbar({
     category,
 }: BoardToolbarProps) {
     const hrefFor = (c?: string) => {
-        const sp = newURLSearchParams();
+        const sp = new URLSearchParams();
         if (q) sp.set('q', q);
         if (c) sp.set('category', c);
         const qs = sp.toString();
@@ -25,7 +25,7 @@ export default function BoardToolbar({
 
     return (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            {board.use_category && board.categoies ? (
+            {board.use_category && board.categories ? (
                 <div className="flex flex-wrap gap-1.5">
                     <Link href={hrefFor()} className={chipClass(!category)}>
                         전체
