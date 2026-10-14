@@ -7,6 +7,7 @@ import {
 import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
 import { Product } from '@/domains/products/types/product.types';
+import { CartItem } from '@/domains/cart/types/cart.types';
 
 // 중첩 카테고리 트리 Mock Data
 
@@ -175,6 +176,21 @@ export const MOCK_PRODUCTS: Product[] = [
     },
 ];
 
+// 장바구니 Mock Data
+export const MOCK_CART_ITEMS: CartItem[] = [
+    {
+        product: MOCK_PRODUCTS[0],
+        quantity: 2,
+    },
+    {
+        product: MOCK_PRODUCTS[1],
+        quantity: 1,
+    },
+    {
+        product: MOCK_PRODUCTS[2],
+        quantity: 3,
+    },
+];
 // 게시판 인터페이스(규격) 기본값
 export const BOARD_SETTINGS: BoardSetting[] = [
     {
