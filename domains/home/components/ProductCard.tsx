@@ -13,14 +13,16 @@ export default function ProductCard({ product }: ProductCardProps) {
             <Link
                 href={`/products/${product.id}`}
                 className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-50"
-            ></Link>
-            {/* <Image
-                src={product.imageUrl}
-                alt={product.name}
-                fill
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-            /> */}
+            >
+                <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+            </Link>
+
             <div className="mt-3 flex flex-1 flex-col">
                 <div>
                     <h3 className="line-clamp-2 text-sm font-medium text-gray-800 group-hover:text-blue-600">
