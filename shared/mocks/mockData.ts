@@ -7,6 +7,7 @@ import {
 import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
 import { Product } from '@/domains/products/types/product.types';
+import { CartItem } from '@/domains/cart/types/cart.types';
 
 // 중첩 카테고리 트리 Mock Data
 
@@ -135,46 +136,61 @@ export const MOCK_PRODUCTS: Product[] = [
     },
     {
         id: 2,
-        name: '데일리 코튼 티셔츠',
-        price: 19900,
+        name: '밑단 스트링 후드티',
+        price: 59000,
         category_id: 'tops',
-        imageUrl: 'https://placehold.co/600x800?text=T-shirt',
-        description: '부드러운 코튼 소재로 매일 입기 좋은 기본 티셔츠입니다.',
-        isNew: false,
-        viewCount: 246,
+        imageUrl: '/products/피치 오렌지 밑단 스트링 후드티.png',
+        description: '군더더기 없는 깔끔한 디자인에 밑단 스트링 디테일을 더해, 심플하면서도 유니크한 분위기를 연출합니다. 일반적인 후드티와 달리 목 부분의 스트링을 생략하고, 밑단에 포인트를 주어 차별화된 디자인을 완성했습니다. 부드러운 피치 오렌지와 감각적인 라임 옐로우 컬러로 구성되어, 단독 착용은 물론 다양한 아우터와 레이어드하기에도 좋은 아이템입니다.',
+        isNew: true,
+        viewCount: 1000,
     },
     {
         id: 3,
-        name: '스트레이트 데님 팬츠',
+        name: '파스텔 조거 팬츠',
         price: 42000,
-        category_id: 'bottoms',
-        imageUrl: 'https://placehold.co/600x800?text=Jeans',
-        description: '깔끔한 일자 핏으로 캐주얼하게 입기 좋은 데님 팬츠입니다.',
+        category_id: 'Pants',
+        imageUrl: '/products/파스텔 조거 팬츠.png',
+        description: '감각적인 컬러 조합이 돋보이는 타이다이 조거 팬츠.핑크, 옐로우, 블루 컬러가 자연스럽게 어우러져 유니크한 분위기를 연출합니다. 여유롭게 떨어지는 와이드 실루엣에 발목으로 갈수록 좁아지는 조거 스타일을 더해 캐주얼하면서도 트렌디한 핏을 완성했습니다.심플한 티셔츠나 후드티와 매치해도 스타일리시한 스트릿룩을 연출할 수 있는 포인트 아이템입니다.',
         isNew: true,
-        viewCount: 93,
+        viewCount: 1300,
     },
     {
         id: 4,
-        name: '베이직 니트 가디건',
-        price: 35900,
-        category_id: 'outer',
-        imageUrl: 'https://placehold.co/600x800?text=Cardigan',
-        description: '간절기에 가볍게 걸치기 좋은 기본 가디건입니다.',
+        name: '옐로우 하이넥 윈드브레이커',
+        price: 81000,
+        category_id: 'outerwear',
+        imageUrl: '/products/바람막이.png',
+        description: '일상 속 스타일에 감각적인 포인트를 더해주는 하이넥 윈드브레이커. 선명하면서도 빈티지한 머스타드 옐로우 컬러가 돋보이며, 군더더기 없는 미니멀한 디자인으로 캐주얼하면서도 세련된 분위기를 연출합니다.목을 감싸는 하이넥 디자인과 깔끔하게 떨어지는 실루엣이 특징이며, 데님 팬츠부터 와이드 팬츠까지 다양한 아이템과 자연스럽게 어우러집니다.가볍게 걸치는 것만으로도 스타일을 완성할 수 있는 데일리 아우터입니다.',
         isNew: false,
-        viewCount: 175,
+        viewCount: 600,
     },
     {
         id: 5,
-        name: '클래식 캔버스 스니커즈',
-        price: 49000,
+        name: '스웨이드 스니커즈',
+        price: 39000,
         category_id: 'shoes',
-        imageUrl: 'https://placehold.co/600x800?text=Sneakers',
-        description: '데일리 룩에 잘 어울리는 심플한 캔버스 스니커즈입니다.',
-        isNew: false,
+        imageUrl: '/products/스웨이드 스니커즈.png',
+        description: '클래식한 디자인에 빈티지한 감성을 더한 브라운 스니커즈. 차분하고 깊이 있는 브라운 컬러와 부드러운 질감의 스웨이드 무드가 어우러져 자연스럽고 감각적인 스타일을 연출합니다. 화이트 슈레이스와 아이보리 컬러의 아웃솔이 조화를 이루며, 캐주얼하면서도 레트로한 분위기를 완성합니다.데님 팬츠, 와이드 팬츠, 조거 팬츠 등 다양한 하의와 자연스럽게 매치할 수 있어 데일리 스타일링에 포인트를 더하기 좋은 아이템입니다.',
+        isNew: true,
         viewCount: 311,
     },
 ];
 
+// 장바구니 Mock Data
+export const MOCK_CART_ITEMS: CartItem[] = [
+    {
+        product: MOCK_PRODUCTS[0],
+        quantity: 2,
+    },
+    {
+        product: MOCK_PRODUCTS[1],
+        quantity: 1,
+    },
+    {
+        product: MOCK_PRODUCTS[2],
+        quantity: 3,
+    },
+];
 // 게시판 인터페이스(규격) 기본값
 export const BOARD_SETTINGS: BoardSetting[] = [
     {
