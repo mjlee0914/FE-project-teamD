@@ -1,5 +1,4 @@
 import { BOARD_SETTINGS, POSTS, FAQS } from '@/shared/mocks/mockData';
-import type { BoardSetting, Post, FaqItem } from '../types/board.types';
 
 type Store = { boards: BoardSetting[]; posts: Post[]; faqs: FaqItem[] };
 const g = globalThis as unknown as { __boardStore?: Store };

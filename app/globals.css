@@ -128,3 +128,7 @@
         @apply font-sans;
     }
 }
+
+.brand-logo {
+    font-family: var(--font-cactus-classical-serif), serif;
+}
