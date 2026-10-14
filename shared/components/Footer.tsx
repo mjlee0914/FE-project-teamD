@@ -72,6 +72,14 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
+                                    href="/boards/promotion"
+                                    className="hover:text-blue-600"
+                                >
+                                    이벤트
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     href="/boards/qna"
                                     className="hover:text-blue-600"
                                 >
