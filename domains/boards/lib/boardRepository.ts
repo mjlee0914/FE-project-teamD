@@ -201,3 +201,19 @@ export async function updatePost(
     post.updated_at = new Date().toISOString();
     return post;
 }
+
+export async function deletePost(
+    boardId: string,
+    postId: string,
+): Promise<boolean> {
+    const post = store.posts.find(
+        (p) =>
+            p.id === postId && p.board_id === boardId && p.deleted_at === null,
+    );
+    if (!post) return false;
+
+    const now = new Date().toISOString();
+    post.deleted_at = now;
+    post.updated_at = now;
+    return true;
+}

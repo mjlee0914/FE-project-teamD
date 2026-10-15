@@ -5,12 +5,14 @@ interface BoardToolbarProps {
     board: BoardSetting;
     q?: string;
     category?: string;
+    canWrite?: boolean; // 쓰기 권한이 있을 때만 글쓰기 버튼을 보여 줌 (권한 판단은 page.tsx에서)
 }
 
 export default function BoardToolbar({
     board,
     q,
     category,
+    canWrite,
 }: BoardToolbarProps) {
     const hrefFor = (c?: string) => {
         const sp = new URLSearchParams();
@@ -44,23 +46,35 @@ export default function BoardToolbar({
                 <div />
             )}
 
-            <form action={`/boards/${board.id}`} className="flex gap-2">
-                {category && (
-                    <input type="hidden" name="category" value={category} />
+            {/* 오른쪽: [검색창] [검색] [글쓰기] 한 줄 */}
+            <div className="flex items-center gap-2">
+                <form action={`/boards/${board.id}`} className="flex gap-2">
+                    {category && (
+                        <input type="hidden" name="category" value={category} />
+                    )}
+                    <input
+                        name="q"
+                        defaultValue={q}
+                        placeholder="검색어를 입력하세요"
+                        className="border px-3 py-1.5 text-xs"
+                    />
+                    <button
+                        type="submit"
+                        className="w-[4.5rem] cursor-pointer border border-black bg-black py-1.5 text-center text-xs text-white"
+                    >
+                        검색
+                    </button>
+                </form>
+
+                {canWrite && (
+                    <Link
+                        href={`/boards/${board.id}/new`}
+                        className="w-[4.5rem] border border-black bg-white py-1.5 text-center text-xs text-black"
+                    >
+                        글쓰기
+                    </Link>
                 )}
-                <input
-                    name="q"
-                    defaultValue={q}
-                    placeholder="검색어를 입력하세요"
-                    className="border px-3 py-1.5 text-xs"
-                />
-                <button
-                    type="submit"
-                    className="w-[4.5rem] cursor-pointer border border-black bg-black py-1.5 text-center text-xs text-white"
-                >
-                    검색
-                </button>
-            </form>
+            </div>
         </div>
     );
 }
