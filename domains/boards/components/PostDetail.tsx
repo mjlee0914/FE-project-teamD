@@ -50,7 +50,7 @@ export default function PostDetail({
 
             <ul className="border-b text-xs">
                 <li className="flex gap-4 px-1.5 py-2.5">
-                    <b className="w-14 font-medium text-gray-500">이전글</b>
+                    <b className="w-14 font-medium text-gray-500">이전 글</b>
                     {prev ? (
                         <Link
                             href={`${listHref}/${prev.id}`}
@@ -59,11 +59,13 @@ export default function PostDetail({
                             {prev.title}
                         </Link>
                     ) : (
-                        <span className="text-gray-400">이전글이 없습니다</span>
+                        <span className="text-gray-400">
+                            이전 글이 없습니다.
+                        </span>
                     )}
                 </li>
                 <li className="flex gap-4 px-1.5 py-2.5">
-                    <b className="w-14 font-medium text-gray-500">다음글</b>
+                    <b className="w-14 font-medium text-gray-500">다음 글</b>
                     {next ? (
                         <Link
                             href={`${listHref}/${next.id}`}
@@ -72,7 +74,9 @@ export default function PostDetail({
                             {next.title}
                         </Link>
                     ) : (
-                        <span className="text-gray-400">다음글이 없습니다</span>
+                        <span className="text-gray-400">
+                            다음 글이 없습니다.
+                        </span>
                     )}
                 </li>
             </ul>

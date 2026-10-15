@@ -117,7 +117,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
     // 상품 종류에 따라 사이즈 구분
     const sizes =
-        product.category_id === 'shoes'
+        product.category_id === 'cat-shoes'
             ? ['230', '240', '250', '260', '270', '280']
             : ['S', 'M', 'L', 'XL'];
 
