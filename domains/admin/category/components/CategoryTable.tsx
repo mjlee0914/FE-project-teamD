@@ -30,7 +30,6 @@ export default function CategoryTable({
     const [expandedIds, setExpandedIds] = useState<Set<string>>(
         () => new Set(),
     );
-    const [open, setOpen] = useState(false);
 
     function toggleCategory(id: string) {
         setExpandedIds((previous) => {
@@ -104,8 +103,6 @@ export default function CategoryTable({
                                 수정
                             </Button>
                             <AdminAlertDialog
-                                open={open}
-                                onOpenChange={setOpen}
                                 buttonName="삭제"
                                 title="삭제하시겠습니까?"
                                 description="삭제시 하위 카테고리까지 전부 삭제됩니다."
@@ -142,7 +139,7 @@ export default function CategoryTable({
                     ) : (
                         <TableRow>
                             <TableCell
-                                colSpan={3}
+                                colSpan={4}
                                 className="h-24 text-center text-gray-500"
                             >
                                 등록된 카테고리가 없습니다.

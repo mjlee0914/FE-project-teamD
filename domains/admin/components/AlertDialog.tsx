@@ -10,10 +10,9 @@ import {
     AlertDialogTrigger,
 } from '@/shared/components/ui/alert-dialog';
 import { Button } from '@/shared/components/ui/button';
+import { useState } from 'react';
 
 interface AdminAlertDialogProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
     buttonName: string;
     title: string;
     description: string;
@@ -21,15 +20,15 @@ interface AdminAlertDialogProps {
 }
 
 export function AdminAlertDialog({
-    open,
-    onOpenChange,
     buttonName,
     title,
     description,
     onClick,
 }: AdminAlertDialogProps) {
+    const [open, setOpen] = useState(false);
+
     return (
-        <AlertDialog open={open} onOpenChange={onOpenChange}>
+        <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger
                 render={<Button variant="outline">{buttonName}</Button>}
             />
@@ -45,7 +44,7 @@ export function AdminAlertDialog({
                     <AlertDialogAction
                         onClick={() => {
                             onClick();
-                            onOpenChange(false);
+                            setOpen(false);
                         }}
                     >
                         확인
