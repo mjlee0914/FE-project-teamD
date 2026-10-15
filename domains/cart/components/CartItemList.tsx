@@ -1,6 +1,5 @@
 'use client';
 
-import ShippingAddress from '@/domains/cart/components/ShippingAddress';
 import { formatPrice } from '@/shared/utils/formatPrice';
 import { MOCK_CART_ITEMS } from '@/shared/mocks/mockData';
 import Image from 'next/image';
@@ -8,6 +7,7 @@ import { Button } from '@/shared/components/ui/button';
 import { useState } from 'react';
 import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function CartItemList() {
     const [items, setItems] = useState(MOCK_CART_ITEMS);
@@ -148,7 +148,6 @@ export default function CartItemList() {
             </ul>
             {items.length > 0 && (
                 <form action={handlePay} className="mt-10">
-                    <ShippingAddress />
                     <div className="my-8 flex flex-wrap items-center justify-center gap-20 rounded-lg border p-10">
                         <div className="flex flex-col items-end gap-1">
                             <p className="text-sm text-gray-500">상품 금액</p>
@@ -184,9 +183,11 @@ export default function CartItemList() {
                             </p>
                         </div>
                     </div>
-                    <Button type="submit" className="h-12 w-full text-base">
-                        결제하기
-                    </Button>
+                    <Link href="/checkout">
+                        <Button type="submit" className="h-12 w-full text-base">
+                            주문서 작성하기
+                        </Button>
+                    </Link>
                     {payMessage && (
                         <p className="py-4 text-center text-red-600">
                             {payMessage}
