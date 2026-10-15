@@ -56,7 +56,7 @@ export default function BoardToolbar({
                 />
                 <button
                     type="submit"
-                    className="w-[4.5rem] border border-black bg-black py-1.5 text-center text-xs text-white"
+                    className="w-[4.5rem] cursor-pointer border border-black bg-black py-1.5 text-center text-xs text-white"
                 >
                     검색
                 </button>

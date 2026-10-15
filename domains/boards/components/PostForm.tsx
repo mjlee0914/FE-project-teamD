@@ -3,13 +3,15 @@
 import Link from 'next/link';
 import { useActionState } from 'react';
 import type { ReactNode } from 'react';
-import type { BoardSetting } from '../types/board.types';
+import type { BoardSetting, Post } from '../types/board.types';
 import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
 import { createPostAction } from '../actions/createPost.action';
+import { updatePostAction } from '../actions/updatePost.action';
 
 interface PostFormProps {
     board: BoardSetting;
     gid: string; // 첨부파일은 글 저장 전에 올라가기 때문에 폼을 열 때 서버 내림
+    post?: Post; // 수정일 때 기존 글 가져오기
 }
 
 function FormRow({
@@ -39,12 +41,15 @@ function FormRow({
     );
 }
 
-export default function PostForm({ board, gid }: PostFormProps) {
+export default function PostForm({ board, gid, post }: PostFormProps) {
+    const isEdit = !!post;
+
     const [state, formAction, isPending] = useActionState(
-        createPostAction,
+        isEdit ? updatePostAction : createPostAction, // 등록/수정 여부에 따라 서버함수 변경
         INITIAL_ACTION_STATE,
     );
     const errors = state.errors;
+    const v = state.values; // v ?? post 순서로 사용
 
     // [useActionState 주의]
     // 1. action은 (prevState, formData)를 받음 — prevState를 안 써도 첫 번째 인자로 반드시 받아야 함
@@ -58,6 +63,7 @@ export default function PostForm({ board, gid }: PostFormProps) {
         <form noValidate action={formAction}>
             <input type="hidden" name="boardId" value={board.id} />
             <input type="hidden" name="gid" value={gid} />
+            {post && <input type="hidden" name="postId" value={post.id} />}
 
             {errors?.form && (
                 <p className="mb-3 text-xs text-red-500">{errors.form}</p>
@@ -71,10 +77,10 @@ export default function PostForm({ board, gid }: PostFormProps) {
                         error={errors?.category}
                     >
                         <select
-                            key={state.values?.category ?? 'init'}
+                            key={v?.category ?? post?.category ?? 'init'}
                             id="category"
                             name="category"
-                            defaultValue={state.values?.category ?? ''}
+                            defaultValue={v?.category ?? post?.category ?? ''}
                             className="w-full border px-3 py-2 text-xs"
                         >
                             <option value="">선택하세요.</option>
@@ -91,7 +97,7 @@ export default function PostForm({ board, gid }: PostFormProps) {
                     <input
                         id="title"
                         name="title"
-                        defaultValue={state.values?.title}
+                        defaultValue={v?.title ?? post?.title}
                         placeholder="제목을 입력해 주세요."
                         className={`w-full border px-3 py-2 text-xs ${errors?.title ? 'border-red-500' : ''}`}
                     />
@@ -101,7 +107,7 @@ export default function PostForm({ board, gid }: PostFormProps) {
                     <textarea
                         id="content"
                         name="content"
-                        defaultValue={state.values?.content}
+                        defaultValue={v?.content ?? post?.content}
                         placeholder="내용을 입력해 주세요."
                         className={`h-40 w-full border px-3 py-2 text-xs ${errors?.content ? 'border-red-500' : ''}`}
                     />
@@ -115,7 +121,11 @@ export default function PostForm({ board, gid }: PostFormProps) {
                             <input
                                 type="checkbox"
                                 name="isSecret"
-                                defaultChecked={state.values?.isSecret === 'on'}
+                                defaultChecked={
+                                    v
+                                        ? v.isSecret === 'on'
+                                        : (post?.is_secret ?? false)
+                                }
                             />
                             비밀글
                         </label>
@@ -125,7 +135,11 @@ export default function PostForm({ board, gid }: PostFormProps) {
 
             <div className="mt-5 flex justify-center gap-2">
                 <Link
-                    href={`/boards/${board.id}`}
+                    href={
+                        post
+                            ? `/boards/${board.id}/${post.id}` // 수정이면 그 글 상세로
+                            : `/boards/${board.id}` // 등록이면 목록으로
+                    }
                     className="w-[4.5rem] border border-black py-1.5 text-center text-xs"
                 >
                     취소
@@ -133,9 +147,15 @@ export default function PostForm({ board, gid }: PostFormProps) {
                 <button
                     type="submit"
                     disabled={isPending}
-                    className="w-[4.5rem] border border-black bg-black py-1.5 text-center text-xs text-white disabled:opacity-50"
+                    className="w-[4.5rem] cursor-pointer border border-black bg-black py-1.5 text-center text-xs text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    {isPending ? '등록 중...' : '등록'}
+                    {isPending
+                        ? isEdit
+                            ? '수정 중...'
+                            : '등록 중...'
+                        : isEdit
+                          ? '수정'
+                          : '등록'}
                 </button>
             </div>
         </form>

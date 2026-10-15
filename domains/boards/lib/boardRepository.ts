@@ -173,3 +173,31 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
     store.posts.push(post);
     return post;
 }
+
+// 게시물 수정 가능 항목
+export interface UpdatePostInput {
+    title: string;
+    content: string;
+    category?: string;
+    isSecret?: boolean;
+}
+
+// 게시물 수정 - 나중에 supabase update로 교체 예정
+export async function updatePost(
+    boardId: string,
+    postId: string,
+    input: UpdatePostInput,
+): Promise<Post | null> {
+    const post = store.posts.find(
+        (p) =>
+            p.id === postId && p.board_id === boardId && p.deleted_at === null,
+    );
+    if (!post) return null;
+
+    post.title = input.title;
+    post.content = input.content;
+    post.category = input.category;
+    post.is_secret = input.isSecret;
+    post.updated_at = new Date().toISOString();
+    return post;
+}

@@ -1,4 +1,4 @@
-import type { BoardSetting } from '../types/board.types';
+import type { Post, BoardSetting } from '../types/board.types';
 import type { BoardUser } from './currentUser';
 
 // 게시글 등록 권한
@@ -17,4 +17,10 @@ export function canWriteBoard(
         case 'admin':
             return user?.role === 'admin';
     }
+}
+
+// 수정 권한 - 작성자 본인 또는 관리자
+export function canEditPost(post: Post, user: BoardUser | null): boolean {
+    if (!user) return false;
+    return user.role === 'admin' || post.user_id === user.id;
 }
