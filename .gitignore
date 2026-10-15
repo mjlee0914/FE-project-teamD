@@ -47,3 +47,6 @@ next-env.d.ts
 
 # 개인소스파일폴더
 .personalresource
+
+.env*
+!.env.example

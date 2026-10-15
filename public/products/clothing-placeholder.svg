@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="750" viewBox="0 0 600 750">
+  <rect width="600" height="750" fill="#f3f4f6"/>
+  <path d="M230 235l-95 65 50 80 45-30v180h140V350l45 30 50-80-95-65c-20 35-120 35-140 0z" fill="#d1d5db" stroke="#9ca3af" stroke-width="6"/>
+  <text x="300" y="620" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#6b7280">SAMPLE PRODUCT</text>
+</svg>

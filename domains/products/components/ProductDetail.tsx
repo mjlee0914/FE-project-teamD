@@ -1,8 +1,11 @@
-
 'use client';
 
 import { useState } from 'react';
 import Image from 'next/image';
+import useCartStore from '@/shared/store/useCartStore';
+import Modal from '@/shared/components/Modal';
+import { ShoppingCart } from 'lucide-react';
+import CartSuccessDialog from './CartSuccessDialog';
 
 // page.tsx에서 전달받을 상품 정보
 interface ProductDetailProps {
@@ -16,11 +19,24 @@ interface ProductDetailProps {
     };
 }
 
+type SelectedOption = {
+    key: string;
+    color: string;
+    size: string;
+    quantity: number;
+};
+
 export default function ProductDetail({ product }: ProductDetailProps) {
     // 사용자가 선택한 옵션 저장
     const [color, setColor] = useState('블랙');
     const [size, setSize] = useState('');
-    const [quantity, setQuantity] = useState(1);
+    const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>(
+        [],
+    );
+    const [popupOpen, setPopupOpen] = useState(false);
+
+    const setCartCount = useCartStore((state) => state.setCount);
+    const cartCount = useCartStore((state) => state.count);
 
     // 상품별 색상과 이미지 설정
     const colorsByProduct: Record<
@@ -51,7 +67,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             {
                 name: '라임 옐로우',
                 style: 'bg-[#E3E272]',
-                src: '/products/라임 옐로우 밑단 스트링 후드티.png'
+                src: '/products/라임 옐로우 밑단 스트링 후드티.png',
             },
         ],
 
@@ -105,9 +121,66 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             ? ['230', '240', '250', '260', '270', '280']
             : ['S', 'M', 'L', 'XL'];
 
+    // 사이즈 클릭 시 색상 + 사이즈 조합 추가
+    const handleSelectSize = (newSize: string) => {
+        setSize(newSize);
+
+        const key = `${product.id}-${selectedColor.name}-${newSize}`;
+
+        setSelectedOptions((prev) => {
+            // 이미 추가되면 중복 추가 x
+            if (prev.some((option) => option.key === key)) {
+                return prev;
+            }
+
+            return [
+                ...prev,
+                {
+                    key,
+                    color: selectedColor.name,
+                    size: newSize,
+                    quantity: 1,
+                },
+            ];
+        });
+    };
+
+    // 각 옵션의 수량 증가 / 감소
+    const handleQuantityChange = (key: string, change: number) => {
+        setSelectedOptions((prev) =>
+            prev.map((option) =>
+                option.key === key
+                    ? {
+                          ...option,
+                          quantity: Math.max(1, option.quantity + change),
+                      }
+                    : option,
+            ),
+        );
+    };
+
+    // 선택한 옵션 삭제
+    const handleRemoveOption = (key: string) => {
+        setSelectedOptions((prev) =>
+            prev.filter((option) => option.key !== key),
+        );
+
+        setSize('');
+    };
+
+    const onClickCart = () => {
+        setCartCount(cartCount + 1);
+        setPopupOpen(true);
+    };
+
+    // 선택한 모든 옵션의 총금액
+    const totalPrice = selectedOptions.reduce(
+        (total, option) => total + product.price * option.quantity,
+        0,
+    );
+
     return (
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-
             {/* 왼쪽: 상품 이미지 */}
             <section className="flex justify-center">
                 <div className="w-full max-w-[500px]">
@@ -121,19 +194,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     />
                 </div>
             </section>
-
             {/* 오른쪽: 상품 정보 */}
             <section>
-
                 {/* 카테고리 */}
                 <p className="mb-3 text-xs text-gray-400">
                     DN MALL / {product.category_id.toUpperCase()}
                 </p>
 
                 {/* 상품명 */}
-                <h1 className="text-2xl font-medium">
-                    {product.name}
-                </h1>
+                <h1 className="text-2xl font-medium">{product.name}</h1>
 
                 {/* 상품 가격 */}
                 <div className="mt-5 flex items-center gap-3">
@@ -144,7 +213,6 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
                 {/* 색상 및 사이즈 선택 영역 */}
                 <div className="mt-10 border-t pt-6">
-
                     {/* 모든 상품 색상 선택 */}
                     <div>
                         <h2 className="text-sm font-medium">
@@ -159,7 +227,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                                 <button
                                     key={item.name}
                                     type="button"
-                                    onClick={() => setColor(item.name)}
+                                    onClick={() => {
+                                        setColor(item.name);
+                                        setSize('');
+                                    }}
                                     aria-label={`${item.name} 선택`}
                                     aria-pressed={
                                         selectedColor.name === item.name
@@ -180,16 +251,14 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
                     {/* 모든 상품 사이즈 선택 */}
                     <div className="mt-10">
-                        <h2 className="mb-4 text-sm font-medium">
-                            사이즈
-                        </h2>
+                        <h2 className="mb-4 text-sm font-medium">사이즈</h2>
 
                         <div className="flex flex-wrap gap-2">
                             {sizes.map((item) => (
                                 <button
                                     key={item}
                                     type="button"
-                                    onClick={() => setSize(item)}
+                                    onClick={() => handleSelectSize(item)}
                                     aria-pressed={size === item}
                                     className={`h-11 min-w-12 border px-3 text-sm ${
                                         size === item
@@ -204,70 +273,109 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     </div>
                 </div>
 
-                {/* 수량 선택 */}
-                <div className="mt-10">
-                    <h2 className="mb-4 text-sm font-medium">
-                        수량
-                    </h2>
+                {/* 선택한 상품 옵션 목록 */}
+                {selectedOptions.length > 0 && (
+                    <div className="mt-10 space-y-2">
+                        {selectedOptions.map((option) => (
+                            <div
+                                key={option.key}
+                                className="flex flex-wrap items-center gap-4 bg-[#F8F7F4] px-5 py-6"
+                            >
+                                {/* 상품명과 선택한 옵션 */}
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium">
+                                        {product.name}
+                                    </p>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        - {option.color} / {option.size}
+                                    </p>
+                                </div>
 
-                    <div className="flex items-center gap-4">
+                                {/* 옵션별 수량 변경 */}
+                                <div className="flex items-center border border-gray-200 bg-white">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleQuantityChange(option.key, -1)
+                                        }
+                                        className="h-10 w-10"
+                                        aria-label={`${option.color} ${option.size} 수량 감소`}
+                                    >
+                                        −
+                                    </button>
 
-                        {/* 수량 감소 */}
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setQuantity((prev) =>
-                                    Math.max(1, prev - 1)
-                                )
-                            }
-                            className="h-10 w-10 border border-gray-300"
-                        >
-                            -
-                        </button>
+                                    <span className="flex h-10 w-10 items-center justify-center border-x border-gray-200">
+                                        {option.quantity}
+                                    </span>
 
-                        {/* 현재 수량 */}
-                        <span className="w-8 text-center">
-                            {quantity}
-                        </span>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleQuantityChange(option.key, 1)
+                                        }
+                                        className="h-10 w-10"
+                                        aria-label={`${option.color} ${option.size} 수량 증가`}
+                                    >
+                                        +
+                                    </button>
+                                </div>
 
-                        {/* 수량 증가 */}
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setQuantity((prev) => prev + 1)
-                            }
-                            className="h-10 w-10 border border-gray-300"
-                        >
-                            +
-                        </button>
+                                {/* 선택한 옵션 삭제 */}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        handleRemoveOption(option.key)
+                                    }
+                                    className="text-xl text-gray-400 hover:text-black"
+                                    aria-label={`${option.color} ${option.size} 옵션 삭제`}
+                                >
+                                    ×
+                                </button>
+
+                                {/* 옵션별 금액 */}
+                                <p className="w-full text-right font-medium sm:w-28">
+                                    {(
+                                        product.price * option.quantity
+                                    ).toLocaleString('ko-KR')}
+                                    원
+                                </p>
+                            </div>
+                        ))}
                     </div>
-                </div>
+                )}
 
                 {/* 총 상품 금액 */}
                 <div className="mt-10 flex items-center justify-between border-t pt-6">
-                    <span className="text-sm font-medium">
-                        총 상품 금액
-                    </span>
+                    <span className="text-sm font-medium">총 상품 금액</span>
 
                     <span className="text-xl font-semibold">
-                        {(product.price * quantity).toLocaleString('ko-KR')}원
+                        {totalPrice.toLocaleString('ko-KR')}원
                     </span>
                 </div>
 
-                {/* 장바구니 버튼 */}
-                <button
-                    type="button"
-                    disabled
-                    className="mt-12 w-full bg-black py-4 text-sm font-medium text-white disabled:opacity-60"
-                >
-                    장바구니 담기
-                </button>
+                {/* 구매 및 장바구니 버튼 */}
+                <div className="mt-12 grid grid-cols-3 gap-4">
+                    {/* 바로 구매 버튼 */}
+                    <button
+                        type="button"
+                        className="col-span-2 h-16 cursor-pointer bg-[#171717] text-base font-semibold text-white transition-colors hover:bg-[#333333] active:bg-[#555555]"
+                    >
+                        BUY IT NOW
+                    </button>
+
+                    {/* 장바구니 버튼 */}
+                    <button
+                        type="button"
+                        className="col-span-1 h-16 cursor-pointer border border-black bg-white text-base font-semibold text-black transition-colors hover:bg-gray-100 active:bg-gray-200"
+                        onClick={onClickCart}
+                    >
+                        CART
+                    </button>
+                </div>
 
                 {/* 배송 및 교환 안내 */}
                 <div className="mt-8 border-t py-6 text-sm">
-                    <p className="font-medium">
-                        배송 및 교환 안내
-                    </p>
+                    <p className="font-medium">배송 및 교환 안내</p>
 
                     <a
                         href="#guide"
@@ -279,16 +387,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
                 {/* 상품 설명 */}
                 <div className="border-t py-8">
-                    <h2 className="mb-4 font-semibold">
-                        상품 설명
-                    </h2>
+                    <h2 className="mb-4 font-semibold">상품 설명</h2>
 
                     <p className="text-sm leading-7 text-gray-600">
                         {product.description}
                     </p>
                 </div>
-
             </section>
+
+            <CartSuccessDialog open={popupOpen} onOpenChange={setPopupOpen} />
         </div>
     );
 }
