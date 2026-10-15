@@ -31,7 +31,7 @@ export default function PostList({
     return (
         <table className="w-full text-sm">
             <thead>
-                <tr className="border-b text-left">
+                <tr className="border-b text-center">
                     <th className="w-16 py-3">No.</th>
                     {board.use_category && <th className="w-24">분류</th>}
                     <th>제목</th>
@@ -46,10 +46,12 @@ export default function PostList({
                         key={post.id}
                         className={`${post.is_pinned ? 'bg-stone-100 font-semibold' : ''} border-b`}
                     >
-                        <td className="py-3">
+                        <td className="py-3 text-center">
                             {post.is_pinned ? '📌' : total - offset - i}
                         </td>
-                        {board.use_category && <td>{post.category}</td>}
+                        {board.use_category && (
+                            <td className="text-center">{post.category}</td>
+                        )}
                         {/* 제목을 클릭하면 해당 게시물로 이동 */}
                         <td>
                             <Link
@@ -59,9 +61,11 @@ export default function PostList({
                                 {post.title}
                             </Link>
                         </td>
-                        <td>{post.author_name}</td>
-                        <td>{formatDate(post.created_at)}</td>
-                        <td className="text-right">{post.view_count}</td>
+                        <td className="text-center">{post.author_name}</td>
+                        <td className="text-center">
+                            {formatDate(post.created_at)}
+                        </td>
+                        <td className="text-center">{post.view_count}</td>
                     </tr>
                 ))}
             </tbody>
