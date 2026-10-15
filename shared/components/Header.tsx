@@ -32,7 +32,7 @@ export default function Header() {
                         href="/"
                         className="text-lg tracking-tight text-gray-900 transition-colors hover:text-blue-600 md:text-xl"
                     >
-                        <span className="brand-logo font-medium tracking-wide">
+                        <span className="brand-logo font-semibold tracking-wide">
                             DN Mall
                         </span>
                     </Link>
