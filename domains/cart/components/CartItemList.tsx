@@ -43,14 +43,24 @@ export default function CartItemList() {
         const phone = String(formData.get('phone'));
         const address = String(formData.get('address'));
         const addressDetail = String(formData.get('addressDetail'));
+        const zipcode = String(formData.get('zipcode'));
 
         if (
             recipient === '' ||
             phone === '' ||
             address === '' ||
-            addressDetail === ''
+            addressDetail === '' ||
+            zipcode === ''
         ) {
             setPayMessage('빈칸을 입력해 주세요');
+            return;
+        }
+        if (!/^\d{5}$/.test(zipcode)) {
+            setPayMessage('우편번호는 숫자 5자리로 입력해 주세요.');
+            return;
+        }
+        if (!/^010\d{8}$/.test(phone)) {
+            setPayMessage('휴대전화는 010으로 시작합니다');
             return;
         }
 
