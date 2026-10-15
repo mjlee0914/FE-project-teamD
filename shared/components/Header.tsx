@@ -1,9 +1,13 @@
+'use client';
+
 import { cn } from '@/shared/utils/cn';
 import Link from 'next/link';
 import { LuShoppingCart, LuUser, LuSearch } from 'react-icons/lu';
 import { PiListBold } from 'react-icons/pi';
+import useCartStore from '../store/useCartStore';
 
 export default function Header() {
+    const cartCount = useCartStore((state) => state.count);
     return (
         <>
             <header
@@ -47,6 +51,7 @@ export default function Header() {
                             aria-label="장바구니"
                             className="flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
                         >
+                            <span>{cartCount}</span>
                             <LuShoppingCart className="h-4 w-4 shrink-0" />
                         </Link>
 

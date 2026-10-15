@@ -1,0 +1,245 @@
+[33mcommit 5a63c1323ef55177a150d1d6653f1b892e13e0f2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/BYM-product-detail[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: 151bc6d 06c366f
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 19:19:56 2026 +0900
+
+    Merge pull request #19 from mjlee0914/feature/lmj-1014-update2
+    
+    Feature/lmj 1014 update2
+
+[33mcommit 06c366fe71e48ce50f90f7047dde6fdd745acf34[m[33m ([m[1;31morigin/feature/lmj-1014-update2[m[33m)[m
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 17:58:13 2026 +0900
+
+    fix: ProductCard unoptimized 추가
+
+[33mcommit 2885f2e3662b5ac234d79ce4a546b4b6af6dc72f[m
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 17:21:38 2026 +0900
+
+    Add promotion event banner
+
+[33mcommit a717986720270810940ccf9313fc7cb89a694153[m
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 14:05:12 2026 +0900
+
+    update: header, footer, banners 레이아웃  업데이트
+
+[33mcommit 151bc6d49185fe594f3521d581629a7190717d9f[m
+Merge: 5513368 b01363e
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 18:56:59 2026 +0900
+
+    Merge pull request #18 from mjlee0914/feature/lsj-notice
+    
+    feat: 공지사항 기능 개발 초안 완료
+
+[33mcommit b01363e85a76daf1df1281f116595a1808462285[m[33m ([m[1;31morigin/feature/lsj-notice[m[33m)[m
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 18:49:38 2026 +0900
+
+    chore: 그냥 코드 꾸미기
+
+[33mcommit d450c2b1bcb8a12fe572ead29aa16459a04827aa[m
+Merge: 0ff76f2 5513368
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 18:49:01 2026 +0900
+
+    Merge branch 'main' of https://github.com/mjlee0914/FE-project-teamD into feature/lsj-notice
+
+[33mcommit 5513368e0a93841c112df24ff73110f75656c3b5[m
+Merge: 0398c8e 42bed40
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 17:57:31 2026 +0900
+
+    Merge pull request #17 from mjlee0914/feature/BYM-product-detail
+    
+    update: 상세페이지 컴포넌트 분리 및 구현중
+
+[33mcommit 0ff76f2b2c01e5c86633a1843b13efbf2503448c[m
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 17:56:40 2026 +0900
+
+    feat: 오류예외처리
+
+[33mcommit 42bed4037697a22cfac7a0bc37a33aa70b832f56[m[33m ([m[1;31morigin/feature/BYM-product-detail[m[33m)[m
+Merge: 18c1dce 0398c8e
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 17:49:37 2026 +0900
+
+    Merge branch 'main' into feature/BYM-product-detail
+
+[33mcommit 18c1dceb30f63299bf8d5477cebefbe316a546dd[m
+Author: imeab <qodbals18@gmail.com>
+Date:   Wed Oct 14 17:34:28 2026 +0900
+
+    update: 상세페이지 컴포넌트 분리 및 구현중
+
+[33mcommit 0398c8e10564a408bb2e99f59b74589d83c6eaf6[m[33m ([m[1;32mfeature/BYM-product-detail-update[m[33m)[m
+Merge: b38eb1d 024c4be
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 17:16:06 2026 +0900
+
+    feat: 장바구니 페이지 구현
+    
+    feat: 장바구니 페이지 구현
+
+[33mcommit 28ddde1687aa8250075ad0ace31af51959048c24[m
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 17:11:03 2026 +0900
+
+    feat: 게시글 상세 페이지 및 이전/다음글 추가
+
+[33mcommit 024c4be6fb67a9ea992902d04e608c5589093a77[m[33m ([m[1;31morigin/feature/cjh-cart[m[33m)[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 17:03:46 2026 +0900
+
+    feat: 장바구니 제목에 상품 개수 표시
+
+[33mcommit ee5c1112851cdb79ca8653b9003ed059ce8697f3[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 16:33:37 2026 +0900
+
+    feat: 장바구니 추천 상품 추가
+
+[33mcommit 5a79f0d6f1efa3fbbcdba2ff091663f4dd4e6427[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 16:11:56 2026 +0900
+
+    style: 장바구니 배송지, 목록 간격 정리
+
+[33mcommit fcf56782de56670386ee0b927c2198eda4c4578a[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 15:47:43 2026 +0900
+
+    feat: 결제하기 버튼, 배송지 빈칸 검사 추가
+
+[33mcommit 898ef1a9a076954c5d9c619893eb1e92c5651c30[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 15:20:42 2026 +0900
+
+    feat: 장바구니 배송지 입력 추가
+
+[33mcommit 9cb9d496f48a5dcec96761386cb9dd1a04cb2fc2[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 14:16:08 2026 +0900
+
+    feat: 배송지 타입 추가
+
+[33mcommit 5e97fece159734156445054e16d6358ffe8a895c[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 14:12:06 2026 +0900
+
+    feat: 장바구니 금액 합계, 배송비, 빈 장바구니 안내 추가
+
+[33mcommit b0e13adc4af3f94d29d1f3fc6a58152c3ad2e2f6[m
+Merge: c811f2f b38eb1d
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Wed Oct 14 12:08:09 2026 +0900
+
+    merge: main 최신 반영 (mockData 충돌 해결)
+
+[33mcommit e9f92e8670a1b317305a3d9b2854746242576962[m
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 11:15:08 2026 +0900
+
+    feat 공지 게시판 검색 및 카테고리 필터 추가
+
+[33mcommit 4bdbd1cf403261fd457f902804d5df70d1d203d8[m
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 11:06:58 2026 +0900
+
+    fix: 목데이터 임포트 수정
+
+[33mcommit b38eb1db735524760ce7b36e9e60c0bb82e67202[m
+Merge: 90709d0 3cd7341
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 11:04:42 2026 +0900
+
+    Merge pull request #14 from mjlee0914/feature/lsj-notice
+    
+    move: 게시판용 목데이터 공용 목데이터로 포함
+
+[33mcommit 3cd7341d85eb16a134b083c77388cc1a90b349fa[m
+Merge: ca6cc35 90709d0
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 11:02:35 2026 +0900
+
+    Merge branch 'main' of https://github.com/mjlee0914/FE-project-teamD into feature/lsj-notice
+
+[33mcommit ca6cc359f39c3a7b18af66a0737005d2537bf9a0[m
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 10:59:43 2026 +0900
+
+    move: 게시판용 목데이터 공용 목데이터로 포함
+
+[33mcommit 90709d0d7865b9c987154f0f92de2d09e7372416[m
+Merge: d6607f5 6aff389
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 10:44:41 2026 +0900
+
+    Merge pull request #13 from mjlee0914/feature/lsj-notice
+    
+    feat: 게시판 UI 구현 (1)
+
+[33mcommit 6aff38907d995aea062ca1e9c3a043b74e954f4b[m
+Merge: 241bda8 d6607f5
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 10:37:27 2026 +0900
+
+    Merge branch 'main' of https://github.com/mjlee0914/FE-project-teamD into feature/lsj-notice
+    
+    # Conflicts:
+    #       shared/components/Footer.tsx
+
+[33mcommit d6607f514c20c107fbcd394f87c8067f4897aa76[m
+Merge: 88fd6e1 cf8036e
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 10:34:08 2026 +0900
+
+    Merge pull request #12 from mjlee0914/feature/BYM-product-detail
+    
+    Feature/bym product detail
+
+[33mcommit 241bda8cc3770aa1ee9ad379054ddcd918e5f5af[m
+Author: eeseuju <denkend357@gmail.com>
+Date:   Wed Oct 14 10:29:55 2026 +0900
+
+    temp: 임시 커밋
+
+[33mcommit cf8036e3e02880ab4e20cc8699c290a5562d56aa[m
+Author: imeab <qodbals18@gmail.com>
+Date:   Wed Oct 14 10:29:06 2026 +0900
+
+    update:상세페이지 업데이트
+
+[33mcommit 88fd6e17e80eb5ab882647ea6819dc2209402a9b[m
+Merge: d74588f afb7f3a
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 10:28:52 2026 +0900
+
+    Merge pull request #11 from mjlee0914/feature/lmj-home-layout-update
+    
+    update: 메인페이지 업데이트
+
+[33mcommit afb7f3a1a2b38c0a2f48162f1d4067a4102ee6ad[m[33m ([m[1;31morigin/feature/lmj-home-layout-update[m[33m)[m
+Author: Myungji Lee <myungjilee0914@gmail.com>
+Date:   Wed Oct 14 10:26:41 2026 +0900
+
+    update: 메인페이지 업데이트
+
+[33mcommit c811f2f969e274effde480c1c15b2ae739975a1d[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Tue Oct 13 20:20:11 2026 +0900
+
+    feat: 장바구니 상품 삭제 버튼 추가
+
+[33mcommit d130900c372b39dfa3f05d4abf8dc1424a7c09d8[m
+Author: Aiopenjh <Aiopenjh@gmail.com>
+Date:   Tue Oct 13 19:47:19 2026 +0900
+
+    feat: 장바구니 수량 변경 버튼, 사진, 반응형 레이아웃
+
+[33mcommit 24341a3b6b170d19cbd036864d4dd83ac030d74e[m
+Merge: aaffa43 d74588f
+Auth
