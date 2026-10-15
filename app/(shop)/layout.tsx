@@ -1,3 +1,4 @@
+'user client';
 import Footer from '@/shared/components/Footer';
 import Header from '@/shared/components/Header';
 import type { Metadata } from 'next';
