@@ -38,7 +38,14 @@ export default function CategoryTree({
                             // 최상위: 항상 표시
                             <div className="mb-6">
                                 <h2 className="mb-3 font-semibold">
-                                    {category.name}
+                                    <Link
+                                        href={{
+                                            pathname: '/products',
+                                            query: { categoryId: category.id },
+                                        }}
+                                    >
+                                        {category.name}
+                                    </Link>
                                 </h2>
 
                                 <div className="pl-4">
@@ -53,7 +60,14 @@ export default function CategoryTree({
                             // 중간 단계: 클릭해서 펼치기
                             <details className="group">
                                 <summary className="flex cursor-pointer list-none items-center justify-between py-2 text-sm [&::-webkit-details-marker]:hidden">
-                                    {category.name}
+                                    <Link
+                                        href={{
+                                            pathname: '/products',
+                                            query: { categoryId: category.id },
+                                        }}
+                                    >
+                                        {category.name}
+                                    </Link>
                                     <span className="transition-transform group-open:rotate-180">
                                         ▾
                                     </span>
