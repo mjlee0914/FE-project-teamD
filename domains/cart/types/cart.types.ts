@@ -10,4 +10,6 @@ export interface ShippingAddress {
     phone: string;
     address: string;
     addressDetail: string;
+    zipcode: string;
+    deliveryMemo?: string;
 }
