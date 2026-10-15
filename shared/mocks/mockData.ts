@@ -147,6 +147,22 @@ export const MOCK_CATEGORY_ROWS: Category[] = [
     },
 ];
 
+// 로그인 테스트용 회원 관리자, 테스트 Mock Data
+export const MOCK_USERS: User[] = [
+    {
+        id: 1,
+        loginId: 'admin',
+        password: 'admin',
+        name: '관리자',
+    },
+    {
+        id: 2,
+        loginId: 'test',
+        password: 'test',
+        name: '테스터',
+    },
+];
+
 // 기존 CategoryTree에서 사용하는 중첩 구조.
 function buildCategoryTree(parentId: string | null = null): Category[] {
     return MOCK_CATEGORY_ROWS.filter(
