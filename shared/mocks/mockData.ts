@@ -13,16 +13,23 @@ import { CartItem } from '@/domains/cart/types/cart.types';
 // DB category 테이블과 같은 평탄한 데이터. 신상품·베스트·세일은 상품 분류 대신 별도 필터로 처리합니다.
 export const MOCK_CATEGORY_ROWS: Category[] = [
     {
-        id: 'cat-fashion-top',
+        id: 'cat-fashion-best',
         parent_id: null,
-        name: '상의',
+        name: 'Best',
         depth: 1,
         sort_order: 1,
     },
     {
+        id: 'cat-fashion-top',
+        parent_id: null,
+        name: 'Tops & Sweaters',
+        depth: 1,
+        sort_order: 2,
+    },
+    {
         id: 'cat-fashion-top-outer',
         parent_id: 'cat-fashion-top',
-        name: '아우터',
+        name: 'Outerwear',
         depth: 2,
         sort_order: 1,
     },
@@ -57,9 +64,9 @@ export const MOCK_CATEGORY_ROWS: Category[] = [
     {
         id: 'cat-fashion-bottom',
         parent_id: null,
-        name: '하의',
+        name: 'Pants & Jeans',
         depth: 1,
-        sort_order: 2,
+        sort_order: 3,
     },
     {
         id: 'cat-fashion-bottom-denim',
@@ -92,9 +99,9 @@ export const MOCK_CATEGORY_ROWS: Category[] = [
     {
         id: 'cat-dress',
         parent_id: null,
-        name: '원피스·스커트',
+        name: 'Dress & Skirt',
         depth: 1,
-        sort_order: 3,
+        sort_order: 4,
     },
     {
         id: 'cat-dress-onepiece',
@@ -113,16 +120,16 @@ export const MOCK_CATEGORY_ROWS: Category[] = [
     {
         id: 'cat-shoes',
         parent_id: null,
-        name: '신발',
+        name: 'Shoes & Bags',
         depth: 1,
-        sort_order: 4,
+        sort_order: 5,
     },
     {
         id: 'cat-accessories',
         parent_id: null,
-        name: '패션잡화',
+        name: 'Sale',
         depth: 1,
-        sort_order: 5,
+        sort_order: 6,
     },
     {
         id: 'cat-accessories-bag',
