@@ -4,13 +4,10 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import type { ReactNode } from 'react';
 import type { BoardSetting } from '../types/board.types';
-import {
-    INITIAL_ACTION_STATE,
-    type ActionState,
-} from '@/shared/types/action.types';
-import { validatePost } from '../lib/validatePost';
+import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
+import { createPostAction } from '../actions/createPost.action';
 
-interface PostFromProps {
+interface PostFormProps {
     board: BoardSetting;
     gid: string; // 첨부파일은 글 저장 전에 올라가기 때문에 폼을 열 때 서버 내림
 }
@@ -42,45 +39,29 @@ function FormRow({
     );
 }
 
-export default function PostForm({ board, gid }: PostFromProps) {
+export default function PostForm({ board, gid }: PostFormProps) {
+    const [state, formAction, isPending] = useActionState(
+        createPostAction,
+        INITIAL_ACTION_STATE,
+    );
+    const errors = state.errors;
+
     // [useActionState 주의]
     // 1. action은 (prevState, formData)를 받음 — prevState를 안 써도 첫 번째 인자로 반드시 받아야 함
     // 2. React 19는 <form action> 이 끝나면 비제어 입력칸(defaultValue 쓰는 칸)을 자동으로 초기화함
     //    → 검증 에러가 날 때 사용자가 쓴 글이 지워지는 문제. 그래서 제출한 값을 values로 돌려주고
     //    각 입력칸에 defaultValue={state.values?.xxx}로 다시 채움 (실제로 유지되는지 브라우저에서 확인할 것)
-    // 3. 지금은 클라이언트 함수. 나중에 'use server' Server Action으로 교체 (같은 시그니처 유지)
-
-    async function postAction(
-        _prevState: ActionState,
-        formData: FormData,
-    ): Promise<ActionState> {
-        // 에러가 나도 입력칸을 다시 채울 수 있게 제출값을 모아둠
-        const values = {
-            category: String(formData.get('category') ?? ''),
-            title: String(formData.get('title') ?? ''),
-            content: String(formData.get('content') ?? ''),
-            isSecret: formData.get('isSecret') ? 'on' : '',
-        };
-
-        const errors = validatePost(board, formData);
-        if (Object.keys(errors).length > 0) {
-            return { success: false, errors, values };
-        }
-
-        // 검증을 통과하면
-        return { success: true, values };
-    }
-
-    const [state, formAction, isPending] = useActionState(
-        postAction,
-        INITIAL_ACTION_STATE,
-    );
-    const errors = state.errors;
+    // 3. 서버 함수(createPostAction, 'use server')를 그대로 넘김. U13의 클라이언트 함수와 시그니처가 같아서 교체만 하면 됨
+    //    성공하면 서버가 목록으로 redirect하므로 성공 표시는 따로 없음
 
     return (
         <form noValidate action={formAction}>
             <input type="hidden" name="boardId" value={board.id} />
             <input type="hidden" name="gid" value={gid} />
+
+            {errors?.form && (
+                <p className="mb-3 text-xs text-red-500">{errors.form}</p>
+            )}
 
             <div className="border-t-2 border-black">
                 {board.use_category && board.categories && (
@@ -90,9 +71,10 @@ export default function PostForm({ board, gid }: PostFromProps) {
                         error={errors?.category}
                     >
                         <select
+                            key={state.values?.category ?? 'init'}
                             id="category"
                             name="category"
-                            defaultValue=""
+                            defaultValue={state.values?.category ?? ''}
                             className="w-full border px-3 py-2 text-xs"
                         >
                             <option value="">선택하세요.</option>
@@ -115,7 +97,7 @@ export default function PostForm({ board, gid }: PostFromProps) {
                     />
                 </FormRow>
 
-                <FormRow label="내용" htmlFor="content">
+                <FormRow label="내용" htmlFor="content" error={errors?.content}>
                     <textarea
                         id="content"
                         name="content"
@@ -129,7 +111,7 @@ export default function PostForm({ board, gid }: PostFromProps) {
 
                 {board.use_secret && (
                     <FormRow label="옵션">
-                        <label className="item-center flex gap-2 text-xs">
+                        <label className="flex items-center gap-2 text-xs">
                             <input
                                 type="checkbox"
                                 name="isSecret"
@@ -141,13 +123,6 @@ export default function PostForm({ board, gid }: PostFromProps) {
                 )}
             </div>
 
-            {/* 임시검증통과표시 */}
-            {state.success && (
-                <p className="mt-3 text-center text-xs text-gray-500">
-                    검증을 통과했습니다.
-                </p>
-            )}
-
             <div className="mt-5 flex justify-center gap-2">
                 <Link
                     href={`/boards/${board.id}`}
@@ -157,7 +132,8 @@ export default function PostForm({ board, gid }: PostFromProps) {
                 </Link>
                 <button
                     type="submit"
-                    className="w-[4.5rem] border border-black bg-black py-1.5 text-center text-xs text-white"
+                    disabled={isPending}
+                    className="w-[4.5rem] border border-black bg-black py-1.5 text-center text-xs text-white disabled:opacity-50"
                 >
                     {isPending ? '등록 중...' : '등록'}
                 </button>

@@ -1,4 +1,3 @@
-import { experimental_taintObjectReference } from 'react';
 import type { BoardSetting, FaqItem, Post } from '../types/board.types';
 import { store } from './mockStore';
 
@@ -132,4 +131,45 @@ export async function getFaqs(category?: string): Promise<FaqItem[]> {
             // 작은 번호를 앞으로 가게 하기
             .sort((a, b) => a.sort_order - b.sort_order)
     );
+}
+
+// 새 글 등록에 필요한 값
+export interface CreatePostInput {
+    boardId: string;
+    userId: string;
+    authorName: string;
+    title: string;
+    content: string;
+    gid: string;
+    category?: string;
+    isSecret?: boolean;
+}
+
+// 새 글 등록
+export async function createPost(input: CreatePostInput): Promise<Post> {
+    // 새 아이디 부여 (DB 붙이면 uuid로 적용)
+    const maxNo = store.posts.reduce((max, p) => {
+        const n = Number(p.id.replace('post-', ''));
+        return Number.isNaN(n) ? max : Math.max(max, n);
+    }, 0);
+    const now = new Date().toISOString();
+
+    const post: Post = {
+        id: `post-${maxNo + 1}`,
+        board_id: input.boardId,
+        category: input.category,
+        title: input.title,
+        content: input.content,
+        user_id: input.userId,
+        author_name: input.authorName,
+        gid: input.gid,
+        view_count: 0,
+        is_secret: input.isSecret,
+        created_at: now,
+        updated_at: now,
+        deleted_at: null,
+    };
+
+    store.posts.push(post);
+    return post;
 }
