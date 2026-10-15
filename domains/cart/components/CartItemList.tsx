@@ -7,10 +7,12 @@ import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
 import { useState } from 'react';
 import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
+import { useRouter } from 'next/navigation';
 
 export default function CartItemList() {
     const [items, setItems] = useState(MOCK_CART_ITEMS);
     const [payMessage, setPayMessage] = useState<string | null>(null);
+    const router = useRouter();
 
     function changeQuantity(id: number, amount: number) {
         setItems(
@@ -35,8 +37,9 @@ export default function CartItemList() {
         (sum, item) => sum + item.product.price * item.quantity,
         0,
     );
+    const discountPrice = 0; //향후 쿠폰 및 할인 적용시 변경예정
     const shippingFee = totalPrice === 0 || totalPrice >= 50000 ? 0 : 3000;
-    const finalPrice = totalPrice + shippingFee;
+    const finalPrice = totalPrice - discountPrice + shippingFee;
 
     function handlePay(formData: FormData) {
         const recipient = String(formData.get('recipient'));
@@ -64,7 +67,7 @@ export default function CartItemList() {
             return;
         }
 
-        setPayMessage(`${formatPrice(finalPrice)} 결제 완료!`);
+        router.push('/order/complete');
     }
 
     return (
@@ -146,12 +149,40 @@ export default function CartItemList() {
             {items.length > 0 && (
                 <form action={handlePay} className="mt-10">
                     <ShippingAddress />
-                    <div className="flex flex-col items-end gap-1 py-6">
-                        <p>상품 금액: {formatPrice(totalPrice)}</p>
-                        <p>배송비: {formatPrice(shippingFee)}</p>
-                        <p className="text-lg font-bold">
-                            총 결제 금액: {formatPrice(finalPrice)}
-                        </p>
+                    <div className="my-8 flex flex-wrap items-center justify-center gap-20 rounded-lg border p-10">
+                        <div className="flex flex-col items-end gap-1">
+                            <p className="text-sm text-gray-500">상품 금액</p>
+                            <p className="text-lg font-bold">
+                                {formatPrice(totalPrice)}
+                            </p>
+                        </div>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                            −
+                        </span>
+                        <div className="flex flex-col items-end gap-1">
+                            <p className="text-sm text-gray-500">할인 금액</p>
+                            <p className="text-lg font-bold">
+                                {formatPrice(discountPrice)}
+                            </p>
+                        </div>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                            +
+                        </span>
+                        <div className="flex flex-col items-end gap-1">
+                            <p className="text-sm text-gray-500">배 송 비</p>
+                            <p className="text-lg font-bold">
+                                {formatPrice(shippingFee)}
+                            </p>
+                        </div>
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                            =
+                        </span>
+                        <div className="flex flex-col items-end gap-1">
+                            <p className="text-sm text-gray-500">총 결제금액</p>
+                            <p className="text-lg font-bold">
+                                {formatPrice(finalPrice)}
+                            </p>
+                        </div>
                     </div>
                     <Button type="submit" className="h-12 w-full text-base">
                         결제하기
