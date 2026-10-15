@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-// 없는 게시판/글 안내
 export default function NotFound() {
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">

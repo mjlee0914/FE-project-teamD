@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { getBoard } from '@/domains/boards/lib/boardRepository';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
 import { canWriteBoard } from '@/domains/boards/lib/permissions';
+import { io } from 'next/cache';
+import PostForm from '@/domains/boards/components/PostForm';
 
 // 새 글 작성
 export default async function NewPostPage({
@@ -41,9 +43,17 @@ export default async function NewPostPage({
         );
     }
 
+    await io();
+    const gid = crypto.randomUUID();
+
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
-            <p>{board.name} 새 글 작성</p>
+            <p className="text-muted-foreground text-xs tracking-widest">
+                NEW POST
+            </p>
+            <h1 className="mt-1 text-2xl font-bold">새 글 작성</h1>
+            <p className="text-muted-foreground mt-2 text-sm">{board.name}</p>
+            <PostForm board={board} gid={gid} />
         </div>
     );
 }

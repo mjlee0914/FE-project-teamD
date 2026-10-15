@@ -5,9 +5,11 @@ export default function Loading() {
             <div className="flex min-h-[28rem] flex-col items-center justify-center border bg-stone-100 text-center">
                 <p className="text-3xl">불러오는 중...</p>
                 <h3 className="mt-1.5 mb-1 text-base font-bold">
-                    잠시만 기다려주세요
+                    잠시만 기다려주세요...
                 </h3>
-                <p className="mb-3.5 text-xs text-gray-500">금방 끝납니다.</p>
+                <p className="mb-3.5 text-xs text-gray-500">
+                    금방 끝납니다... 아마도...
+                </p>
             </div>
         </div>
     );
