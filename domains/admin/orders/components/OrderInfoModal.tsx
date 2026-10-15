@@ -11,6 +11,7 @@ import {
 } from '@/shared/components/ui/dialog';
 import { Button } from '@/shared/components/ui/button';
 import { formatPrice } from '@/shared/utils/formatPrice';
+import { formatDate } from '@/shared/utils/formatDate';
 
 interface OrderModalProps {
     open: boolean;
@@ -33,16 +34,6 @@ function InfoField({
             </dd>
         </div>
     );
-}
-
-function formatDate(value: string) {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return value || '—';
-    return new Intl.DateTimeFormat('ko-KR', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-        timeZone: 'Asia/Seoul',
-    }).format(date);
 }
 
 export default function OrderInfoModal({

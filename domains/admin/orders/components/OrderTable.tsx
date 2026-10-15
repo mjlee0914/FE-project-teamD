@@ -9,6 +9,7 @@ import {
 } from '@/shared/components/ui/table';
 import { Button } from '@/shared/components/ui/button';
 import { formatPrice } from '@/shared/utils/formatPrice';
+import { formatDate } from '@/shared/utils/formatDate';
 
 interface OrderTableProps {
     orders: Order[];
@@ -50,7 +51,9 @@ export default function OrderTable({ orders, onClick }: OrderTableProps) {
                                 <TableCell>{order.order_name}</TableCell>
                                 <TableCell>{order.order_email}</TableCell>
                                 <TableCell>{order.order_phone}</TableCell>
-                                <TableCell>{order.created_at}</TableCell>
+                                <TableCell>
+                                    {formatDate(order.created_at)}
+                                </TableCell>
                                 <TableCell>
                                     {formatPrice(order.final_price)}
                                 </TableCell>
