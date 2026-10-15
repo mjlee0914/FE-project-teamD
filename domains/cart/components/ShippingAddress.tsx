@@ -7,7 +7,7 @@ export default function ShippingAddress() {
     const [phone, setPhone] = useState('');
 
     const phoneError =
-        phone !== '' && phone.length !== 11
+        phone !== '' && !/^010\d{8}$/.test(phone)
             ? '휴대폰 번호 11자리를 입력해 주세요'
             : null;
     const [zipcode, setZipcode] = useState('');
