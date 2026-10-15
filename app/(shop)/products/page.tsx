@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { formatPrice } from '@/shared/utils/formatPrice';
 import Link from 'next/link';
 import { useState, type FormEvent, useRef } from 'react';
+import { Category } from '@/domains/categories/types/category.types';
 
 export default function ProductList() {
     const searchParams = useSearchParams();
@@ -61,8 +62,40 @@ export default function ProductList() {
         if (maxPriceRef.current) maxPriceRef.current.value = '';
     }
 
-    const products = categoryId
-        ? MOCK_PRODUCTS.filter((product) => product.category_id === categoryId)
+    function findAllChildCategoryId(
+        parentId: string,
+        categories: Category[] = MOCK_CATEGORIES,
+    ): string[] {
+        for (const category of categories) {
+            if (category.id === parentId) {
+                const collectIds = (items: Category[]): string[] =>
+                    items.flatMap((item) => [
+                        item.id,
+                        ...collectIds(item.children ?? []),
+                    ]);
+
+                return collectIds(category.children ?? []);
+            }
+
+            const found = findAllChildCategoryId(
+                parentId,
+                category.children ?? [],
+            );
+
+            if (found.length > 0) return found;
+        }
+
+        return [];
+    }
+
+    const categoryIds = categoryId
+        ? new Set([categoryId, ...findAllChildCategoryId(categoryId)])
+        : null;
+
+    const products = categoryIds
+        ? MOCK_PRODUCTS.filter((product) =>
+              categoryIds.has(product.category_id),
+          )
         : MOCK_PRODUCTS;
 
     const searchProducts = searchKeyword
@@ -204,13 +237,13 @@ export default function ProductList() {
                                     className="object-cover"
                                 />
                             </div>
-                            <div className="w-[250px] text-left">
+                            <div className="w-full text-left">
                                 {product.name}
                             </div>
-                            <div className="text-bold w-62.5 text-left text-xl">
+                            <div className="text-bold w-full text-left text-xl">
                                 {formatPrice(product.price)}
                             </div>
-                            <div className="w-62.5 text-left text-xs text-gray-400">
+                            <div className="w-full text-left text-xs text-gray-400">
                                 조회수 {product.viewCount}
                             </div>
                         </Link>
