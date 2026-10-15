@@ -1,4 +1,3 @@
-import type { Profile } from '@/domains/auth/types/profile.types';
 import { User } from '@/domains/auth/types/auth.types';
 import {
     BoardSetting,
@@ -398,22 +397,6 @@ export const MOCK_FILES: FileInfo[] = [
     },
 ];
 
-// 로그인 테스트용 회원 관리자, 테스트 Mock Data
-export const MOCK_USERS: User[] = [
-    {
-        id: '10000000-0000-4000-8000-000000000001',
-        loginId: 'admin',
-        password: 'admin',
-        name: '관리자',
-    },
-    {
-        id: '10000000-0000-4000-8000-000000000002',
-        loginId: 'test',
-        password: 'test',
-        name: '테스트회원A',
-    },
-];
-
 // 상품 Mock Data
 export const MOCK_PRODUCTS: Product[] = [
     {
@@ -618,35 +601,6 @@ export const MOCK_PRODUCTS: Product[] = [
         isNew: true,
         viewCount: 766,
         gid: 'product-mock-18',
-    },
-];
-
-// ERD 기반 주문 목업. 실제 개인정보·결제 키가 아닌 테스트 전용 데이터입니다.
-// MOCK_USERS의 id는 MOCK_PROFILES.id와 공유합니다. 실제 인증 연결 시 Supabase auth.users.id를 사용합니다.
-export const MOCK_PROFILES: Profile[] = [
-    {
-        id: '10000000-0000-4000-8000-000000000001',
-        username: '관리자',
-        phone: '010-0000-0000',
-        address: '테스트시 샘플로 1',
-        role: 'admin',
-        created_at: '2026-10-01T00:00:00Z',
-    },
-    {
-        id: '10000000-0000-4000-8000-000000000002',
-        username: '테스트회원A',
-        phone: '010-0000-0001',
-        address: '테스트시 샘플로 10',
-        role: 'user',
-        created_at: '2026-10-02T00:00:00Z',
-    },
-    {
-        id: '10000000-0000-4000-8000-000000000003',
-        username: '테스트회원B',
-        phone: '010-0000-0002',
-        address: '테스트시 샘플로 20',
-        role: 'user',
-        created_at: '2026-10-03T00:00:00Z',
     },
 ];
 
