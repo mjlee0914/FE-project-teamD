@@ -730,7 +730,7 @@ export const EVENT_POSTS: Post[] = [
         author_name: '관리자',
         gid: 'post-event-2',
         view_count: 1204,
-        thumbnail_url: '/images/mock/event-2.jpg',
+        thumbnail_url: 'public/eventbanner/bf2.png',
         created_at: '2026-10-14T09:00:00Z',
         updated_at: '2026-10-14T09:00:00Z',
         deleted_at: null,
@@ -746,7 +746,7 @@ export const EVENT_POSTS: Post[] = [
         author_name: '관리자',
         gid: 'post-event-3',
         view_count: 695,
-        thumbnail_url: '/images/mock/event-3.jpg',
+        thumbnail_url: 'public/eventbanner/sneakers.png',
         created_at: '2026-10-05T09:00:00Z',
         updated_at: '2026-10-05T09:00:00Z',
         deleted_at: null,
@@ -783,6 +783,29 @@ export const EVENT_POSTS: Post[] = [
         deleted_at: null,
     },
 ];
+
+// [게시판 mock] 페이지네이션(… 줄임) 확인용 자유게시판 글 95개 (id post-101 ~ post-195)
+const MOCK_FREE_POSTS: Post[] = Array.from({ length: 95 }, (_, i) => {
+    const no = i + 1;
+    const mine = no % 2 === 1;
+    const date = new Date(
+        Date.UTC(2026, 9, 12, 9, 0, 0) - i * 24 * 60 * 60 * 1000,
+    ).toISOString();
+
+    return {
+        id: `post-${100 + no}`,
+        board_id: 'free',
+        title: `자유게시판 테스트 글 ${no}`,
+        content: `페이지네이션 확인용 ${no}번째 글입니다.\n둘째 줄입니다.`,
+        user_id: mine ? 'user-1' : 'user-2',
+        author_name: mine ? '박강정' : '이준',
+        gid: `post-${100 + no}`,
+        view_count: (no * 7) % 120,
+        created_at: date,
+        updated_at: date,
+        deleted_at: null,
+    };
+});
 
 export const POSTS: Post[] = [
     // notice: 고정글 + 분류 + 첨부
@@ -1132,6 +1155,9 @@ export const POSTS: Post[] = [
         updated_at: '2026-10-13T09:00:00Z',
         deleted_at: null,
     },
+
+    // 페이지네이션 확인용 자유게시판 글 (위에서 만든 MOCK_FREE_POSTS)
+    ...MOCK_FREE_POSTS,
 ];
 
 export const FAQS: FaqItem[] = [

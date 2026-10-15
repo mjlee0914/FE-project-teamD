@@ -48,11 +48,15 @@ export default async function NewPostPage({
 
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
-            <p className="text-muted-foreground text-xs tracking-widest">
-                NEW POST
-            </p>
-            <h1 className="mt-1 text-2xl font-bold">새 글 작성</h1>
-            <p className="text-muted-foreground mt-2 text-sm">{board.name}</p>
+            <header className="mb-8 border-b pb-6">
+                <p className="text-muted-foreground text-xs tracking-widest">
+                    NEW POST
+                </p>
+                <h1 className="mt-1 text-2xl font-bold">새 글 작성</h1>
+                <p className="text-muted-foreground mt-2 text-sm">
+                    {board.name}
+                </p>
+            </header>
             <PostForm board={board} gid={gid} />
         </div>
     );

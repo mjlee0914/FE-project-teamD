@@ -8,8 +8,8 @@ export default function HomePage() {
     return (
         <>
             <MainBanner></MainBanner>
-            <PopularProducts>popular products</PopularProducts>
-            <EventBanner>event banner</EventBanner>
+            <PopularProducts></PopularProducts>
+            <EventBanner></EventBanner>
         </>
     );
 }

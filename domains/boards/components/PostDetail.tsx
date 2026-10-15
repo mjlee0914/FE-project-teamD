@@ -7,6 +7,7 @@ interface PostDetailProps {
     post: Post;
     prev: Post | null;
     next: Post | null;
+    canEdit: boolean;
 }
 
 // 이벤트가 없어서 use client 불필요
@@ -15,6 +16,7 @@ export default function PostDetail({
     post,
     prev,
     next,
+    canEdit,
 }: PostDetailProps) {
     const listHref = `/boards/${board.id}`;
 
@@ -22,7 +24,7 @@ export default function PostDetail({
         <article>
             {/* 경로 표시 */}
             <p className="mb-2 text-xs text-gray-500">
-                <Link href="/" className="hover:underlind">
+                <Link href="/" className="hover:underline">
                     홈
                 </Link>{' '}
                 ＞{' '}
@@ -89,7 +91,14 @@ export default function PostDetail({
                     목록
                 </Link>
 
-                {/* 수정삭제버튼위치 */}
+                {canEdit && (
+                    <Link
+                        href={`${listHref}/${post.id}/edit`}
+                        className="border border-black px-4 py-1.5 text-xs"
+                    >
+                        수정
+                    </Link>
+                )}
             </div>
         </article>
     );

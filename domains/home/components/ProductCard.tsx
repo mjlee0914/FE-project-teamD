@@ -1,4 +1,3 @@
-
 import { Product } from '@/domains/products/types/product.types';
 import { formatPrice } from '@/shared/utils/formatPrice';
 import Link from 'next/link';
