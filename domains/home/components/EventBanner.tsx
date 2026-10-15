@@ -1,7 +1,22 @@
 import EventSwiper from './EventSwiper';
 import Link from 'next/link';
-import { EVENT_POSTS } from '@/shared/mocks/mockData';
-export default function EventBanner() {
+import type { Post } from '@/domains/boards/types/board.types';
+
+interface EventBannerProps {
+    posts: Post[];
+}
+
+export default function EventBanner({ posts }: EventBannerProps) {
+    const visiblePosts = posts.filter(
+        (post) =>
+            post.board_id === 'promotion' &&
+            post.deleted_at === null &&
+            post.category !== '종료' &&
+            post.thumbnail_url,
+    );
+
+    if (visiblePosts.length === 0) return null;
+
     return (
         <>
             <section className="p-20">
@@ -11,10 +26,12 @@ export default function EventBanner() {
                     </h1>
 
                     <Link href="/boards/events">
-                        <p className="text-sm underline">전체 이벤트</p>
+                        <p className="cursor-pointer text-sm underline">
+                            전체 이벤트
+                        </p>
                     </Link>
                 </div>
-                <EventSwiper post={EVENT_POSTS}></EventSwiper>
+                <EventSwiper post={visiblePosts}></EventSwiper>
             </section>
         </>
     );
