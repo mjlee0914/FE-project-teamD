@@ -52,11 +52,11 @@ export default function BoardToolbar({
                     name="q"
                     defaultValue={q}
                     placeholder="검색어를 입력하세요"
-                    className="border px-3 py-1 text-sm"
+                    className="border px-3 py-1.5 text-xs"
                 />
                 <button
                     type="submit"
-                    className="bg-black px-3 py-1 text-sm text-white"
+                    className="w-[4.5rem] border border-black bg-black py-1.5 text-center text-xs text-white"
                 >
                     검색
                 </button>
