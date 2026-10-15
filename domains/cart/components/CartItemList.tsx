@@ -7,10 +7,12 @@ import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
 import { useState } from 'react';
 import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
+import { useRouter } from 'next/navigation';
 
 export default function CartItemList() {
     const [items, setItems] = useState(MOCK_CART_ITEMS);
     const [payMessage, setPayMessage] = useState<string | null>(null);
+    const router = useRouter();
 
     function changeQuantity(id: number, amount: number) {
         setItems(
@@ -65,7 +67,7 @@ export default function CartItemList() {
             return;
         }
 
-        setPayMessage(`${formatPrice(finalPrice)} 결제 완료!`);
+        router.push('/order/complete');
     }
 
     return (
