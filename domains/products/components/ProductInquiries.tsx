@@ -1,6 +1,6 @@
 
 interface ProductInquiriesProps {
-    productId: number;
+    productId: string;
 }
 
 export default function ProductInquiries({
