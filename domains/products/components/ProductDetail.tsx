@@ -6,17 +6,12 @@ import useCartStore from '@/shared/store/useCartStore';
 import Modal from '@/shared/components/Modal';
 import { ShoppingCart } from 'lucide-react';
 import CartSuccessDialog from './CartSuccessDialog';
+import type { Product } from '@/domains/products/types/product.types';
 
 // page.tsx에서 전달받을 상품 정보
 interface ProductDetailProps {
-    product: {
-        id: number;
-        name: string;
-        price: number;
-        category_id: string;
-        imageUrl: string;
-        description: string;
-    };
+    product: Product;
+    categoryName: string;
 }
 
 type SelectedOption = {
@@ -26,7 +21,10 @@ type SelectedOption = {
     quantity: number;
 };
 
-export default function ProductDetail({ product }: ProductDetailProps) {
+export default function ProductDetail({
+    product,
+    categoryName,
+}: ProductDetailProps) {
     // 사용자가 선택한 옵션 저장
     const [color, setColor] = useState('블랙');
     const [size, setSize] = useState('');
@@ -40,7 +38,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
     // 상품별 색상과 이미지 설정
     const colorsByProduct: Record<
-        number,
+        string,
         { name: string; style: string; src: string }[]
     > = {
         // 1번: 아노락
@@ -151,9 +149,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             prev.map((option) =>
                 option.key === key
                     ? {
-                          ...option,
-                          quantity: Math.max(1, option.quantity + change),
-                      }
+                        ...option,
+                        quantity: Math.max(1, option.quantity + change),
+                    }
                     : option,
             ),
         );
@@ -198,7 +196,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             <section>
                 {/* 카테고리 */}
                 <p className="mb-3 text-xs text-gray-400">
-                    DN MALL / {product.category_id.toUpperCase()}
+                    DN MALL / {categoryName}
                 </p>
 
                 {/* 상품명 */}
