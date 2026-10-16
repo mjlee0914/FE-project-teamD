@@ -1,3 +1,10 @@
+import { Category } from '@/domains/categories/types/category.types';
+
+// type 값은 임시로 'board'
+export interface CategoryRow extends Category {
+    type: string;
+}
+
 // 향후 목데이터에 추가 (나중에 정리)
 export type BoardWriteRole = 'all' | 'user' | 'admin';
 
