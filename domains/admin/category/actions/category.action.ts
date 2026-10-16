@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 
 async function checkConnection() {
     const { data, error } = await supabase
-        .from('category') // 실제 테이블명과 일치해야 함
+        .from('category')
         .select('id, parent_id, name, depth, sort_order');
 
     if (error) {
