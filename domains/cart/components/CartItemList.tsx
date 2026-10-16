@@ -14,7 +14,7 @@ export default function CartItemList() {
     const [payMessage, setPayMessage] = useState<string | null>(null);
     const router = useRouter();
 
-    function changeQuantity(id: number, amount: number) {
+    function changeQuantity(id: string, amount: number) {
         setItems(
             items.map((item) =>
                 item.product.id === id
@@ -30,7 +30,7 @@ export default function CartItemList() {
         );
     }
 
-    function removeCartItem(id: number) {
+    function removeCartItem(id: string) {
         setItems(items.filter((item) => item.product.id !== id));
     }
     const totalPrice = items.reduce(
