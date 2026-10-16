@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import useCartStore from '@/shared/store/useCartStore';
-import Modal from '@/shared/components/Modal';
-import { ShoppingCart } from 'lucide-react';
+
 import CartSuccessDialog from './CartSuccessDialog';
 import type { Product } from '@/domains/products/types/product.types';
 
@@ -149,9 +148,9 @@ export default function ProductDetail({
             prev.map((option) =>
                 option.key === key
                     ? {
-                        ...option,
-                        quantity: Math.max(1, option.quantity + change),
-                    }
+                          ...option,
+                          quantity: Math.max(1, option.quantity + change),
+                      }
                     : option,
             ),
         );

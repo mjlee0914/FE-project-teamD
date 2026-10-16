@@ -3,17 +3,19 @@ import Image from 'next/image';
 
 interface ProductDescriptionProps {
     product: {
-        id: number;
+        id: string;
         name: string;
     };
 }
 
 // 상품별 상세 이미지 목록
-const detailImages: Record<number, string[]> = {
-    1: ['/products/anorak.gif'],
 
-   
+const detailImages: Record<string, string[]> = {
+    '60000000-0000-4000-8000-000000000001': [
+        '/products/anorak.gif',
+    ],
 };
+
 
 export default function ProductDescription({
     product,
@@ -46,7 +48,7 @@ export default function ProductDescription({
                     className="h-auto w-full"
                 />
             ))}
-           
+        
         </section>
     );
 }

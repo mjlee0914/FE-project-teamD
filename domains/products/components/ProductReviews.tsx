@@ -1,6 +1,6 @@
 
 interface ProductReviewsProps {
-    productId: number;
+    productId: string;
 }
 
 export default function ProductReviews({
