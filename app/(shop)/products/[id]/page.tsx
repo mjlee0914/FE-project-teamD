@@ -18,7 +18,7 @@ export default async function ProductPage({
     const { id } = await params;
 
     // ID에 맞는 상품 데이터 찾기
-    const product = MOCK_PRODUCTS.find((item) => item.id === Number(id));
+    const product = MOCK_PRODUCTS.find((item) => item.id === String(id));
 
     // 해당 상품 없으면 404
     if (!product) {

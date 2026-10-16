@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, Post } from '../types/board.types';
+import DeleteButton from './DeleteButton';
 
 interface PostDetailProps {
     board: BoardSetting;
@@ -92,12 +93,15 @@ export default function PostDetail({
                 </Link>
 
                 {canEdit && (
-                    <Link
-                        href={`${listHref}/${post.id}/edit`}
-                        className="border border-black px-4 py-1.5 text-xs"
-                    >
-                        수정
-                    </Link>
+                    <div className="flex gap-2">
+                        <Link
+                            href={`${listHref}/${post.id}/edit`}
+                            className="w-[4.5rem] border border-black py-1.5 text-center text-xs"
+                        >
+                            수정
+                        </Link>
+                        <DeleteButton boardId={board.id} postId={post.id} />
+                    </div>
                 )}
             </div>
         </article>
