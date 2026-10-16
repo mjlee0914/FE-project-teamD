@@ -8,27 +8,27 @@ import '../globals.css';
 
 // Noto Sans KR 폰트 인스턴스 생성
 const notoSansKr = Noto_Sans_KR({
-subsets: ['latin'],
-weight: ['400', '500', '600', '700', '900'],
-display: 'swap',
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700', '900'],
+    display: 'swap',
 });
 
 const cactus = Cactus_Classical_Serif({
-weight: '400',
-subsets: ['latin'],
-variable: '--font-cactus-classical-serif',
-display: 'swap',
+    weight: '400',
+    subsets: ['latin'],
+    variable: '--font-cactus-classical-serif',
+    display: 'swap',
 });
 
 export const metadata: Metadata = {
-title: 'Team D Shopping Mall',
-description: 'Team Disco Ninja FrontEnd Project',
+    title: 'Team D Shopping Mall',
+    description: 'Team Disco Ninja FrontEnd Project',
 };
 
 export default function RootLayout({
-children,
+    children,
 }: Readonly<{
-children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
     return (
         <html lang="ko" className={`h-full ${cactus.variable}`}>
