@@ -2,7 +2,16 @@ import ProductGrid from './ProductGrid';
 import { MOCK_PRODUCTS } from '@/shared/mocks/mockData';
 
 export default function PopularProducts() {
-    const recommendedProducts = MOCK_PRODUCTS.slice(0, 3);
+    const productsSelected = [...MOCK_PRODUCTS];
+
+    productsSelected.sort((a, b) => {
+        const viewsA = a.viewCount ?? 0;
+        const viewsB = b.viewCount ?? 0;
+
+        return viewsB - viewsA; // 조회수 높은 상품이 앞에 오도록
+    });
+
+    const popularProducts = productsSelected.slice(0, 3);
     return (
         <>
             <section className="p-20">
@@ -14,7 +23,7 @@ export default function PopularProducts() {
                         지금 사랑받는 베스트 상품을 한눈에 확인해보세요.
                     </p>
                 </div>
-                <ProductGrid products={recommendedProducts} />
+                <ProductGrid products={popularProducts} />
             </section>
         </>
     );

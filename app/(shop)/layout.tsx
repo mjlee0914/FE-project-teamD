@@ -30,15 +30,15 @@ children,
 }: Readonly<{
 children: React.ReactNode;
 }>) {
-return (
-<html lang="ko" className={h-full ${cactus.variable}}>
-<body
-className={${notoSansKr.className} flex min-h-screen flex-col bg-white text-gray-900 antialiased}
->
-<Header />
-<main className="w-full flex-1">{children}</main>
-<Footer />
-</body>
-</html>
-);
+    return (
+        <html lang="ko" className={`h-full ${cactus.variable}`}>
+            <body
+                className={`${notoSansKr.className} flex min-h-screen flex-col bg-white text-gray-900 antialiased`}
+            >
+                <Header />
+                <main className="w-full flex-1">{children}</main>
+                <Footer />
+            </body>
+        </html>
+    );
 }
