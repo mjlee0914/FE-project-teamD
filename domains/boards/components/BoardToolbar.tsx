@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Form from 'next/form';
 import type { BoardSetting } from '../types/board.types';
 
 interface BoardToolbarProps {
@@ -48,7 +49,11 @@ export default function BoardToolbar({
 
             {/* 오른쪽: [검색창] [검색] [글쓰기] 한 줄 */}
             <div className="flex items-center gap-2">
-                <form action={`/boards/${board.id}`} className="flex gap-2">
+                <Form
+                    action={`/boards/${board.id}`} // 제출하면 ?q=검색어가 붙음
+                    scroll={false} // 검색 후 맨 위로 스크롤하지 않음
+                    className="flex gap-2"
+                >
                     {category && (
                         <input type="hidden" name="category" value={category} />
                     )}
@@ -64,7 +69,7 @@ export default function BoardToolbar({
                     >
                         검색
                     </button>
-                </form>
+                </Form>
 
                 {canWrite && (
                     <Link
