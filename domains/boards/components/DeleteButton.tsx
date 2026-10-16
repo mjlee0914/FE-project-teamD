@@ -50,7 +50,20 @@ export default function DeleteButton({ boardId, postId }: DeleteButtonProps) {
                 >
                     <input type="hidden" name="boardId" value={boardId} />
                     <input type="hidden" name="postId" value={postId} />
-                    <button type="submit" disabled={isPending}></button>
+                    <button
+                        type="button"
+                        onClick={() => dialogRef.current?.close()}
+                        className="w-[4.5rem] cursor-pointer border border-black py-1.5 text-center text-xs"
+                    >
+                        취소
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={isPending}
+                        className="w-[4.5rem] cursor-pointer border border-red-500 bg-red-500 py-1.5 text-xs text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        {isPending ? '삭제 중...' : '삭제'}
+                    </button>
                 </form>
             </dialog>
         </>
