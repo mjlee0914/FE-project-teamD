@@ -2,6 +2,8 @@
 
 import { ActionState } from '@/shared/types/action.types';
 import { validateSignUp } from '@/domains/auth/utils/authValidations';
+import { createServerClient } from '@/lib/supabase';
+import { redirect } from 'next/navigation';
 
 export async function signUpAction(
     prevState: ActionState,
@@ -32,10 +34,48 @@ export async function signUpAction(
         };
     }
 
-    // TODO: Supabase Auth 가입 + profiles 저장 (D단계)
+    const supabase = createServerClient();
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+    });
+    if (error) {
+        return {
+            success: false,
+            errors: { email: error.message },
+            values: { name, email, phone, address },
+        };
+    }
 
-    return {
-        success: true,
-        data: {},
-    };
+    // 가입 결과에 사용자 정보가 없으면 UUID를 꺼낼 수 없으므로 멈춘다
+    if (!data.user) {
+        return {
+            success: false,
+            errors: {
+                form: '회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+            },
+            values: { name, email, phone, address },
+        };
+    }
+
+    // 폼 변수 이름은 name, DB 칸 이름은 username
+    const { error: profileError } = await supabase.from('profiles').insert({
+        id: data.user.id,
+        username: name,
+        phone,
+        address,
+        role: 'user',
+    });
+
+    if (profileError) {
+        return {
+            success: false,
+            errors: {
+                form: '회원 정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+            },
+            values: { name, email, phone, address },
+        };
+    }
+    //회원가입 완료 후 화면전환
+    redirect('/login');
 }

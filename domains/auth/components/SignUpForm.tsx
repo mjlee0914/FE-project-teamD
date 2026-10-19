@@ -50,6 +50,9 @@ export default function SignUpForm() {
                     )}
                 </div>
             ))}
+            {state.errors?.form && (
+                <p className="text-sm text-red-600">{state.errors.form}</p>
+            )}
             <Button type="submit" disabled={isPending}>
                 {isPending ? '처리 중...' : '가입하기'}
             </Button>
