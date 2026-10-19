@@ -29,7 +29,7 @@ export default function PostList({
     }
 
     return (
-        <table className="w-full text-sm">
+        <table className="w-full border-t-2 border-t-black text-sm">
             <thead>
                 <tr className="border-b text-center">
                     <th className="w-16 py-3">No.</th>
