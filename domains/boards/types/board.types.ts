@@ -1,8 +1,10 @@
 import { Category } from '@/domains/categories/types/category.types';
 
 // type 값은 임시로 'board'
-export interface CategoryRow extends Category {
+export interface BoardCategoryRow extends Category {
     type: string;
+    created_at: string;
+    deleted_at: string | null;
 }
 
 // 향후 목데이터에 추가 (나중에 정리)
@@ -18,6 +20,7 @@ export type BoardProductScope = 'none' | 'optional' | 'required';
 // 게시판 인터페이스(규격)
 export interface BoardSetting {
     id: string; // notice, qna, review 등
+    category_id: string; // DB boards.category_id (FK → category.id): 이 게시판의 분류 루트 행. 칩(선택지)은 이 루트의 자식 행
     eyebrow: string;
     name: string;
     description: string;

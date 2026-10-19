@@ -9,6 +9,7 @@ import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
 import { Product } from '@/domains/products/types/product.types';
 import { CartItem } from '@/domains/cart/types/cart.types';
+import { BoardCategoryRow } from '@/domains/boards/types/board.types';
 
 // 로그인 테스트용 회원 관리자, 테스트 Mock Data * 게시판 개발에 이용 중*
 export const MOCK_USERS: User[] = [
@@ -643,6 +644,49 @@ export const MOCK_CART_ITEMS: CartItem[] = [
         quantity: 3,
     },
 ];
+
+// 게시판 카테고리 (헤더 노출 위험 있으므로 상품분류에 섞이지 않도록 함)
+const boardCat = (
+    id: string,
+    parent_id: string | null,
+    name: string,
+    depth: number,
+    sort_order: number,
+): BoardCategoryRow => ({
+    id,
+    parent_id,
+    name,
+    depth,
+    sort_order,
+    type: 'board',
+    created_at: '2026-10-13T00:00:00Z', // 고정 시각(mock)
+    deleted_at: null,
+});
+
+export const BOARD_CATEGORY_ROWS: BoardCategoryRow[] = [
+    // 루트: 게시판마다 1개 (boards.category_id가 가리킴)
+    boardCat('cat-board-notice', null, '공지사항', 1, 1),
+    boardCat('cat-board-promotion', null, '이벤트', 1, 2),
+    boardCat('cat-board-faq', null, '자주 묻는 질문', 1, 3),
+    boardCat('cat-board-qna', null, '고객 Q&A', 1, 4),
+    boardCat('cat-board-review', null, '상품 리뷰', 1, 5),
+    boardCat('cat-board-free', null, '자유게시판', 1, 6),
+    boardCat('cat-board-lookbook', null, '룩북', 1, 7),
+    // 자식: 칩(선택지). review, free, lookbook은 분류 없음
+    boardCat('cat-notice-info', 'cat-board-notice', '공지', 2, 1),
+    boardCat('cat-notice-delivery', 'cat-board-notice', '배송', 2, 2),
+    boardCat('cat-promotion-ongoing', 'cat-board-promotion', '진행중', 2, 1),
+    boardCat('cat-promotion-ended', 'cat-board-promotion', '종료', 2, 2),
+    boardCat('cat-faq-order', 'cat-board-faq', '주문/결제', 2, 1),
+    boardCat('cat-faq-delivery', 'cat-board-faq', '배송', 2, 2),
+    boardCat('cat-faq-exchange', 'cat-board-faq', '교환/반품', 2, 3),
+    boardCat('cat-faq-member', 'cat-board-faq', '회원', 2, 4),
+    boardCat('cat-qna-product', 'cat-board-qna', '상품', 2, 1),
+    boardCat('cat-qna-delivery', 'cat-board-qna', '배송', 2, 2),
+    boardCat('cat-qna-exchange', 'cat-board-qna', '교환/반품', 2, 3),
+    boardCat('cat-qna-etc', 'cat-board-qna', '기타', 2, 4),
+];
+
 // 게시판 인터페이스(규격) 기본값
 export const BOARD_SETTINGS: BoardSetting[] = [
     {
@@ -655,6 +699,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         use_attachment: true,
         use_category: true,
         categories: ['공지', '배송'],
+        category_id: 'cat-board-notice',
         created_at: '2026-10-13T00:00:00Z',
     },
     {
@@ -666,6 +711,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         write_role: 'admin',
         use_category: true,
         categories: ['진행중', '종료'],
+        category_id: 'cat-board-promotion',
         created_at: '2026-10-13T00:00:00Z',
     },
     {
@@ -677,6 +723,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         write_role: 'admin',
         use_category: true,
         categories: ['주문/결제', '배송', '교환/반품', '회원'],
+        category_id: 'cat-board-faq',
         created_at: '2026-10-13T00:00:00Z',
     },
     {
@@ -691,6 +738,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         categories: ['상품', '배송', '교환/반품', '기타'],
         // 상품페이지에서 쓴 글도 같은 qna에 쌓임. 목록은 탭(전체 / 일반 / 상품)으로 구분
         product_scope: 'optional',
+        category_id: 'cat-board-qna',
         created_at: '2026-10-13T00:00:00Z',
     },
     {
@@ -704,6 +752,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         // 상품에 속한 글만 존재. 상품페이지 하단에 뿌리는 것이 주 용도이고 /boards/review는 전체 모아보기
         product_scope: 'required',
         use_rating: true,
+        category_id: 'cat-board-review',
         created_at: '2026-10-14T00:00:00Z',
     },
     {
@@ -714,6 +763,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         type: 'list',
         write_role: 'user',
         use_attachment: true,
+        category_id: 'cat-board-free',
         created_at: '2026-10-13T00:00:00Z',
     },
     {
@@ -723,6 +773,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         description: '우리가 입은 가을, 유저들의 스타일링',
         type: 'gallery',
         write_role: 'user',
+        category_id: 'cat-board-lookbook',
         created_at: '2026-10-13T00:00:00Z',
     },
 ];

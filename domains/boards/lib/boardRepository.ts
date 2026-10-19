@@ -217,3 +217,15 @@ export async function deletePost(
     post.updated_at = now;
     return true;
 }
+
+// 게시판 분류 목록
+export async function getBoardCategories(
+    boardId: string,
+): Promise<{ id: string; name: string }[]> {
+    const board = store.boards.find((b) => b.id === boardId);
+    if (!board) return [];
+    return store.categories
+        .filter((c) => c.parent_id === board.category_id)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((c) => ({ id: c.id, name: c.name }));
+}
