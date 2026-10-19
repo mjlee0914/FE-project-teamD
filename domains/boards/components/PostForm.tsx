@@ -3,7 +3,11 @@
 import Link from 'next/link';
 import { useActionState } from 'react';
 import type { ReactNode } from 'react';
-import type { BoardSetting, Post } from '../types/board.types';
+import type {
+    BoardSetting,
+    CategoryOption,
+    Post,
+} from '../types/board.types';
 import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
 import { createPostAction } from '../actions/createPost.action';
 import { updatePostAction } from '../actions/updatePost.action';
@@ -12,6 +16,7 @@ interface PostFormProps {
     board: BoardSetting;
     gid: string; // 첨부파일은 글 저장 전에 올라가기 때문에 폼을 열 때 서버 내림
     post?: Post; // 수정일 때 기존 글 가져오기
+    categories: CategoryOption[]; // select에 보여 줄 분류 목록 (서버 페이지에서 조회해 내림)
 }
 
 function FormRow({
@@ -41,7 +46,12 @@ function FormRow({
     );
 }
 
-export default function PostForm({ board, gid, post }: PostFormProps) {
+export default function PostForm({
+    board,
+    gid,
+    post,
+    categories,
+}: PostFormProps) {
     const isEdit = !!post;
 
     const [state, formAction, isPending] = useActionState(
@@ -70,23 +80,25 @@ export default function PostForm({ board, gid, post }: PostFormProps) {
             )}
 
             <div className="border-t-2 border-black">
-                {board.use_category && board.categories && (
+                {board.use_category && categories.length > 0 && (
                     <FormRow
                         label="분류"
                         htmlFor="category"
                         error={errors?.category}
                     >
                         <select
-                            key={v?.category ?? post?.category ?? 'init'}
+                            key={v?.category ?? post?.category_id ?? 'init'}
                             id="category"
                             name="category"
-                            defaultValue={v?.category ?? post?.category ?? ''}
+                            defaultValue={
+                                v?.category ?? post?.category_id ?? ''
+                            }
                             className="w-full border px-3 py-2 text-xs"
                         >
                             <option value="">선택하세요.</option>
-                            {board.categories.map((c) => (
-                                <option key={c} value={c}>
-                                    {c}
+                            {categories.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.name}
                                 </option>
                             ))}
                         </select>

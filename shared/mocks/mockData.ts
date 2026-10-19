@@ -658,7 +658,7 @@ const boardCat = (
     name,
     depth,
     sort_order,
-    type: 'board',
+    type: 'BOARD',
     created_at: '2026-10-13T00:00:00Z', // 고정 시각(mock)
     deleted_at: null,
 });
@@ -674,8 +674,20 @@ export const BOARD_CATEGORY_ROWS: BoardCategoryRow[] = [
     boardCat('cat-board-lookbook', null, '룩북', 1, 7),
     // 자식: 칩(선택지). review, free, lookbook은 분류 없음
     boardCat('cat-notice-info', 'cat-board-notice', '공지', 2, 1),
-    boardCat('cat-notice-delivery', 'cat-board-notice', '배송', 2, 2),
-    boardCat('cat-promotion-ongoing', 'cat-board-promotion', '진행중', 2, 1),
+    boardCat(
+        'cat-notice-delivery',
+        'cat-board-notice',
+        '배송',
+        2,
+        2,
+    ),
+    boardCat(
+        'cat-promotion-ongoing',
+        'cat-board-promotion',
+        '진행중',
+        2,
+        1,
+    ),
     boardCat('cat-promotion-ended', 'cat-board-promotion', '종료', 2, 2),
     boardCat('cat-faq-order', 'cat-board-faq', '주문/결제', 2, 1),
     boardCat('cat-faq-delivery', 'cat-board-faq', '배송', 2, 2),
@@ -698,7 +710,6 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         write_role: 'admin',
         use_attachment: true,
         use_category: true,
-        categories: ['공지', '배송'],
         category_id: 'cat-board-notice',
         created_at: '2026-10-13T00:00:00Z',
     },
@@ -710,7 +721,6 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         type: 'gallery',
         write_role: 'admin',
         use_category: true,
-        categories: ['진행중', '종료'],
         category_id: 'cat-board-promotion',
         created_at: '2026-10-13T00:00:00Z',
     },
@@ -722,7 +732,6 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         type: 'faq',
         write_role: 'admin',
         use_category: true,
-        categories: ['주문/결제', '배송', '교환/반품', '회원'],
         category_id: 'cat-board-faq',
         created_at: '2026-10-13T00:00:00Z',
     },
@@ -735,7 +744,6 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         write_role: 'user',
         use_secret: true,
         use_category: true,
-        categories: ['상품', '배송', '교환/반품', '기타'],
         // 상품페이지에서 쓴 글도 같은 qna에 쌓임. 목록은 탭(전체 / 일반 / 상품)으로 구분
         product_scope: 'optional',
         category_id: 'cat-board-qna',
@@ -782,7 +790,7 @@ export const EVENT_POSTS: Post[] = [
     {
         id: 'event-1',
         board_id: 'promotion',
-        category: '진행중',
+        category_id: 'cat-promotion-ongoing',
         title: '첫 구매 30% 할인 이벤트',
         content: 'DN Mall에서 첫 구매하시는 고객님께 30% 할인 쿠폰을 드립니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -797,7 +805,7 @@ export const EVENT_POSTS: Post[] = [
     {
         id: 'event-2',
         board_id: 'promotion',
-        category: '진행중',
+        category_id: 'cat-promotion-ongoing',
         title: '블랙프라이데이 이벤트',
         content: '블랙프라이데이 특별 할인 상품을 만나보세요.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -812,7 +820,7 @@ export const EVENT_POSTS: Post[] = [
     {
         id: 'event-3',
         board_id: 'promotion',
-        category: '진행중',
+        category_id: 'cat-promotion-ongoing',
         title: '스니커즈 20% OFF',
         content:
             '가을 데일리룩에 어울리는 스니커즈를 20% 할인된 가격으로 만나보세요.',
@@ -828,7 +836,7 @@ export const EVENT_POSTS: Post[] = [
     {
         id: 'event-4',
         board_id: 'promotion',
-        category: '진행중',
+        category_id: 'cat-promotion-ongoing',
         title: '가을 아우터 기획전',
         content:
             '쌀쌀해진 날씨에 어울리는 아우터를 특별한 가격으로 준비했습니다.',
@@ -844,7 +852,7 @@ export const EVENT_POSTS: Post[] = [
     {
         id: 'event-5',
         board_id: 'promotion',
-        category: '종료',
+        category_id: 'cat-promotion-ended',
         title: '추석 특가전',
         content: '추석 맞이 특가전이 종료되었습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -886,7 +894,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-1',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '추석 연휴 배송 일정 안내',
         content: '추석 연휴 기간 배송 일정을 안내드립니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -901,7 +909,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-2',
         board_id: 'notice',
-        category: '배송',
+        category_id: 'cat-notice-delivery',
         title: '도서산간 추가 배송비 안내',
         content: '도서산간 지역은 추가 배송비가 부과됩니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -916,7 +924,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-9',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '서비스 이용약관 개정 안내',
         content: '서비스 이용약관이 개정되어 안내드립니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -931,7 +939,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-10',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '개인정보 처리방침 개정 안내',
         content: '개인정보 처리방침이 개정되었습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -945,7 +953,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-11',
         board_id: 'notice',
-        category: '배송',
+        category_id: 'cat-notice-delivery',
         title: '택배사 변경 안내',
         content: '10월부터 배송 택배사가 변경됩니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -959,7 +967,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-12',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '서비스 점검 안내 (10/12 02:00~04:00)',
         content: '시스템 점검으로 서비스 이용이 일시 중단됩니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -973,7 +981,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-13',
         board_id: 'notice',
-        category: '배송',
+        category_id: 'cat-notice-delivery',
         title: '여름 휴가 기간 배송 지연 안내',
         content: '휴가 기간 동안 배송이 지연될 수 있습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -987,7 +995,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-14',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '신규 회원 가입 혜택 안내',
         content: '신규 가입 회원에게 적립금을 드립니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1001,7 +1009,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-15',
         board_id: 'notice',
-        category: '배송',
+        category_id: 'cat-notice-delivery',
         title: '새벽 배송 서비스 지역 확대 안내',
         content: '새벽 배송 가능 지역이 확대되었습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1015,7 +1023,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-16',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '고객센터 운영시간 변경 안내',
         content: '고객센터 운영시간이 평일 09:00~18:00으로 변경됩니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1029,7 +1037,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-17',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '결제 수단 추가 안내',
         content: '간편결제 수단이 추가되었습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1043,7 +1051,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-18',
         board_id: 'notice',
-        category: '배송',
+        category_id: 'cat-notice-delivery',
         title: '무료 배송 기준 금액 변경 안내',
         content: '무료 배송 기준 금액이 변경됩니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1057,7 +1065,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-19',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '앱 업데이트 안내',
         content: '새로운 기능이 추가된 업데이트가 배포되었습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1071,7 +1079,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-20',
         board_id: 'notice',
-        category: '배송',
+        category_id: 'cat-notice-delivery',
         title: '제주 지역 배송 일정 안내',
         content: '제주 지역은 배송에 1~2일이 더 소요됩니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1085,7 +1093,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-21',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: '교환/반품 정책 안내',
         content: '교환 및 반품 정책을 안내드립니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1099,7 +1107,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-22',
         board_id: 'notice',
-        category: '공지',
+        category_id: 'cat-notice-info',
         title: 'DN Mall 오픈 안내',
         content: 'DN Mall이 정식 오픈했습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -1115,7 +1123,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-5',
         board_id: 'qna',
-        category: '교환/반품',
+        category_id: 'cat-qna-exchange',
         title: '사이즈가 안 맞아요, 교환하고 싶어요',
         content: '주문번호 20261008-001 한 치수 작은 걸로 교환하고 싶습니다.',
         user_id: '10000000-0000-4000-8000-000000000002',
@@ -1136,7 +1144,7 @@ export const POSTS: Post[] = [
     {
         id: 'post-6',
         board_id: 'qna',
-        category: '상품',
+        category_id: 'cat-qna-product',
         title: '재입고 일정이 궁금해요',
         content: '블랙 M 사이즈는 언제 재입고되나요?',
         user_id: '10000000-0000-4000-8000-000000000003',
@@ -1181,11 +1189,11 @@ export const POSTS: Post[] = [
     },
 
     // 상품 연동 시드: product_id는 MOCK_PRODUCTS의 UUID를 참조합니다.
-    // qna + product_id: 상품 Q&A (qna 목록의 '상품' 탭에 보임)
+    // qna + product_id: 상품 Q&A (qna 목록의 'cat-qna-product' 탭에 보임)
     {
         id: 'post-23',
         board_id: 'qna',
-        category: '상품',
+        category_id: 'cat-qna-product',
         title: '아노락 재킷 블랙 M 사이즈 문의',
         content: '키 175, 몸무게 70인데 M 사이즈가 맞을까요?',
         user_id: '10000000-0000-4000-8000-000000000003',

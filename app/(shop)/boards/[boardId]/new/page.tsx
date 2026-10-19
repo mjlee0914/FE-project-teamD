@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getBoard } from '@/domains/boards/lib/boardRepository';
+import {
+    getBoard,
+    getBoardCategories,
+} from '@/domains/boards/lib/boardRepository';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
 import { canWriteBoard } from '@/domains/boards/lib/permissions';
 import { io } from 'next/cache';
@@ -43,6 +46,8 @@ export default async function NewPostPage({
         );
     }
 
+    const categories = await getBoardCategories(board.id);
+
     await io();
     const gid = crypto.randomUUID();
 
@@ -57,7 +62,7 @@ export default async function NewPostPage({
                     {board.name}
                 </p>
             </header>
-            <PostForm board={board} gid={gid} />
+            <PostForm board={board} gid={gid} categories={categories} />
         </div>
     );
 }

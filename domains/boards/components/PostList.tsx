@@ -1,5 +1,9 @@
 import { formatDate } from '../lib/formatDate';
-import type { BoardSetting, Post } from '../types/board.types';
+import type {
+    BoardSetting,
+    CategoryOption,
+    Post,
+} from '../types/board.types';
 import Link from 'next/link';
 
 interface PostListProps {
@@ -8,6 +12,7 @@ interface PostListProps {
     total: number; // 게시물 번호 계산용
     page: number;
     pageSize: number;
+    categories: CategoryOption[]; // 분류 id → 이름 변환용
 }
 
 export default function PostList({
@@ -16,6 +21,7 @@ export default function PostList({
     total,
     page,
     pageSize,
+    categories,
 }: PostListProps) {
     // 고정글 강조 및 페이징이 연번을 해치지 않게 하기
     const offset = (page - 1) * pageSize;
@@ -50,7 +56,11 @@ export default function PostList({
                             {post.is_pinned ? '📌' : total - offset - i}
                         </td>
                         {board.use_category && (
-                            <td className="text-center">{post.category}</td>
+                            <td className="text-center">
+                                {categories.find(
+                                    (c) => c.id === post.category_id,
+                                )?.name ?? ''}
+                            </td>
                         )}
                         {/* 제목을 클릭하면 해당 게시물로 이동 */}
                         <td>

@@ -1,10 +1,17 @@
 import { Category } from '@/domains/categories/types/category.types';
+import type { CategoryType } from '@/shared/types/category.types';
 
-// type 값은 임시로 'board'
+// type은 공통 CATEGORY_TYPES의 값 ('BOARD' / 'MAIN')
 export interface BoardCategoryRow extends Category {
-    type: string;
+    type: CategoryType;
     created_at: string;
     deleted_at: string | null;
+}
+
+// 화면(칩·select·분류 칸)에서 쓰는 분류 선택지
+export interface CategoryOption {
+    id: string;
+    name: string;
 }
 
 // 향후 목데이터에 추가 (나중에 정리)
@@ -29,9 +36,6 @@ export interface BoardSetting {
     use_secret?: boolean; // qna 비밀글 허용 여부
     use_attachment?: boolean; // 파일 첨부 허용 여부
     use_category?: boolean; // 게시물 카테고리 (게시판 안의 세부 카테고리)
-    categories?: string[]; // user_category를 담을 배열
-    // 상품 연동 (review, qna). 없으면 'none'으로 취급
-    // 주의: boards 테이블에는 컬럼을 추가하지 않고 코드 설정표(BOARD_CONFIG)로 관리
     product_scope?: BoardProductScope;
     use_rating?: boolean; // 별점 사용 (review) → Post.rating
     created_at: string;
@@ -42,7 +46,7 @@ export interface BoardSetting {
 export interface Post {
     id: string; // DB: UUID (mock은 'post-1' 형태)
     board_id: string;
-    category?: string; // use_category가 있는 경우만
+    category_id?: string; // use_category가 있는 경우만
     title: string;
     content: string;
     user_id: string | null; // DB: profiles.id (탈퇴 시 null)

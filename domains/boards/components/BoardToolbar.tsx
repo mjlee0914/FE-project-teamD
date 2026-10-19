@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import Form from 'next/form';
-import type { BoardSetting } from '../types/board.types';
+import type { BoardSetting, CategoryOption } from '../types/board.types';
 
 interface BoardToolbarProps {
     board: BoardSetting;
     q?: string;
-    category?: string;
+    category?: string; // 선택된 분류 id
+    categories: CategoryOption[]; // 칩으로 보여 줄 분류 목록
     canWrite?: boolean; // 쓰기 권한이 있을 때만 글쓰기 버튼을 보여 줌 (권한 판단은 page.tsx에서)
 }
 
@@ -13,6 +14,7 @@ export default function BoardToolbar({
     board,
     q,
     category,
+    categories,
     canWrite,
 }: BoardToolbarProps) {
     const hrefFor = (c?: string) => {
@@ -28,18 +30,18 @@ export default function BoardToolbar({
 
     return (
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            {board.use_category && board.categories ? (
+            {board.use_category && categories.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">
                     <Link href={hrefFor()} className={chipClass(!category)}>
                         전체
                     </Link>
-                    {board.categories.map((c) => (
+                    {categories.map((c) => (
                         <Link
-                            key={c}
-                            href={hrefFor(c)}
-                            className={chipClass(category === c)}
+                            key={c.id}
+                            href={hrefFor(c.id)}
+                            className={chipClass(category === c.id)}
                         >
-                            {c}
+                            {c.name}
                         </Link>
                     ))}
                 </div>

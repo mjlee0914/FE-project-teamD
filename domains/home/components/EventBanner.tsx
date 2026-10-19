@@ -11,7 +11,7 @@ export default function EventBanner({ posts }: EventBannerProps) {
         (post) =>
             post.board_id === 'promotion' &&
             post.deleted_at === null &&
-            post.category !== '종료' &&
+            post.category_id !== 'cat-promotion-ended' &&
             post.thumbnail_url,
     );
 

@@ -5,5 +5,5 @@
         "source.fixAll.eslint": "explicit"
     },
     "specstory.cloudSync.enabled": "never",
-    "git.decorations.enabled": true
+    "git.decorations.enabled": false
 }

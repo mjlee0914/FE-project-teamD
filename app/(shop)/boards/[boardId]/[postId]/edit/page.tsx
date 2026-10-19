@@ -1,6 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getBoard, getPost } from '@/domains/boards/lib/boardRepository';
+import {
+    getBoard,
+    getBoardCategories,
+    getPost,
+} from '@/domains/boards/lib/boardRepository';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
 import { canEditPost } from '@/domains/boards/lib/permissions';
 import PostForm from '@/domains/boards/components/PostForm';
@@ -43,6 +47,8 @@ export default async function EditPostPage({
         );
     }
 
+    const categories = await getBoardCategories(board.id);
+
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <header className="mb-8 border-b pb-6">
@@ -54,7 +60,12 @@ export default async function EditPostPage({
                     {board.name}
                 </p>
             </header>
-            <PostForm board={board} gid={post.gid} post={post} />
+            <PostForm
+                board={board}
+                gid={post.gid}
+                post={post}
+                categories={categories}
+            />
         </div>
     );
 }

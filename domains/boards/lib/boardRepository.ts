@@ -56,7 +56,7 @@ export async function getPosts({
         // 삭제되지 않은 글
         .filter((post) => post.board_id === boardId && post.deleted_at === null)
         // 분류가 없거나(조건이 없으면 통과) 분류가 같은 글
-        .filter((post) => !category || post.category === category)
+        .filter((post) => !category || post.category_id === category)
         // 특정 상품의 글
         .filter((post) => !productId || post.product_id === productId)
         // 키워드 검색
@@ -141,7 +141,7 @@ export interface CreatePostInput {
     title: string;
     content: string;
     gid: string;
-    category?: string;
+    categoryId?: string;
     isSecret?: boolean;
 }
 
@@ -157,7 +157,7 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
     const post: Post = {
         id: `post-${maxNo + 1}`,
         board_id: input.boardId,
-        category: input.category,
+        category_id: input.categoryId,
         title: input.title,
         content: input.content,
         user_id: input.userId,
@@ -178,7 +178,7 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
 export interface UpdatePostInput {
     title: string;
     content: string;
-    category?: string;
+    categoryId?: string;
     isSecret?: boolean;
 }
 
@@ -196,7 +196,7 @@ export async function updatePost(
 
     post.title = input.title;
     post.content = input.content;
-    post.category = input.category;
+    post.category_id = input.categoryId;
     post.is_secret = input.isSecret;
     post.updated_at = new Date().toISOString();
     return post;
@@ -226,6 +226,7 @@ export async function getBoardCategories(
     if (!board) return [];
     return store.categories
         .filter((c) => c.parent_id === board.category_id)
+        .filter((c) => c.deleted_at === null) // 삭제된 분류는 제외 (글·게시판과 같은 소프트 삭제 규칙)
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((c) => ({ id: c.id, name: c.name }));
 }

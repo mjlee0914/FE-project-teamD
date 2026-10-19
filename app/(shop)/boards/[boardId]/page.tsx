@@ -1,4 +1,8 @@
-import { getBoard, getPosts } from '@/domains/boards/lib/boardRepository';
+import {
+    getBoard,
+    getBoardCategories,
+    getPosts,
+} from '@/domains/boards/lib/boardRepository';
 import { notFound } from 'next/navigation';
 import BoardHeader from '@/domains/boards/components/BoardHeader';
 import PostList from '@/domains/boards/components/PostList';
@@ -35,6 +39,9 @@ export default async function BoardPage({
     const user = await getCurrentUser();
     const canWrite = canWriteBoard(board, user);
 
+    // 분류 목록
+    const categories = await getBoardCategories(boardId);
+
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <BoardHeader board={board} />
@@ -45,6 +52,7 @@ export default async function BoardPage({
                         q={sp.q}
                         category={sp.category}
                         canWrite={canWrite}
+                        categories={categories}
                     />
                     <PostList
                         board={board}
@@ -52,6 +60,7 @@ export default async function BoardPage({
                         total={result.total}
                         page={result.page}
                         pageSize={result.pageSize}
+                        categories={categories}
                     />
                     <Pagination
                         basePath={`/boards/${board.id}`}
