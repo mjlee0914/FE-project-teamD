@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { getProfile } from '@/domains/auth/queries/getProfile.query';
+import ProfileForm from '@/domains/auth/components/ProfileForm';
 
 async function MyPageContent() {
     const profile = await getProfile();
@@ -27,32 +28,12 @@ async function MyPageContent() {
 
                 {/* 컨텐츠 영역 */}
                 <section className="w-full">
-                    <div className="space-y-4">
-                        <div>
-                            <h3 className="text-lg font-medium">이메일</h3>
-                            <p className="mt-1 text-gray-600">
-                                {profile.email}
-                            </p>
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-medium">이름</h3>
-                            <p className="mt-1 text-gray-600">
-                                {profile.username}
-                            </p>
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-medium">전화번호</h3>
-                            <p className="mt-1 text-gray-600">
-                                {profile.phone}
-                            </p>
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-medium">주소</h3>
-                            <p className="mt-1 text-gray-600">
-                                {profile.address}
-                            </p>
-                        </div>
-                    </div>
+                    <ProfileForm
+                        email={profile.email ?? ''}
+                        name={profile.username ?? ''}
+                        phone={profile.phone ?? ''}
+                        address={profile.address ?? ''}
+                    />
                 </section>
             </div>
         </div>
