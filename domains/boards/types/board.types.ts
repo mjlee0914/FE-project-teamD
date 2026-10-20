@@ -14,6 +14,9 @@ export interface CategoryOption {
     name: string;
 }
 
+// 목록 정렬 방식 정의
+export type BoardSortMode = 'latest' | 'manual';
+
 // 향후 목데이터에 추가 (나중에 정리)
 export type BoardWriteRole = 'all' | 'user' | 'admin';
 
@@ -36,6 +39,7 @@ export interface BoardSetting {
     use_secret?: boolean; // qna 비밀글 허용 여부
     use_attachment?: boolean; // 파일 첨부 허용 여부
     use_category?: boolean; // 게시물 카테고리 (게시판 안의 세부 카테고리)
+    sort?: BoardSortMode; // 기본값은 latest
     product_scope?: BoardProductScope;
     use_rating?: boolean; // 별점 사용 (review) → Post.rating
     created_at: string;

@@ -26,11 +26,25 @@ export interface PostListResult {
     totalPages: number;
 }
 
-// 정렬 규칙 : 고정글이 앞으로 오고 고정 여부가 같으면 최신글이 앞으로
+// 정렬 규칙1 : 고정글이 앞으로 오고 고정 여부가 같으면 최신글이 앞으로
 const byPinnedTheNewest = (a: Post, b: Post) => {
     if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
     return b.created_at.localeCompare(a.created_at);
 };
+
+// 정렬 규칙 2 : sort_order로 수동 정렬
+const byManualOrder = (a: Post, b: Post) => {
+    //번호가 없는 글은 무한대로 보고 맨 뒤로 보냄
+    const an = a.sort_order ?? Infinity;
+    const bn = b.sort_order ?? Infinity;
+    // 둘 다 무한대면 NaN이 되므로 비교 처리
+    if (an !== bn) return an < bn ? -1 : 1;
+    return a.created_at.localeCompare(b.created_at);
+};
+
+// 정렬 규칙 3 : 게시판 성격에 맞는 정렬 규칙 적용
+const sorterFor = (board: BoardSetting | null) =>
+    board?.sort === 'manual' ? byManualOrder : byPinnedTheNewest;
 
 // supabase 연동 대비 비동기 함수로 우선 작성하고 loading.tsx를 넣어서 시연
 
@@ -48,6 +62,9 @@ export async function getPosts({
     category,
     productId,
 }: GetPostsParams): Promise<PostListResult> {
+    // 게시판 확인
+    const board = await getBoard(boardId);
+
     // 검색어 준비
     const keyword = q?.trim().toLowerCase();
 
@@ -68,7 +85,7 @@ export async function getPosts({
         //     if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
         //     return b.created_at.localeCompare(a.created_at);
         // });
-        .sort(byPinnedTheNewest);
+        .sort(sorterFor(board));
 
     // 페이지 계산
     const total = filtered.length;
@@ -110,9 +127,11 @@ export async function getAdjacentPosts(
     boardId: string,
     postId: string,
 ): Promise<{ prev: Post | null; next: Post | null }> {
+    // 게시판 확인
+    const board = await getBoard(boardId);
     const list = store.posts
         .filter((post) => post.board_id === boardId && post.deleted_at === null)
-        .sort(byPinnedTheNewest);
+        .sort(sorterFor(board)); // 목록과 같은 정렬이어야 이전/다음글이 어긋나지 않음
 
     const index = list.findIndex((post) => post.id === postId);
 

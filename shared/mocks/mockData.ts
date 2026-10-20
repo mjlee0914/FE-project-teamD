@@ -670,20 +670,8 @@ export const BOARD_CATEGORY_ROWS: BoardCategoryRow[] = [
     boardCat('cat-board-lookbook', null, '룩북', 1, 7),
     // 자식: 칩(선택지). review, free, lookbook은 분류 없음
     boardCat('cat-notice-info', 'cat-board-notice', '공지', 2, 1),
-    boardCat(
-        'cat-notice-delivery',
-        'cat-board-notice',
-        '배송',
-        2,
-        2,
-    ),
-    boardCat(
-        'cat-events-ongoing',
-        'cat-board-events',
-        '진행중',
-        2,
-        1,
-    ),
+    boardCat('cat-notice-delivery', 'cat-board-notice', '배송', 2, 2),
+    boardCat('cat-events-ongoing', 'cat-board-events', '진행중', 2, 1),
     boardCat('cat-events-ended', 'cat-board-events', '종료', 2, 2),
     boardCat('cat-faq-order', 'cat-board-faq', '주문/결제', 2, 1),
     boardCat('cat-faq-delivery', 'cat-board-faq', '배송', 2, 2),
@@ -730,6 +718,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         use_category: true,
         category_id: 'cat-board-faq',
         created_at: '2026-10-13T00:00:00Z',
+        sort: 'manual',
     },
     {
         id: 'qna',
