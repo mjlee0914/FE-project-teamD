@@ -1,9 +1,10 @@
 import Footer from '@/shared/components/Footer';
 import Header from '@/shared/components/Header';
+import HeaderWithUser from '@/shared/components/HeaderWithUser';
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import { Cactus_Classical_Serif } from 'next/font/google';
-import { getProfile } from '@/domains/auth/queries/getProfile.query';
+import { Suspense } from 'react';
 import '../globals.css';
 
 // Noto Sans KR 폰트 인스턴스 생성
@@ -25,19 +26,20 @@ export const metadata: Metadata = {
     description: 'Team Disco Ninja FrontEnd Project',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const profile = await getProfile();
-
     return (
         <html lang="ko" className={`h-full ${cactus.variable}`}>
             <body
                 className={`${notoSansKr.className} flex min-h-screen flex-col bg-white text-gray-900 antialiased`}
             >
-                <Header userName={profile?.username ?? null} />
+                {/* 로그인 정보를 기다리는 동안은 비로그인 헤더를 먼저 보여준다 */}
+                <Suspense fallback={<Header userName={null} />}>
+                    <HeaderWithUser />
+                </Suspense>
                 <main className="w-full flex-1">{children}</main>
                 <Footer />
             </body>
