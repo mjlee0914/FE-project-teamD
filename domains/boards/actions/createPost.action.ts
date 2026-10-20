@@ -3,7 +3,11 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { ActionState } from '@/shared/types/action.types';
-import { createPost, getBoard } from '../lib/boardRepository';
+import {
+    createPost,
+    getBoard,
+    getBoardCategories,
+} from '../lib/boardRepository';
 import { getCurrentUser } from '../lib/currentUser';
 import { canWriteBoard } from '../lib/permissions';
 import { validatePost } from '../lib/validatePost';
@@ -37,8 +41,15 @@ export async function createPostAction(
         return fail({ form: '작성 권한이 없습니다.' });
     }
 
+    // 2-1) 카테고리 검증
+    const categories = await getBoardCategories(board.id);
+
     // 3) 검증 재실행
-    const errors = validatePost(board, formData);
+    const errors = validatePost(
+        board,
+        formData,
+        categories.map((c) => c.id),
+    );
     if (Object.keys(errors).length > 0) return fail(errors);
 
     const gid = String(formData.get('gid') ?? '');
@@ -52,7 +63,7 @@ export async function createPostAction(
         title: values.title.trim(),
         content: values.content.trim(),
         gid,
-        category: board.use_category ? values.category : undefined,
+        categoryId: board.use_category ? values.category : undefined,
         isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
     });
 

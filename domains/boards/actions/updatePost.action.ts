@@ -3,7 +3,12 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { ActionState } from '@/shared/types/action.types';
-import { getBoard, getPost, updatePost } from '../lib/boardRepository';
+import {
+    getBoard,
+    getBoardCategories,
+    getPost,
+    updatePost,
+} from '../lib/boardRepository';
 import { getCurrentUser } from '../lib/currentUser';
 import { canEditPost } from '../lib/permissions';
 import { validatePost } from '../lib/validatePost';
@@ -38,13 +43,18 @@ export async function updatePostAction(
     if (!canEditPost(post, user))
         return fail({ form: '수정 권한이 없습니다.' });
 
-    const errors = validatePost(board, formData);
+    const categories = await getBoardCategories(board.id);
+    const errors = validatePost(
+        board,
+        formData,
+        categories.map((c) => c.id),
+    );
     if (Object.keys(errors).length > 0) return fail(errors);
 
     await updatePost(board.id, post.id, {
         title: values.title.trim(),
         content: values.content.trim(),
-        category: board.use_category ? values.category : undefined,
+        categoryId: board.use_category ? values.category : undefined,
         isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
     });
 
