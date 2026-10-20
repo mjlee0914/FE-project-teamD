@@ -6,8 +6,9 @@ import { LuShoppingCart, LuUser, LuSearch } from 'react-icons/lu';
 import { PiListBold } from 'react-icons/pi';
 import useCartStore from '../store/useCartStore';
 import { MOCK_CATEGORIES } from '../mocks/mockData';
+import { logout } from '@/domains/auth/actions/logout.action';
 
-export default function Header() {
+export default function Header({ userName }: { userName: string | null }) {
     const cartCount = useCartStore((state) => state.count);
     return (
         <>
@@ -57,13 +58,37 @@ export default function Header() {
                         </Link>
 
                         {/* 로그인 버튼 */}
-                        <Link
-                            href="/login"
-                            aria-label="로그인"
-                            className="flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
-                        >
-                            <LuUser className="h-4 w-4 shrink-0" />
-                        </Link>
+                        {userName ? (
+                            <>
+                                <span className="flex h-10 items-center px-2.5 text-xs font-medium text-gray-700 md:px-3 md:text-sm">
+                                    {userName}님 환영합니다!!
+                                </span>
+                                {/* 정보수정 */}
+                                <Link
+                                    href="/mypage"
+                                    className="flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
+                                >
+                                    정보수정
+                                </Link>
+                                {/* 로그아웃 */}
+                                <form action={logout}>
+                                    <button
+                                        type="submit"
+                                        className="flex h-10 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
+                                    >
+                                        로그아웃
+                                    </button>
+                                </form>
+                            </>
+                        ) : (
+                            <Link
+                                href="/login"
+                                aria-label="로그인"
+                                className="flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
+                            >
+                                <LuUser className="h-4 w-4 shrink-0" />
+                            </Link>
+                        )}
                     </nav>
                 </div>
             </header>

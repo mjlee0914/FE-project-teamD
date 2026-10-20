@@ -6,6 +6,6 @@ export interface User {
 }
 
 export interface LoginFormValues {
-    loginId: string;
+    email: string;
     password: string;
 }
