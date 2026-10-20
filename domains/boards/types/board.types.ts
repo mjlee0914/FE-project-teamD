@@ -23,6 +23,9 @@ export type BoardWriteRole = 'all' | 'user' | 'admin';
 // 게시판 구분하기 (boradId 아래에 모두 넣을 예정이기 때문)
 export type BoardType = 'list' | 'qna' | 'gallery';
 
+// 갤러리 카드 모양 - portrait(3:4) / landscape(4:3)
+export type GalleryLayout = 'portrait' | 'landscape';
+
 // 게시판과 상품의 연결 방식
 // none: 상품과 무관 / optional: 상품에서 쓴 글과 일반 글이 섞임(qna) / required: 반드시 상품에 속함(review)
 export type BoardProductScope = 'none' | 'optional' | 'required';
@@ -43,6 +46,7 @@ export interface BoardSetting {
     product_scope?: BoardProductScope;
     use_rating?: boolean; // 별점 사용 (review) → Post.rating
     created_at: string;
+    gallery_layout?: GalleryLayout;
 }
 
 // 게시물 인터페이스(규격에 대입될 값)

@@ -129,7 +129,7 @@ export default function PostForm({
 
                 {board.use_secret && (
                     <FormRow label="옵션">
-                        <label className="flex items-center gap-2 text-xs">
+                        <label className="flex items-center gap-2 py-1 text-xs">
                             <input
                                 type="checkbox"
                                 name="isSecret"

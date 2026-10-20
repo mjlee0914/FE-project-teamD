@@ -11,6 +11,7 @@ import BoardToolbar from '@/domains/boards/components/BoardToolbar';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
 import { canWriteBoard } from '@/domains/boards/lib/permissions';
 import AskQnaBox from '@/domains/boards/components/AskQnaBox';
+import PostGallery from '@/domains/boards/components/PostGallery';
 
 export default async function BoardPage({
     params,
@@ -34,6 +35,8 @@ export default async function BoardPage({
         page,
         q: sp.q,
         category: sp.category,
+        // 갤러리이면 12장, undefined이면 구조분해기본값 (10줄)
+        pageSize: board.type === 'gallery' ? 12 : undefined,
     });
 
     // 쓰기 권한이 있을 때만 글쓰기 버튼을 보여 줌
@@ -72,8 +75,27 @@ export default async function BoardPage({
                     {board.id === 'faq' && <AskQnaBox />}
                 </>
             ) : (
-                // 객체를 글자로 바꾸고(JSON.stringify) JSON 모양 그대로 출력하기(pre)
-                <pre>{JSON.stringify(result, null, 2)}</pre>
+                <>
+                    <BoardToolbar
+                        board={board}
+                        q={sp.q}
+                        category={sp.category}
+                        canWrite={canWrite}
+                        categories={categories}
+                    />
+                    <PostGallery
+                        boardId={board.id}
+                        posts={result.items}
+                        layout={board.gallery_layout}
+                        categories={categories}
+                    />
+                    <Pagination
+                        basePath={`/boards/${board.id}`}
+                        page={result.page}
+                        totalPages={result.totalPages}
+                        query={{ q: sp.q, category: sp.category }}
+                    />
+                </>
             )}
         </div>
     );

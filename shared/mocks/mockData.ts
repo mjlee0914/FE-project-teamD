@@ -707,6 +707,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         use_category: true,
         category_id: 'cat-board-events',
         created_at: '2026-10-13T00:00:00Z',
+        gallery_layout: 'landscape',
     },
     {
         id: 'faq',
@@ -768,6 +769,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         write_role: 'user',
         category_id: 'cat-board-lookbook',
         created_at: '2026-10-13T00:00:00Z',
+        gallery_layout: 'portrait',
     },
 ];
 
@@ -1232,7 +1234,7 @@ export const POSTS: Post[] = [
         author_name: '서지수',
         gid: 'post-8',
         view_count: 88,
-        thumbnail_url: '/images/mock/lookbook-1.jpg',
+        thumbnail_url: 'public/products/Black-anorak.png', // post-8 (룩북)
         created_at: '2026-10-12T12:00:00Z',
         updated_at: '2026-10-12T12:00:00Z',
         deleted_at: null,
