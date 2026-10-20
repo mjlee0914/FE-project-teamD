@@ -4,19 +4,21 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { ActionState } from '@/shared/types/action.types';
 import {
+    normalizePhone,
     validateAddress,
     validateName,
     validatePhone,
 } from '@/domains/auth/utils/authValidations';
+import { isPhoneTaken } from '@/domains/auth/queries/isPhoneTaken.query';
 import { createServerClient } from '@/lib/supabase';
 
 export async function updateProfileAction(
     prevState: ActionState,
     formData: FormData,
 ): Promise<ActionState> {
-    const name = (formData.get('name') as string) ?? '';
-    const phone = (formData.get('phone') as string) ?? '';
-    const address = (formData.get('address') as string) ?? '';
+    const name = ((formData.get('name') as string) ?? '').trim();
+    const phone = normalizePhone((formData.get('phone') as string) ?? '');
+    const address = ((formData.get('address') as string) ?? '').trim();
     const values = { name, phone, address };
 
     // 칸마다 검사해서 오류가 있는 칸만 모은다
@@ -41,6 +43,15 @@ export async function updateProfileAction(
         return {
             success: false,
             errors: { form: '로그인이 필요합니다.' },
+            values,
+        };
+    }
+
+    // 내 번호는 빼고, 다른 회원이 쓰는 번호면 막는다
+    if (await isPhoneTaken(phone, user.id)) {
+        return {
+            success: false,
+            errors: { phone: '이미 가입된 전화번호입니다.' },
             values,
         };
     }

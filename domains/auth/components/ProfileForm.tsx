@@ -5,6 +5,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Button } from '@/shared/components/ui/button';
 import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
 import { updateProfileAction } from '@/domains/auth/actions/updateProfile.action';
+import { FIELD_MAX_LENGTH } from '@/domains/auth/utils/authValidations';
 
 interface ProfileFormProps {
     email: string;
@@ -14,9 +15,27 @@ interface ProfileFormProps {
 }
 
 const FIELDS = [
-    { name: 'name', label: '이름', type: 'text' },
-    { name: 'phone', label: '전화번호', type: 'tel' },
-    { name: 'address', label: '주소', type: 'text' },
+    {
+        name: 'name',
+        label: '이름',
+        type: 'text',
+        maxLength: FIELD_MAX_LENGTH.name,
+        placeholder: '홍길동',
+    },
+    {
+        name: 'phone',
+        label: '전화번호',
+        type: 'tel',
+        maxLength: FIELD_MAX_LENGTH.phone,
+        placeholder: '010-1234-5678',
+    },
+    {
+        name: 'address',
+        label: '주소',
+        type: 'text',
+        maxLength: FIELD_MAX_LENGTH.address,
+        placeholder: '서울특별시 구로구 ...',
+    },
 ] as const;
 
 export default function ProfileForm({ email, ...initial }: ProfileFormProps) {
@@ -49,6 +68,8 @@ export default function ProfileForm({ email, ...initial }: ProfileFormProps) {
                         id={field.name}
                         name={field.name}
                         type={field.type}
+                        maxLength={field.maxLength}
+                        placeholder={field.placeholder}
                         // 오류가 나면 입력한 값을, 처음엔 저장된 값을 보여준다
                         defaultValue={
                             state.values?.[field.name] ?? initial[field.name]

@@ -1,7 +1,11 @@
 'use server';
 
 import { ActionState } from '@/shared/types/action.types';
-import { validateSignUp } from '@/domains/auth/utils/authValidations';
+import {
+    normalizePhone,
+    validateSignUp,
+} from '@/domains/auth/utils/authValidations';
+import { isPhoneTaken } from '@/domains/auth/queries/isPhoneTaken.query';
 import { createServerClient } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
 
@@ -9,12 +13,13 @@ export async function signUpAction(
     prevState: ActionState,
     formData: FormData,
 ): Promise<ActionState> {
-    const name = (formData.get('name') as string) ?? '';
-    const email = (formData.get('email') as string) ?? '';
+    const name = ((formData.get('name') as string) ?? '').trim();
+    const email = ((formData.get('email') as string) ?? '').trim();
     const password = (formData.get('password') as string) ?? '';
     const passwordConfirm = (formData.get('passwordConfirm') as string) ?? '';
-    const phone = (formData.get('phone') as string) ?? '';
-    const address = (formData.get('address') as string) ?? '';
+    // 전화번호는 010-1234-5678 한 가지 모양으로 맞춰서 저장·비교한다
+    const phone = normalizePhone((formData.get('phone') as string) ?? '');
+    const address = ((formData.get('address') as string) ?? '').trim();
 
     const errors = validateSignUp({
         name,
@@ -34,6 +39,15 @@ export async function signUpAction(
         };
     }
 
+    // 같은 전화번호로 이미 가입한 회원이 있으면 막는다 (계정을 만들기 전에 확인)
+    if (await isPhoneTaken(phone)) {
+        return {
+            success: false,
+            errors: { phone: '이미 가입된 전화번호입니다.' },
+            values: { name, email, phone, address },
+        };
+    }
+
     const supabase = createServerClient();
     const { data, error } = await supabase.auth.signUp({
         email: email,
@@ -42,7 +56,12 @@ export async function signUpAction(
     if (error) {
         return {
             success: false,
-            errors: { email: error.message },
+            errors: {
+                email:
+                    error.code === 'user_already_exists'
+                        ? '이미 가입된 이메일입니다.'
+                        : '회원가입에 실패했습니다. 입력한 내용을 확인해 주세요.',
+            },
             values: { name, email, phone, address },
         };
     }
