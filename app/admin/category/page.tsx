@@ -6,6 +6,8 @@ import { MOCK_CATEGORIES } from '@/shared/mocks/mockData';
 import CategoryTable from '@/domains/admin/category/components/CategoryTable';
 import CategoryModal from '@/domains/admin/category/components/CategoryEditModal';
 import { useState, type FormEvent } from 'react';
+import { addCategory } from '@/domains/admin/category/actions/category.action';
+import type { ActionState } from '@/shared/types/action.types';
 import { Category } from '@/domains/categories/types/category.types';
 
 export default function AdminCategoryPage() {
@@ -25,12 +27,17 @@ export default function AdminCategoryPage() {
         setOpen(true);
     }
 
-    async function handleSave(values: {
-        name: string;
-        parent_id: string;
-        sort_order: number;
-    }) {
-        console.log(values);
+    async function handleSave(formData: FormData): Promise<ActionState> {
+        if (selectedCategory) {
+            return {
+                success: false,
+                errors: { form: '수정 기능은 아직 연결되지 않았습니다.' },
+            };
+        }
+
+        // 화면은 입력값을 전달하고 서버의 처리 결과를 받습니다.
+        const result = await addCategory({ success: false }, formData);
+        return result;
     }
 
     function handleDelete(category: Category) {
@@ -134,6 +141,7 @@ export default function AdminCategoryPage() {
             </div>
 
             <CategoryModal
+                key={String(open) + (selectedCategory?.id ?? 'new')}
                 open={open}
                 onOpenChange={setOpen}
                 category={selectedCategory}

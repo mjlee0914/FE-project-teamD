@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import type { Category } from '@/domains/categories/types/category.types';
 import {
     Dialog,
@@ -17,16 +17,14 @@ import {
 } from '@/shared/components/ui/native-select';
 
 import { MOCK_CATEGORY_ROWS } from '@/shared/mocks/mockData';
+import { CATEGORY_TYPES } from '../types/category.type';
+import type { ActionState } from '@/shared/types/action.types';
 
 interface CategoryModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     category?: Category; // 있으면 수정, 없으면 추가
-    onSave: (values: {
-        name: string;
-        parent_id: string;
-        sort_order: number;
-    }) => Promise<void>;
+    onSave: (formData: FormData) => Promise<ActionState>;
 }
 
 export default function CategoryModal({
@@ -36,21 +34,32 @@ export default function CategoryModal({
     onSave,
 }: CategoryModalProps) {
     const isEdit = !!category;
+    const [saving, setSaving] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        if (saving) return;
 
+        // 입력값은 검사하지 않고 그대로 서버에 전달합니다.
         const formData = new FormData(event.currentTarget);
-        const name = String(formData.get('name') ?? '').trim();
-        const parent_id = String(formData.get('parent_id') ?? '').trim();
-        const sortOrder = Number(formData.get('sort_order'));
+        setSaving(true);
+        setErrors({});
 
-        if (!name || !Number.isInteger(sortOrder) || sortOrder < 1) {
-            return;
+        try {
+            const result = await onSave(formData);
+            if (result.success) {
+                onOpenChange(false);
+            } else {
+                setErrors(result.errors ?? { form: '저장에 실패했습니다.' });
+            }
+        } catch {
+            setErrors({
+                form: '서버에 연결하지 못했습니다. 다시 시도해주세요.',
+            });
+        } finally {
+            setSaving(false);
         }
-
-        await onSave({ name, parent_id, sort_order: sortOrder });
-        onOpenChange(false);
     }
 
     return (
@@ -61,12 +70,13 @@ export default function CategoryModal({
                         카테고리 {isEdit ? '수정' : '추가'}
                     </DialogTitle>
                     <DialogDescription>
-                        카테고리 이름과 상위 분류, 표시 순서를 설정하세요.
+                        카테고리 이름과 구분, 상위 분류를 설정하세요.
                     </DialogDescription>
                 </DialogHeader>
                 <form
                     key={category?.id ?? 'new'}
                     onSubmit={handleSubmit}
+                    noValidate
                     className="flex min-h-0 flex-1 flex-col"
                 >
                     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
@@ -77,18 +87,34 @@ export default function CategoryModal({
                             <Input
                                 name="name"
                                 defaultValue={category?.name ?? ''}
-                                placeholder="예: 티셔츠"
-                                required
-                                maxLength={100}
                             />
                         </label>
-                        <section
-                            className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4"
-                            aria-label="분류 및 표시 설정"
-                        >
+                        <section className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                             <h3 className="text-sm font-semibold text-gray-900">
                                 분류 및 표시 설정
                             </h3>
+                            <label className="block space-y-2">
+                                <span className="text-sm font-medium text-gray-700">
+                                    카테고리 구분
+                                </span>
+                                <NativeSelect
+                                    name="type"
+                                    defaultValue={category?.type ?? ''}
+                                    className="w-full bg-white"
+                                >
+                                    <NativeSelectOption value="">
+                                        구분 선택
+                                    </NativeSelectOption>
+                                    {CATEGORY_TYPES.map((item) => (
+                                        <NativeSelectOption
+                                            key={item.value}
+                                            value={item.value}
+                                        >
+                                            {item.label}
+                                        </NativeSelectOption>
+                                    ))}
+                                </NativeSelect>
+                            </label>
                             <label className="block space-y-2">
                                 <span className="text-sm font-medium text-gray-700">
                                     상위 카테고리
@@ -99,7 +125,7 @@ export default function CategoryModal({
                                     className="w-full bg-white"
                                 >
                                     <NativeSelectOption value="">
-                                        없음 (최상위 카테고리)
+                                        상위 카테고리 선택
                                     </NativeSelectOption>
                                     {MOCK_CATEGORY_ROWS.map((item) => (
                                         <NativeSelectOption
@@ -114,25 +140,16 @@ export default function CategoryModal({
                                     선택한 카테고리 아래에 배치됩니다.
                                 </span>
                             </label>
-                            <label className="block space-y-2">
-                                <span className="text-sm font-medium text-gray-700">
-                                    표시 순서
-                                </span>
-                                <Input
-                                    name="sort_order"
-                                    type="number"
-                                    defaultValue={category?.sort_order ?? 1}
-                                    min={1}
-                                    step={1}
-                                    required
-                                    className="bg-white sm:max-w-32"
-                                />
-                                <span className="block text-xs text-gray-500">
-                                    같은 상위 카테고리 안에서 숫자가 작을수록
-                                    먼저 표시됩니다.
-                                </span>
-                            </label>
                         </section>
+                    </div>
+                    <div
+                        role="alert"
+                        aria-live="polite"
+                        className="space-y-1 px-6 text-sm text-red-600"
+                    >
+                        {Object.entries(errors).map(([field, message]) => (
+                            <p key={field}>{message}</p>
+                        ))}
                     </div>
                     <div className="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-gray-50 px-6 py-4">
                         <Button
@@ -142,8 +159,12 @@ export default function CategoryModal({
                         >
                             취소
                         </Button>
-                        <Button type="submit">
-                            {isEdit ? '변경사항 저장' : '카테고리 추가'}
+                        <Button type="submit" disabled={saving}>
+                            {saving
+                                ? '저장 중…'
+                                : isEdit
+                                  ? '변경사항 저장'
+                                  : '카테고리 추가'}
                         </Button>
                     </div>
                 </form>
