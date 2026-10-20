@@ -2,11 +2,11 @@
 
 // 입력칸 maxLength와 서버 검사에서 같이 쓰는 글자 수 제한
 export const FIELD_MAX_LENGTH = {
-    email: 100,
-    name: 20,
-    password: 72, // Supabase(bcrypt)는 72자까지만 비밀번호로 쓴다
+    email: 40,
+    name: 15,
+    password: 15, // Supabase(bcrypt)는 72자까지가능하나 15자로 통일 한다.
     phone: 13, // 010-1234-5678
-    address: 100,
+    address: 40,
 } as const;
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
