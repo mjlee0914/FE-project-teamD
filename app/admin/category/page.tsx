@@ -2,16 +2,29 @@
 
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
-import { MOCK_CATEGORIES } from '@/shared/mocks/mockData';
 import CategoryTable from '@/domains/admin/category/components/CategoryTable';
 import CategoryModal from '@/domains/admin/category/components/CategoryEditModal';
-import { useState, type FormEvent } from 'react';
-import { addCategory } from '@/domains/admin/category/actions/category.action';
+import { useState, type FormEvent, useEffect, useCallback } from 'react';
+import {
+    addCategory,
+    getCategoryList,
+    updateCategory,
+} from '@/domains/admin/category/actions/category.action';
 import type { ActionState } from '@/shared/types/action.types';
 import { Category } from '@/domains/categories/types/category.types';
+import { CATEGORY_TYPES } from '@/domains/admin/category/types/category.type';
+import {
+    NativeSelect,
+    NativeSelectOption,
+} from '@/shared/components/ui/native-select';
 
 export default function AdminCategoryPage() {
-    const [searchKeyword, setSearchKeyword] = useState('');
+    const [search, setSearch] = useState({
+        searchName: '',
+        searchType: '',
+    });
+    const [categories, setCategories] = useState<Category[]>([]);
+
     const [open, setOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<
         Category | undefined
@@ -27,16 +40,24 @@ export default function AdminCategoryPage() {
         setOpen(true);
     }
 
-    async function handleSave(formData: FormData): Promise<ActionState> {
+    async function handleSave(
+        prevState: ActionState,
+        formData: FormData,
+    ): Promise<ActionState> {
+        let result: ActionState;
+
         if (selectedCategory) {
-            return {
-                success: false,
-                errors: { form: '수정 기능은 아직 연결되지 않았습니다.' },
-            };
+            formData.set('id', selectedCategory.id);
+            result = await updateCategory(prevState, formData);
+        } else {
+            result = await addCategory(prevState, formData);
         }
 
-        // 화면은 입력값을 전달하고 서버의 처리 결과를 받습니다.
-        const result = await addCategory({ success: false }, formData);
+        if (result.success) {
+            alert('저장되었습니다.');
+            await loadCategories();
+        }
+
         return result;
     }
 
@@ -48,34 +69,25 @@ export default function AdminCategoryPage() {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const keyword = String(formData.get('searchValue') ?? '');
+        const searchName = String(formData.get('searchName') ?? '');
+        const searchType = String(formData.get('searchType') ?? '');
 
-        setSearchKeyword(keyword.trim());
+        setSearch({ searchName: searchName, searchType: searchType });
     }
 
-    function filterCategories(
-        categories: Category[],
-        keyword: string,
-    ): Category[] {
-        const query = keyword.trim().toLowerCase();
+    const loadCategories = useCallback(async () => {
+        const { data, error } = await getCategoryList(search);
 
-        if (!query) return categories;
+        if (!error) {
+            setCategories(data ?? []);
+        } else {
+            alert(error);
+        }
+    }, [search]);
 
-        return categories.flatMap((category) => {
-            // 본인이 일치하면 하위 카테고리도 함께 유지
-            if (category.name.toLowerCase().includes(query)) {
-                return [category];
-            }
-
-            // 본인이 일치하지 않으면 자식 검색
-            const children = filterCategories(category.children ?? [], query);
-
-            // 일치하는 자식이 있으면 부모와 함께 반환
-            return children.length > 0 ? [{ ...category, children }] : [];
-        });
-    }
-
-    const categories = filterCategories(MOCK_CATEGORIES, searchKeyword);
+    useEffect(() => {
+        loadCategories();
+    }, [loadCategories]);
 
     return (
         <section className="space-y-6">
@@ -103,16 +115,34 @@ export default function AdminCategoryPage() {
                         표시합니다.
                     </p>
                 </div>
-                <div className="p-5">
-                    <label className="block space-y-2">
+                <div className="grid grid-cols-1 gap-5 p-5 md:grid-cols-2">
+                    <label className="min-w-0 space-y-2">
                         <span className="block text-sm font-medium text-gray-700">
                             카테고리명
                         </span>
                         <Input
                             type="text"
-                            name="searchValue"
+                            name="searchName"
                             className="h-10 border-gray-300 bg-white"
                         />
+                    </label>
+                    <label className="min-w-0 space-y-2">
+                        <span className="block text-sm font-medium text-gray-700">
+                            분류
+                        </span>
+                        <NativeSelect name="searchType">
+                            <NativeSelectOption value="">
+                                전체
+                            </NativeSelectOption>
+                            {CATEGORY_TYPES.map((item) => (
+                                <NativeSelectOption
+                                    key={item.value}
+                                    value={item.value}
+                                >
+                                    {item.label}
+                                </NativeSelectOption>
+                            ))}
+                        </NativeSelect>
                     </label>
                 </div>
                 <div className="flex flex-col gap-3 border-t border-gray-100 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -136,7 +166,6 @@ export default function AdminCategoryPage() {
                     categories={categories}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
-                    searching={searchKeyword.trim().length > 0}
                 />
             </div>
 

@@ -26,3 +26,17 @@ export interface Category {
     created_at: string;
     deleted_at: string | null;
 }
+
+export interface addCategoryType {
+    name: string;
+    parent_id?: string;
+    type: CategoryType;
+}
+
+export interface saveCategoryType {
+    id?: string;
+    name: string;
+    parent_id: string;
+    type: CategoryType;
+    deleted_at?: string;
+}
