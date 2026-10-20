@@ -9,15 +9,24 @@ import { MOCK_USERS } from '@/shared/mocks/mockData';
 export type UserRole = 'user' | 'admin';
 
 export interface BoardUser {
-    id: string; // 내 글 여부 확인 (mock 글의 user_id와 맞춤: 'user-1', 'admin')
+    id: string; // 내 글 여부 확인 (mock 글의 user_id와 같은 UUID여야 "본인" 판정이 맞음)
     name: string;
     role: UserRole;
 }
 
 // 쿠키 값(이름)에서 만들어 줄 사용자 틀
 const MOCK_BOARD_USERS: Record<UserRole, BoardUser> = {
-    user: { id: 'user-1', name: '일반 사용자', role: 'user' },
-    admin: { id: 'admin', name: '관리자', role: 'admin' },
+    // id는 mock 글(POSTS)의 user_id 시드 UUID와 맞춤: 관리자 …0001, 일반 사용자 …0002
+    user: {
+        id: '10000000-0000-4000-8000-000000000002',
+        name: '일반 사용자',
+        role: 'user',
+    },
+    admin: {
+        id: '10000000-0000-4000-8000-000000000001',
+        name: '관리자',
+        role: 'admin',
+    },
 };
 
 export async function getCurrentUser(): Promise<BoardUser | null> {

@@ -4,5 +4,6 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
     },
-    "specstory.cloudSync.enabled": "never"
+    "specstory.cloudSync.enabled": "never",
+    "git.decorations.enabled": false
 }

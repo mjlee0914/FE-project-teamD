@@ -1,4 +1,4 @@
-import type { BoardSetting, FaqItem, Post } from '../types/board.types';
+import type { BoardSetting, Post } from '../types/board.types';
 import { store } from './mockStore';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -26,11 +26,25 @@ export interface PostListResult {
     totalPages: number;
 }
 
-// 정렬 규칙 : 고정글이 앞으로 오고 고정 여부가 같으면 최신글이 앞으로
+// 정렬 규칙1 : 고정글이 앞으로 오고 고정 여부가 같으면 최신글이 앞으로
 const byPinnedTheNewest = (a: Post, b: Post) => {
     if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
     return b.created_at.localeCompare(a.created_at);
 };
+
+// 정렬 규칙 2 : sort_order로 수동 정렬
+const byManualOrder = (a: Post, b: Post) => {
+    //번호가 없는 글은 무한대로 보고 맨 뒤로 보냄
+    const an = a.sort_order ?? Infinity;
+    const bn = b.sort_order ?? Infinity;
+    // 둘 다 무한대면 NaN이 되므로 비교 처리
+    if (an !== bn) return an < bn ? -1 : 1;
+    return a.created_at.localeCompare(b.created_at);
+};
+
+// 정렬 규칙 3 : 게시판 성격에 맞는 정렬 규칙 적용
+const sorterFor = (board: BoardSetting | null) =>
+    board?.sort === 'manual' ? byManualOrder : byPinnedTheNewest;
 
 // supabase 연동 대비 비동기 함수로 우선 작성하고 loading.tsx를 넣어서 시연
 
@@ -48,6 +62,9 @@ export async function getPosts({
     category,
     productId,
 }: GetPostsParams): Promise<PostListResult> {
+    // 게시판 확인
+    const board = await getBoard(boardId);
+
     // 검색어 준비
     const keyword = q?.trim().toLowerCase();
 
@@ -56,7 +73,7 @@ export async function getPosts({
         // 삭제되지 않은 글
         .filter((post) => post.board_id === boardId && post.deleted_at === null)
         // 분류가 없거나(조건이 없으면 통과) 분류가 같은 글
-        .filter((post) => !category || post.category === category)
+        .filter((post) => !category || post.category_id === category)
         // 특정 상품의 글
         .filter((post) => !productId || post.product_id === productId)
         // 키워드 검색
@@ -68,7 +85,7 @@ export async function getPosts({
         //     if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
         //     return b.created_at.localeCompare(a.created_at);
         // });
-        .sort(byPinnedTheNewest);
+        .sort(sorterFor(board));
 
     // 페이지 계산
     const total = filtered.length;
@@ -110,9 +127,11 @@ export async function getAdjacentPosts(
     boardId: string,
     postId: string,
 ): Promise<{ prev: Post | null; next: Post | null }> {
+    // 게시판 확인
+    const board = await getBoard(boardId);
     const list = store.posts
         .filter((post) => post.board_id === boardId && post.deleted_at === null)
-        .sort(byPinnedTheNewest);
+        .sort(sorterFor(board)); // 목록과 같은 정렬이어야 이전/다음글이 어긋나지 않음
 
     const index = list.findIndex((post) => post.id === postId);
 
@@ -123,16 +142,6 @@ export async function getAdjacentPosts(
     return { prev: list[index - 1] ?? null, next: list[index + 1] ?? null };
 }
 
-export async function getFaqs(category?: string): Promise<FaqItem[]> {
-    return (
-        store.faqs
-            .filter((faq) => faq.deleted_at === null)
-            .filter((faq) => !category || faq.category === category)
-            // 작은 번호를 앞으로 가게 하기
-            .sort((a, b) => a.sort_order - b.sort_order)
-    );
-}
-
 // 새 글 등록에 필요한 값
 export interface CreatePostInput {
     boardId: string;
@@ -141,7 +150,7 @@ export interface CreatePostInput {
     title: string;
     content: string;
     gid: string;
-    category?: string;
+    categoryId?: string;
     isSecret?: boolean;
 }
 
@@ -157,7 +166,7 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
     const post: Post = {
         id: `post-${maxNo + 1}`,
         board_id: input.boardId,
-        category: input.category,
+        category_id: input.categoryId,
         title: input.title,
         content: input.content,
         user_id: input.userId,
@@ -178,7 +187,7 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
 export interface UpdatePostInput {
     title: string;
     content: string;
-    category?: string;
+    categoryId?: string;
     isSecret?: boolean;
 }
 
@@ -196,12 +205,13 @@ export async function updatePost(
 
     post.title = input.title;
     post.content = input.content;
-    post.category = input.category;
+    post.category_id = input.categoryId;
     post.is_secret = input.isSecret;
     post.updated_at = new Date().toISOString();
     return post;
 }
 
+// 게시물 삭제
 export async function deletePost(
     boardId: string,
     postId: string,
@@ -216,4 +226,17 @@ export async function deletePost(
     post.deleted_at = now;
     post.updated_at = now;
     return true;
+}
+
+// 게시판 분류 목록
+export async function getBoardCategories(
+    boardId: string,
+): Promise<{ id: string; name: string }[]> {
+    const board = store.boards.find((b) => b.id === boardId);
+    if (!board) return [];
+    return store.categories
+        .filter((c) => c.parent_id === board.category_id)
+        .filter((c) => c.deleted_at === null) // 삭제된 분류는 제외 (글·게시판과 같은 소프트 삭제 규칙)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((c) => ({ id: c.id, name: c.name }));
 }

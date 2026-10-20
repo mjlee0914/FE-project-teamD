@@ -24,3 +24,10 @@ export function canEditPost(post: Post, user: BoardUser | null): boolean {
     if (!user) return false;
     return user.role === 'admin' || post.user_id === user.id;
 }
+
+// 열람 권한: 비밀글 아니면 누구나, 비밀글이면 작성자 본인 또는 관리자
+export function canViewPost(post: Post, user: BoardUser | null): boolean {
+    if (!post.is_secret) return true;
+    if (!user) return false;
+    return user.role === 'admin' || post.user_id === user.id;
+}
