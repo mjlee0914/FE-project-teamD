@@ -46,7 +46,7 @@ export default async function BoardPage({
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <BoardHeader board={board} />
-            {board.type === 'list' ? (
+            {board.type === 'list' || board.type === 'qna' ? (
                 <>
                     <BoardToolbar
                         board={board}

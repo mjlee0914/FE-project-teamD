@@ -1,10 +1,7 @@
 import { formatDate } from '../lib/formatDate';
-import type {
-    BoardSetting,
-    CategoryOption,
-    Post,
-} from '../types/board.types';
+import type { BoardSetting, CategoryOption, Post } from '../types/board.types';
 import Link from 'next/link';
+import { maskName, SECRET_TITLE } from '../lib/mask';
 
 interface PostListProps {
     board: BoardSetting;
@@ -23,6 +20,9 @@ export default function PostList({
     pageSize,
     categories,
 }: PostListProps) {
+    // board는 이 함수가 받은 인자라서 함수 안에서만 쓸 수 있음 (함수 밖에서 만들면 board를 못 찾음)
+    const isQna = board.type === 'qna';
+
     // 고정글 강조 및 페이징이 연번을 해치지 않게 하기
     const offset = (page - 1) * pageSize;
 
@@ -44,6 +44,7 @@ export default function PostList({
                     <th className="w-24">작성자</th>
                     <th className="w-28">작성일</th>
                     <th className="w-16">조회수</th>
+                    {isQna && <th className="w-24">상태</th>}
                 </tr>
             </thead>
             <tbody>
@@ -68,14 +69,33 @@ export default function PostList({
                                 href={`/boards/${board.id}/${post.id}`}
                                 className="hover:underline"
                             >
-                                {post.title}
+                                {isQna && post.is_secret
+                                    ? SECRET_TITLE
+                                    : post.title}
                             </Link>
                         </td>
-                        <td className="text-center">{post.author_name}</td>
+                        <td className="text-center">
+                            {isQna
+                                ? maskName(post.author_name)
+                                : post.author_name}
+                        </td>
                         <td className="text-center">
                             {formatDate(post.created_at)}
                         </td>
                         <td className="text-center">{post.view_count}</td>
+                        {isQna && (
+                            <td className="text-center text-xs">
+                                {post.answer ? (
+                                    <span className="bg-[#8A8D6F] px-2 py-1 text-white">
+                                        답변완료
+                                    </span>
+                                ) : (
+                                    <span className="border px-2 py-1">
+                                        답변대기
+                                    </span>
+                                )}
+                            </td>
+                        )}
                     </tr>
                 ))}
             </tbody>
