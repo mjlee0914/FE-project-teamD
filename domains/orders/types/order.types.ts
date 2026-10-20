@@ -39,6 +39,7 @@ export interface OrderLog {
     created_at: Date | null; // TIMESTAMPTZ
 }
 
+// 최근 배송지 조회 기능에서 사용
 export interface OrderShippingInfo {
     recipient: string | null;
     recipient_phone: string | null;
@@ -47,3 +48,15 @@ export interface OrderShippingInfo {
     address_detail: string | null;
     delivery_memo: string | null;
 }
+
+export type ShippingInfoActionResult =
+    | {
+          success: true;
+          data: OrderShippingInfo | null;
+          message?: string;
+      }
+    | {
+          success: false;
+          data?: never;
+          message: string;
+      };
