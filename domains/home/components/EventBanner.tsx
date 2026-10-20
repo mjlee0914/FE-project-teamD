@@ -9,9 +9,9 @@ interface EventBannerProps {
 export default function EventBanner({ posts }: EventBannerProps) {
     const visiblePosts = posts.filter(
         (post) =>
-            post.board_id === 'promotion' &&
+            post.board_id === 'events' &&
             post.deleted_at === null &&
-            post.category_id !== 'cat-promotion-ended' &&
+            post.category_id !== 'cat-events-ended' &&
             post.thumbnail_url,
     );
 

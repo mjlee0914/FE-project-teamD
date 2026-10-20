@@ -1,10 +1,6 @@
 import type { Order } from '@/domains/orders/types/order.types';
 import { User } from '@/domains/auth/types/auth.types';
-import {
-    BoardSetting,
-    Post,
-    FaqItem,
-} from '@/domains/boards/types/board.types';
+import { BoardSetting, Post } from '@/domains/boards/types/board.types';
 import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
 import { Product } from '@/domains/products/types/product.types';
@@ -666,7 +662,7 @@ const boardCat = (
 export const BOARD_CATEGORY_ROWS: BoardCategoryRow[] = [
     // 루트: 게시판마다 1개 (boards.category_id가 가리킴)
     boardCat('cat-board-notice', null, '공지사항', 1, 1),
-    boardCat('cat-board-promotion', null, '이벤트', 1, 2),
+    boardCat('cat-board-events', null, '이벤트', 1, 2),
     boardCat('cat-board-faq', null, '자주 묻는 질문', 1, 3),
     boardCat('cat-board-qna', null, '고객 Q&A', 1, 4),
     boardCat('cat-board-review', null, '상품 리뷰', 1, 5),
@@ -682,13 +678,13 @@ export const BOARD_CATEGORY_ROWS: BoardCategoryRow[] = [
         2,
     ),
     boardCat(
-        'cat-promotion-ongoing',
-        'cat-board-promotion',
+        'cat-events-ongoing',
+        'cat-board-events',
         '진행중',
         2,
         1,
     ),
-    boardCat('cat-promotion-ended', 'cat-board-promotion', '종료', 2, 2),
+    boardCat('cat-events-ended', 'cat-board-events', '종료', 2, 2),
     boardCat('cat-faq-order', 'cat-board-faq', '주문/결제', 2, 1),
     boardCat('cat-faq-delivery', 'cat-board-faq', '배송', 2, 2),
     boardCat('cat-faq-exchange', 'cat-board-faq', '교환/반품', 2, 3),
@@ -714,14 +710,14 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         created_at: '2026-10-13T00:00:00Z',
     },
     {
-        id: 'promotion',
+        id: 'events',
         eyebrow: 'EVENT',
         name: '이벤트',
         description: '진행 중인 혜택과 기획전을 만나보세요',
         type: 'gallery',
         write_role: 'admin',
         use_category: true,
-        category_id: 'cat-board-promotion',
+        category_id: 'cat-board-events',
         created_at: '2026-10-13T00:00:00Z',
     },
     {
@@ -729,7 +725,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         eyebrow: 'CUSTOMER CENTER',
         name: '자주 묻는 질문',
         description: '궁금한 점을 빠르게 찾아보세요',
-        type: 'faq',
+        type: 'list',
         write_role: 'admin',
         use_category: true,
         category_id: 'cat-board-faq',
@@ -789,8 +785,8 @@ export const BOARD_SETTINGS: BoardSetting[] = [
 export const EVENT_POSTS: Post[] = [
     {
         id: 'event-1',
-        board_id: 'promotion',
-        category_id: 'cat-promotion-ongoing',
+        board_id: 'events',
+        category_id: 'cat-events-ongoing',
         title: '첫 구매 30% 할인 이벤트',
         content: 'DN Mall에서 첫 구매하시는 고객님께 30% 할인 쿠폰을 드립니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -804,8 +800,8 @@ export const EVENT_POSTS: Post[] = [
     },
     {
         id: 'event-2',
-        board_id: 'promotion',
-        category_id: 'cat-promotion-ongoing',
+        board_id: 'events',
+        category_id: 'cat-events-ongoing',
         title: '블랙프라이데이 이벤트',
         content: '블랙프라이데이 특별 할인 상품을 만나보세요.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -819,8 +815,8 @@ export const EVENT_POSTS: Post[] = [
     },
     {
         id: 'event-3',
-        board_id: 'promotion',
-        category_id: 'cat-promotion-ongoing',
+        board_id: 'events',
+        category_id: 'cat-events-ongoing',
         title: '스니커즈 20% OFF',
         content:
             '가을 데일리룩에 어울리는 스니커즈를 20% 할인된 가격으로 만나보세요.',
@@ -835,8 +831,8 @@ export const EVENT_POSTS: Post[] = [
     },
     {
         id: 'event-4',
-        board_id: 'promotion',
-        category_id: 'cat-promotion-ongoing',
+        board_id: 'events',
+        category_id: 'cat-events-ongoing',
         title: '가을 아우터 기획전',
         content:
             '쌀쌀해진 날씨에 어울리는 아우터를 특별한 가격으로 준비했습니다.',
@@ -851,8 +847,8 @@ export const EVENT_POSTS: Post[] = [
     },
     {
         id: 'event-5',
-        board_id: 'promotion',
-        category_id: 'cat-promotion-ended',
+        board_id: 'events',
+        category_id: 'cat-events-ended',
         title: '추석 특가전',
         content: '추석 맞이 특가전이 종료되었습니다.',
         user_id: '10000000-0000-4000-8000-000000000001',
@@ -862,6 +858,71 @@ export const EVENT_POSTS: Post[] = [
         thumbnail_url: 'public/eventbanner/chuseok.png',
         created_at: '2026-09-10T09:00:00Z',
         updated_at: '2026-09-10T09:00:00Z',
+        deleted_at: null,
+    },
+];
+
+export const MOCK_FAQ_POSTS: Post[] = [
+    {
+        id: 'faq-1',
+        board_id: 'faq',
+        category_id: 'cat-faq-delivery',
+        title: '배송은 얼마나 걸리나요?',
+        content:
+            '결제 완료 후 평균 2~3일 내 도착합니다. 도서산간은 1~2일 더 걸릴 수 있어요.',
+        user_id: '10000000-0000-4000-8000-000000000001',
+        author_name: '관리자',
+        gid: 'faq-1',
+        view_count: 0,
+        sort_order: 1,
+        created_at: '2026-10-13T00:00:00Z',
+        updated_at: '2026-10-13T00:00:00Z',
+        deleted_at: null,
+    },
+    {
+        id: 'faq-2',
+        board_id: 'faq',
+        category_id: 'cat-faq-exchange',
+        title: '교환 신청은 어떻게 하나요?',
+        content: '마이페이지 > 주문내역에서 수령 후 7일 이내 신청할 수 있어요.',
+        user_id: '10000000-0000-4000-8000-000000000001',
+        author_name: '관리자',
+        gid: 'faq-1',
+        view_count: 0,
+        sort_order: 2,
+        created_at: '2026-10-13T00:00:00Z',
+        updated_at: '2026-10-13T00:00:00Z',
+        deleted_at: null,
+    },
+    {
+        id: 'faq-3',
+        board_id: 'faq',
+        category_id: 'cat-faq-member',
+        title: '비밀번호를 잊어버렸어요.',
+        content:
+            '로그인 화면의 "비밀번호 찾기"에서 이메일로 재설정할 수 있어요.',
+        user_id: '10000000-0000-4000-8000-000000000001',
+        author_name: '관리자',
+        gid: 'faq-1',
+        view_count: 0,
+        sort_order: 3,
+        created_at: '2026-10-13T00:00:00Z',
+        updated_at: '2026-10-13T00:00:00Z',
+        deleted_at: null,
+    },
+    {
+        id: 'faq-4',
+        board_id: 'faq',
+        category_id: 'cat-faq-order',
+        title: '결제 수단은 무엇이 있나요?',
+        content: '신용카드, 계좌이체, 간편결제를 지원합니다.',
+        user_id: '10000000-0000-4000-8000-000000000001',
+        author_name: '관리자',
+        gid: 'faq-1',
+        view_count: 0,
+        sort_order: 4,
+        created_at: '2026-10-13T00:00:00Z',
+        updated_at: '2026-10-13T00:00:00Z',
         deleted_at: null,
     },
 ];
@@ -1240,49 +1301,6 @@ export const POSTS: Post[] = [
 
     // 페이지네이션 확인용 자유게시판 글 (위에서 만든 MOCK_FREE_POSTS)
     ...MOCK_FREE_POSTS,
-];
-
-export const FAQS: FaqItem[] = [
-    {
-        id: 'faq-1',
-        category: '배송',
-        question: '배송은 얼마나 걸리나요?',
-        answer: '결제 완료 후 평균 2~3일 내 도착합니다. 도서산간은 1~2일 더 걸릴 수 있어요.',
-        sort_order: 1,
-        created_at: '2026-10-13T00:00:00Z',
-        updated_at: '2026-10-13T00:00:00Z',
-        deleted_at: null,
-    },
-    {
-        id: 'faq-2',
-        category: '교환/반품',
-        question: '교환 신청은 어떻게 하나요?',
-        answer: '마이페이지 > 주문내역에서 수령 후 7일 이내 신청할 수 있어요.',
-        sort_order: 2,
-        created_at: '2026-10-13T00:00:00Z',
-        updated_at: '2026-10-13T00:00:00Z',
-        deleted_at: null,
-    },
-    {
-        id: 'faq-3',
-        category: '회원',
-        question: '비밀번호를 잊어버렸어요',
-        answer: '로그인 화면의 "비밀번호 찾기"에서 이메일로 재설정할 수 있어요.',
-        sort_order: 3,
-        created_at: '2026-10-13T00:00:00Z',
-        updated_at: '2026-10-13T00:00:00Z',
-        deleted_at: null,
-    },
-    {
-        id: 'faq-4',
-        category: '주문/결제',
-        question: '결제 수단은 무엇이 있나요?',
-        answer: '신용카드, 계좌이체, 간편결제를 지원합니다.',
-        sort_order: 4,
-        created_at: '2026-10-13T00:00:00Z',
-        updated_at: '2026-10-13T00:00:00Z',
-        deleted_at: null,
-    },
 ];
 
 // 주문 목업 10건. 상태·결제수단은 팀의 DB 허용값 확정 전 임시 표시값입니다.

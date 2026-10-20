@@ -1,4 +1,4 @@
-import type { BoardSetting, FaqItem, Post } from '../types/board.types';
+import type { BoardSetting, Post } from '../types/board.types';
 import { store } from './mockStore';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -121,16 +121,6 @@ export async function getAdjacentPosts(
 
     // 맨 앞 글이면 앞 글(prev)은 없음 처리
     return { prev: list[index - 1] ?? null, next: list[index + 1] ?? null };
-}
-
-export async function getFaqs(category?: string): Promise<FaqItem[]> {
-    return (
-        store.faqs
-            .filter((faq) => faq.deleted_at === null)
-            .filter((faq) => !category || faq.category === category)
-            // 작은 번호를 앞으로 가게 하기
-            .sort((a, b) => a.sort_order - b.sort_order)
-    );
 }
 
 // 새 글 등록에 필요한 값

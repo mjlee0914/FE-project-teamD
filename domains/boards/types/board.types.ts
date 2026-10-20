@@ -18,7 +18,7 @@ export interface CategoryOption {
 export type BoardWriteRole = 'all' | 'user' | 'admin';
 
 // 게시판 구분하기 (boradId 아래에 모두 넣을 예정이기 때문)
-export type BoardType = 'list' | 'faq' | 'qna' | 'gallery';
+export type BoardType = 'list' | 'qna' | 'gallery';
 
 // 게시판과 상품의 연결 방식
 // none: 상품과 무관 / optional: 상품에서 쓴 글과 일반 글이 섞임(qna) / required: 반드시 상품에 속함(review)
@@ -53,6 +53,7 @@ export interface Post {
     author_name: string;
     gid: string; // file_info.gid (첨부/본문 이미지 묶음)
     view_count: number;
+    sort_order?: number; // 수동 정렬 번호
     is_pinned?: boolean; // 공지 고정 여부
     is_secret?: boolean; // qna 비밀글 여부
     thumbnail_url?: string; // 룩북 섬네일
@@ -77,14 +78,14 @@ export interface QnaAnswer {
 }
 
 // 게시물 인터페이스 - FaQ
-// 향후 Supabase faqs 테이블로 생성 예정 (posts와 같은 규칙: UUID, 소프트 삭제)
-export interface FaqItem {
-    id: string; // DB: UUID (mock은 'faq-1' 형태)
-    category: string;
-    question: string;
-    answer: string;
-    sort_order: number; // 게시물 수동 정렬
-    created_at: string;
-    updated_at: string;
-    deleted_at: string | null; // 소프트 삭제: null인 항목만 노출
-}
+// deprecated - QnA 게시판 하위로 통합
+// export interface FaqItem {
+//     id: string; // DB: UUID (mock은 'faq-1' 형태)
+//     category: string;
+//     question: string;
+//     answer: string;
+//     sort_order: number; // 게시물 수동 정렬
+//     created_at: string;
+//     updated_at: string;
+//     deleted_at: string | null; // 소프트 삭제: null인 항목만 노출
+// }

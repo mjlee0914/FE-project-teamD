@@ -2,20 +2,17 @@ import {
     BOARD_SETTINGS,
     BOARD_CATEGORY_ROWS,
     POSTS,
-    FAQS,
 } from '@/shared/mocks/mockData';
 import type {
     BoardSetting,
     BoardCategoryRow,
     Post,
-    FaqItem,
 } from '../types/board.types';
 
 type Store = {
     boards: BoardSetting[];
     categories: BoardCategoryRow[];
     posts: Post[];
-    faqs: FaqItem[];
 };
 const g = globalThis as unknown as { __boardStore?: Store };
 
@@ -24,6 +21,5 @@ const g = globalThis as unknown as { __boardStore?: Store };
 export const store: Store = (g.__boardStore ??= {
     boards: structuredClone(BOARD_SETTINGS),
     posts: structuredClone(POSTS),
-    faqs: structuredClone(FAQS),
     categories: structuredClone(BOARD_CATEGORY_ROWS),
 });

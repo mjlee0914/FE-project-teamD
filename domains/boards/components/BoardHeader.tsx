@@ -7,7 +7,7 @@ interface BoardHeaderProps {
 }
 
 export default function BoardHeader({ board }: BoardHeaderProps) {
-    const isSupport = board.type === 'faq' || board.type === 'qna';
+    const isSupport = board.id === 'faq' || board.type === 'qna';
     const boardTitle = isSupport ? '고객센터' : board.name;
 
     return (
