@@ -211,6 +211,7 @@ export async function updatePost(
     return post;
 }
 
+// 게시물 삭제
 export async function deletePost(
     boardId: string,
     postId: string,

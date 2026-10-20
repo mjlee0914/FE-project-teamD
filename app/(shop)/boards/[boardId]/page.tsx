@@ -10,6 +10,7 @@ import Pagination from '@/domains/boards/components/Pagination';
 import BoardToolbar from '@/domains/boards/components/BoardToolbar';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
 import { canWriteBoard } from '@/domains/boards/lib/permissions';
+import AskQnaBox from '@/domains/boards/components/AskQnaBox';
 
 export default async function BoardPage({
     params,
@@ -68,6 +69,7 @@ export default async function BoardPage({
                         totalPages={result.totalPages}
                         query={{ q: sp.q, category: sp.category }}
                     />
+                    {board.id === 'faq' && <AskQnaBox />}
                 </>
             ) : (
                 // 객체를 글자로 바꾸고(JSON.stringify) JSON 모양 그대로 출력하기(pre)

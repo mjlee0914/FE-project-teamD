@@ -1,6 +1,7 @@
 // 상태나 이벤트 없이 받은 데이터를 화면에 그리기만 합니다. (use client 불필요)
 
 import type { BoardSetting } from '../types/board.types';
+import SupportHomeLink from './SupportHomeLink';
 
 interface BoardHeaderProps {
     board: BoardSetting;
@@ -13,6 +14,7 @@ export default function BoardHeader({ board }: BoardHeaderProps) {
     return (
         // 보드헤더는 게시물이 아닌 게시판을 받습니다.
         <header className="mb-8 border-b pb-6">
+            {isSupport && <SupportHomeLink />}
             <p className="text-muted-foreground text-xs tracking-widest">
                 {board.eyebrow}
             </p>
@@ -20,7 +22,6 @@ export default function BoardHeader({ board }: BoardHeaderProps) {
             <p className="text-muted-foreground mt-2 text-sm">
                 {board.description}
             </p>
-            {/* 탭 표시 예정 */}
         </header>
     );
 }
