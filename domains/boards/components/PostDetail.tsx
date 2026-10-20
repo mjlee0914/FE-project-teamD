@@ -3,6 +3,7 @@ import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, Post } from '../types/board.types';
 import DeleteButton from './DeleteButton';
 import QnaAnswer from './QnaAnswer';
+import AnswerForm from './AnswerForm';
 import { maskName, SECRET_TITLE } from '../lib/mask';
 
 interface PostDetailProps {
@@ -12,6 +13,7 @@ interface PostDetailProps {
     next: Post | null;
     canEdit: boolean;
     canView: boolean;
+    canAnswer: boolean;
 }
 
 // 이벤트가 없어서 use client 불필요
@@ -22,6 +24,7 @@ export default function PostDetail({
     next,
     canEdit,
     canView,
+    canAnswer,
 }: PostDetailProps) {
     const listHref = `/boards/${board.id}`;
     const isQna = board.type === 'qna';
@@ -70,6 +73,13 @@ export default function PostDetail({
                 <p className="border-b px-4 py-5 text-xs text-gray-400">
                     답변 대기 중
                 </p>
+            )}
+            {canAnswer && (
+                <AnswerForm
+                    boardId={board.id}
+                    postId={post.id}
+                    current={post.answer?.content}
+                />
             )}
 
             <ul className="border-b text-xs">

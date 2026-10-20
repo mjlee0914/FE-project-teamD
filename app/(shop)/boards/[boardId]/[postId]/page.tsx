@@ -6,7 +6,11 @@ import {
 } from '@/domains/boards/lib/boardRepository';
 import PostDetail from '@/domains/boards/components/PostDetail';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
-import { canEditPost, canViewPost } from '@/domains/boards/lib/permissions';
+import {
+    canAnswerPost,
+    canEditPost,
+    canViewPost,
+} from '@/domains/boards/lib/permissions';
 
 // 게시글 상세
 export default async function PostPage({
@@ -27,6 +31,7 @@ export default async function PostPage({
     const user = await getCurrentUser();
     const canEdit = canEditPost(post, user);
     const canView = canViewPost(post, user);
+    const canAnswer = canAnswerPost(board, user);
 
     const { prev, next } = await getAdjacentPosts(boardId, postId);
 
@@ -39,6 +44,7 @@ export default async function PostPage({
                 next={next}
                 canEdit={canEdit}
                 canView={canView}
+                canAnswer={canAnswer}
             />
         </div>
     );

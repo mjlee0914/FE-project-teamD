@@ -240,3 +240,31 @@ export async function getBoardCategories(
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((c) => ({ id: c.id, name: c.name }));
 }
+
+// Q&A 답변 저장 (글당 1개, 이미 글이 있으면 덮어쓰기(수정))
+export async function saveAnswer(
+    boardId: string,
+    postId: string,
+    content: string,
+    answeredBy: string,
+): Promise<boolean> {
+    const post = store.posts.find(
+        (p) =>
+            p.id === postId && p.board_id === boardId && p.deleted_at === null,
+    );
+    if (!post) return false;
+
+    const now = new Date().toISOString();
+    const prev = post.answer;
+
+    post.answer = prev
+        ? // 수정: 최초 답변 정보는 유지하고 내용과 수정 시간만 변경
+          { ...prev, content, updated_at: now }
+        : // 최초 등록
+          {
+              content,
+              answered_by: answeredBy,
+              answered_at: new Date().toISOString(),
+          };
+    return true;
+}

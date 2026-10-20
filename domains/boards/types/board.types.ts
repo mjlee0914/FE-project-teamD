@@ -83,6 +83,7 @@ export interface QnaAnswer {
     content: string;
     answered_by: string;
     answered_at: string;
+    updated_at?: string;
 }
 
 // 게시물 인터페이스 - FaQ
