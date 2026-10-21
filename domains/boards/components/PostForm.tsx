@@ -3,11 +3,7 @@
 import Link from 'next/link';
 import { useActionState } from 'react';
 import type { ReactNode } from 'react';
-import type {
-    BoardSetting,
-    CategoryOption,
-    Post,
-} from '../types/board.types';
+import type { BoardSetting, CategoryOption, Post } from '../types/board.types';
 import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
 import { createPostAction } from '../actions/createPost.action';
 import { updatePostAction } from '../actions/updatePost.action';
@@ -125,7 +121,27 @@ export default function PostForm({
                     />
                 </FormRow>
 
-                {/* 첨부파일 구역은 나중에 추가 */}
+                {board.type === 'gallery' && (
+                    <FormRow
+                        label="이미지"
+                        htmlFor="image"
+                        error={errors?.image}
+                    >
+                        <input
+                            id="image"
+                            name="image"
+                            type="file"
+                            accept="image/*"
+                            className="text-xs file:mr-3 file:cursor-pointer file:border file:border-black file:bg-white file:px-3 file:py-1.5 file:text-xs"
+                        />
+                        {post?.thumbnail_url && (
+                            <p className="mt-1 text-xs text-gray-500">
+                                현재 이미지가 있습니다. 새로 업로드하면
+                                교체됩니다.
+                            </p>
+                        )}
+                    </FormRow>
+                )}
 
                 {board.use_secret && (
                     <FormRow label="옵션">

@@ -11,6 +11,8 @@ import {
 import { getCurrentUser } from '../lib/currentUser';
 import { canWriteBoard } from '../lib/permissions';
 import { validatePost } from '../lib/validatePost';
+import { toDataUrl } from '../lib/imageUpload';
+import { pickImage } from '../lib/imageUpload';
 
 // 공개요청
 export async function createPostAction(
@@ -55,6 +57,10 @@ export async function createPostAction(
     const gid = String(formData.get('gid') ?? '');
     if (!gid) return fail({ form: '잘못된 요청입니다.' });
 
+    // 3-1) 이미지 확인
+    const image = pickImage(formData);
+    const thumbnailUrl = image ? await toDataUrl(image) : undefined;
+
     // 4) 저장
     await createPost({
         boardId: board.id,
@@ -65,6 +71,7 @@ export async function createPostAction(
         gid,
         categoryId: board.use_category ? values.category : undefined,
         isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
+        thumbnailUrl,
     });
 
     // 5) 목록 캐시 갱신 후 목록 이동
@@ -73,5 +80,6 @@ export async function createPostAction(
     //  - 저장은 try/catch로 감싸더라도 redirect는 그 밖이나 맨 마지막에 호출해야 함
 
     revalidatePath(`/boards/${board.id}`);
+    revalidatePath('/'); // 홈 배너 갱신 (이벤트 게시판일 때만 해도 됨: if (board.id === 'events'))
     redirect(`/boards/${board.id}`);
 }

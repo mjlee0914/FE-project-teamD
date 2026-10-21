@@ -31,3 +31,11 @@ export function canViewPost(post: Post, user: BoardUser | null): boolean {
     if (!user) return false;
     return user.role === 'admin' || post.user_id === user.id;
 }
+
+// 답변 권한: Q&A 게시판에서 관리자만 답변 가능
+export function canAnswerPost(
+    board: BoardSetting,
+    user: BoardUser | null,
+): boolean {
+    return board.type === 'qna' && user?.role === 'admin';
+}

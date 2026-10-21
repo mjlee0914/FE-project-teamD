@@ -2,10 +2,11 @@ import { Suspense } from 'react';
 import { getCategoryProducts } from '@/domains/categories/queries/getCategoryProducts.query';
 import type { Product } from '@/domains/products/types/product.types';
 import ProductListClient from './ProductListClient';
+import { getCategories } from '@/domains/categories/queries/getCategories.query';
 
 export default async function ProductsPage() {
-    
     const data = await getCategoryProducts();
+    const categories = await getCategories();
 
     const products: Product[] = data.flatMap((item): Product[] => {
         if (item.name == null || item.price == null) {
@@ -27,10 +28,12 @@ export default async function ProductsPage() {
         ];
     });
 
-
     return (
         <Suspense fallback={<p>상품 목록을 불러오는 중...</p>}>
-            <ProductListClient dbProducts={products} />
+            <ProductListClient
+                dbProducts={products}
+                dbCategories={categories}
+            />
         </Suspense>
     );
 }
