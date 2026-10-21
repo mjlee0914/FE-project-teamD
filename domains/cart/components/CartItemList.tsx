@@ -1,16 +1,20 @@
 'use client';
 
 import { formatPrice } from '@/shared/utils/formatPrice';
-import { MOCK_CART_ITEMS } from '@/shared/mocks/mockData';
 import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
 import { useState } from 'react';
 import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { CartItem } from '@/domains/cart/types/cart.types';
 
-export default function CartItemList() {
-    const [items, setItems] = useState(MOCK_CART_ITEMS);
+export default function CartItemList({
+    initialItems,
+}: {
+    initialItems: CartItem[];
+}) {
+    const [items, setItems] = useState(initialItems);
     const [payMessage, setPayMessage] = useState<string | null>(null);
     const router = useRouter();
 
@@ -87,14 +91,22 @@ export default function CartItemList() {
                             className="flex items-center gap-6 border-b py-4"
                             key={item.product.id}
                         >
-                            <Image
-                                className="h-24 w-24 shrink-0 md:h-36 md:w-36"
-                                src={item.product.imageUrl}
-                                alt="상품이미지"
-                                width={150}
-                                height={150}
-                                unoptimized
-                            ></Image>
+                            {item.product.imageUrl ? (
+                                <Image
+                                    className="h-24 w-24 shrink-0 md:h-36 md:w-36"
+                                    src={item.product.imageUrl}
+                                    alt="상품이미지"
+                                    width={150}
+                                    height={150}
+                                    unoptimized
+                                ></Image>
+                            ) : (
+                                <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border md:h-36 md:w-36">
+                                    <span className="text-gray-400">
+                                        이미지 준비중
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-4">
                                 <p className="font-medium md:flex-1">
                                     상 품 명: {item.product.name}

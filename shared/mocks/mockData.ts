@@ -628,14 +628,20 @@ export const MOCK_PRODUCTS: Product[] = [
 // 장바구니 Mock Data
 export const MOCK_CART_ITEMS: CartItem[] = [
     {
+        id: 'mock-cart-1',
+        option: null,
         product: MOCK_PRODUCTS[0],
         quantity: 2,
     },
     {
+        id: 'mock-cart-2',
+        option: null,
         product: MOCK_PRODUCTS[1],
         quantity: 1,
     },
     {
+        id: 'mock-cart-3',
+        option: null,
         product: MOCK_PRODUCTS[2],
         quantity: 3,
     },
