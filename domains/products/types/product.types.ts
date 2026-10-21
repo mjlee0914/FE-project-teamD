@@ -2,7 +2,7 @@ import { Category } from '@/domains/categories/types/category.types';
 
 export interface Product {
     id: string; // 상품 고유 식별자
-    gid: string; // ERD의 file_info.gid와 연결하는 파일 그룹 ID
+    gid: number; // ERD의 file_info.gid와 연결하는 파일 그룹 ID
     name: string; // 상품명
     price: number; // 가격 (원화 기준 숫자)
     category_id: string; // 카테고리 분류
