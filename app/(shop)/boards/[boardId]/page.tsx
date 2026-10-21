@@ -13,7 +13,7 @@ import { canWriteBoard } from '@/domains/boards/lib/permissions';
 import AskQnaBox from '@/domains/boards/components/AskQnaBox';
 import PostGallery from '@/domains/boards/components/PostGallery';
 import Link from 'next/link';
-import { getProductnamesByIds } from '@/domains/products/queries/getProductById.query';
+import { getProductNamesByIds } from '@/domains/products/queries/getProductNamesByIds.query';
 
 export default async function BoardPage({
     params,
@@ -60,7 +60,7 @@ export default async function BoardPage({
 
     const productNames =
         board.product_scope && board.product_scope !== 'none'
-            ? await getProductnamesByIds(productIds)
+            ? await getProductNamesByIds(productIds)
             : {};
 
     return (
