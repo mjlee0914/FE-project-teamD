@@ -2,7 +2,6 @@
 
 import { Input } from '@/shared/components/ui/input';
 import { CiSearch } from 'react-icons/ci';
-import { MOCK_CATEGORIES } from '@/shared/mocks/mockData';
 import type { Product } from '@/domains/products/types/product.types';
 import CategoryTree from '@/domains/categories/components/CategoryTree';
 import { useSearchParams } from 'next/navigation';
@@ -12,10 +11,16 @@ import Link from 'next/link';
 import { useState, type FormEvent, useRef } from 'react';
 import { Category } from '@/domains/categories/types/category.types';
 
-export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
+export default function ProductList({
+    dbProducts,
+    dbCategories,
+}: {
+    dbProducts: Product[];
+    dbCategories: Category[];
+}) {
     const searchParams = useSearchParams();
     const categoryId = searchParams.get('categoryId');
-    const page = Number(searchParams.get('page') ?? 1);
+    const requestedPage = Number(searchParams.get('page') ?? 1);
 
     const [searchKeyword, setSearchKeyword] = useState('');
     const [priceRange, setPriceRange] = useState<{
@@ -65,7 +70,7 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
 
     function findAllChildCategoryId(
         parentId: string,
-        categories: Category[] = MOCK_CATEGORIES,
+        categories: Category[] = dbCategories,
     ): string[] {
         for (const category of categories) {
             if (category.id === parentId) {
@@ -112,6 +117,11 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
     const pageSize = 9;
     const totalPage = Math.ceil(priceProducts.length / pageSize);
 
+    const page =
+        Number.isInteger(requestedPage) && requestedPage > 0
+            ? Math.min(requestedPage, Math.max(totalPage, 1))
+            : 1;
+
     const startIndex = (page - 1) * pageSize;
     const pageProducts = priceProducts.slice(startIndex, startIndex + pageSize);
 
@@ -120,7 +130,7 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
             {/* 좌측 메뉴 */}
             <aside>
                 <CategoryTree
-                    categories={MOCK_CATEGORIES}
+                    categories={dbCategories}
                     selectedCategoryId={categoryId ?? undefined}
                 />
                 <div className="border-t border-gray-300 pt-4">
