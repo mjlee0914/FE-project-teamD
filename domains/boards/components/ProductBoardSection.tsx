@@ -15,7 +15,7 @@ export default async function ProductBoardSection({
     productId,
     emptyText,
 }: ProductBoardSectionProps) {
-    const { items, total } = await getPosts({
+    const { items } = await getPosts({
         boardId,
         productId,
         pageSize: 5,
@@ -68,7 +68,7 @@ export default async function ProductBoardSection({
                     href={`/boards/${boardId}?productId=${productId}`}
                     className="text-xs underline"
                 >
-                    전체 보기 → ({total})
+                    전체 보기
                 </Link>
             </div>
         </div>

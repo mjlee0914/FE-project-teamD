@@ -13,6 +13,7 @@ import { canWriteBoard } from '@/domains/boards/lib/permissions';
 import AskQnaBox from '@/domains/boards/components/AskQnaBox';
 import PostGallery from '@/domains/boards/components/PostGallery';
 import Link from 'next/link';
+import { getProductnamesByIds } from '@/domains/products/queries/getProductById.query';
 
 export default async function BoardPage({
     params,
@@ -53,6 +54,15 @@ export default async function BoardPage({
     // 분류 목록
     const categories = await getBoardCategories(boardId);
 
+    const productIds = result.items
+        .map((p) => p.product_id)
+        .filter((id): id is string => !!id);
+
+    const productNames =
+        board.product_scope && board.product_scope !== 'none'
+            ? await getProductnamesByIds(productIds)
+            : {};
+
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <BoardHeader board={board} />
@@ -65,7 +75,7 @@ export default async function BoardPage({
                                 href={`/boards/${boardId}`}
                                 className="underline"
                             >
-                                전체 글 보기
+                                전체 상품 리뷰 보기
                             </Link>
                         </p>
                     )}
@@ -74,6 +84,7 @@ export default async function BoardPage({
                         board={board}
                         q={sp.q}
                         category={sp.category}
+                        productId={sp.productId}
                         canWrite={canWrite}
                         categories={categories}
                     />
@@ -84,6 +95,7 @@ export default async function BoardPage({
                         page={result.page}
                         pageSize={result.pageSize}
                         categories={categories}
+                        productNames={productNames}
                     />
                     <Pagination
                         basePath={`/boards/${board.id}`}

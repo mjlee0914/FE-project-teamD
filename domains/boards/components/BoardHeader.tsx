@@ -1,7 +1,6 @@
 // 상태나 이벤트 없이 받은 데이터를 화면에 그리기만 합니다. (use client 불필요)
 
 import type { BoardSetting } from '../types/board.types';
-import { BOARD_GROUPS } from '../lib/boardGroups';
 import GroupHomeLink from './GroupHomeLink';
 
 interface BoardHeaderProps {
@@ -9,9 +8,6 @@ interface BoardHeaderProps {
 }
 
 export default function BoardHeader({ board }: BoardHeaderProps) {
-    // 그룹(고객센터·커뮤니티)에 속한 게시판이면 설정을 가져옴 (이전에는 board.id === 'faq' 같은 하드코딩)
-    const group = board.group ? BOARD_GROUPS[board.group] : null;
-
     const boardTitle = board.name;
 
     return (
