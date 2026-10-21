@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { MOCK_USERS } from '@/shared/mocks/mockData';
+import { MOCK_USERS } from '../mocks/users';
 
 // 현재 로그인한 사용자 (mock)
 // 팀 로그인(login.action.ts)은 쿠키 'userName'에 이름만 저장하고 User에 role이 없어서,

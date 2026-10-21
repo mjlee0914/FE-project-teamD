@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatDate } from '../lib/formatDate';
 import type { Post } from '../types/board.types';
+import { toImageSrc } from '../lib/imageUpload';
 
 interface PostCardProps {
     boardId: string;
@@ -17,7 +18,7 @@ export default function PostCard({
     aspect,
     categoryName,
 }: PostCardProps) {
-    const src = post.thumbnail_url?.replace(/^public\//, '/');
+    const src = toImageSrc(post.thumbnail_url);
 
     return (
         <Link href={`/boards/${boardId}/${post.id}`} className="group block">
@@ -29,6 +30,7 @@ export default function PostCard({
                         fill
                         sizes="(max-width: 768px) 50vw, 25vw"
                         className="object-cover transition group-hover:opacity-80"
+                        unoptimized={src.startsWith('data:')}
                     />
                 ) : (
                     <div className="flex h-full items-center justify-center text-xs text-gray-400">
@@ -42,7 +44,7 @@ export default function PostCard({
                         {categoryName}
                     </span>
                 )}
-                s{post.title}
+                {post.title}
             </p>
             <p className="text-xs text-gray-500">
                 {post.author_name} · {formatDate(post.created_at)}
