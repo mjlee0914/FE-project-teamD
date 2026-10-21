@@ -1,13 +1,13 @@
 'use client';
 
 import ProductTable from '@/domains/admin/products/components/ProductTable';
-import { MOCK_PRODUCTS } from '@/shared/mocks/mockData';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Product } from '@/domains/products/types/product.types';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import ProductModal from '@/domains/admin/products/components/ProductEditModal';
 import type { ProductFormValues } from '@/domains/admin/products/components/ProductEditModal';
+import { getProductList } from '@/domains/admin/products/actions/product.action';
 
 export default function AdminProductsPage() {
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -15,6 +15,8 @@ export default function AdminProductsPage() {
     const [selectedProduct, setSelectedProduct] = useState<
         Product | undefined
     >();
+
+    const [products, setProducts] = useState<Product[]>([]);
 
     function handleAdd() {
         setSelectedProduct(undefined);
@@ -43,13 +45,20 @@ export default function AdminProductsPage() {
         setSearchKeyword(keyword.trim());
     }
 
-    const porducts = searchKeyword
-        ? MOCK_PRODUCTS.filter((product) =>
-              product.name
-                  .toLowerCase()
-                  .includes(searchKeyword.toLocaleLowerCase()),
-          )
-        : MOCK_PRODUCTS;
+    useEffect(() => {
+        async function loadProducts() {
+            const { data, error } = await getProductList(searchKeyword);
+
+            if (error) {
+                alert('에러가 발생하였습니다.');
+                return;
+            }
+
+            setProducts(data ?? []);
+        }
+
+        loadProducts();
+    }, [searchKeyword]);
 
     return (
         <section className="space-y-6">
@@ -104,11 +113,11 @@ export default function AdminProductsPage() {
                 <h2 className="text-sm font-semibold text-gray-700">
                     검색 결과{' '}
                     <span className="ml-1 text-gray-950 tabular-nums">
-                        {porducts.length}건
+                        {products.length}건
                     </span>
                 </h2>
                 <ProductTable
-                    products={porducts}
+                    products={products}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                 />

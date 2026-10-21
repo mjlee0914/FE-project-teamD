@@ -18,6 +18,8 @@ import {
     NativeSelect,
     NativeSelectOption,
 } from '@/shared/components/ui/native-select';
+import { Category } from '@/domains/categories/types/category.types';
+import { getParentCategoryList } from '../../category/actions/category.action';
 
 export interface ProductFormValues {
     name: string;
@@ -46,11 +48,26 @@ function ProductImageInput({ product }: { product?: Product }) {
     } | null>(null);
     const [error, setError] = useState('');
     const preview = selection?.url ?? product?.imageUrl;
+    const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
         if (!selection) return;
         return () => URL.revokeObjectURL(selection.url);
     }, [selection]);
+
+    useEffect(() => {
+        async function loadCategories() {
+            const { data, error } = await getParentCategoryList('MAIN');
+
+            if (error) {
+                alert('오류가 발생하였습니다.');
+                return;
+            }
+
+            setCategories(data);
+        }
+        loadCategories();
+    }, [categories]);
 
     return (
         <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
