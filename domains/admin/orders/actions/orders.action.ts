@@ -19,3 +19,12 @@ export async function getOrderList({
 
     return await query.order('created_at', { ascending: false });
 }
+
+export async function getOrderListByLimit(limit: number) {
+    const supabase = createServerClient();
+    return await supabase
+        .from('orders')
+        .select('*')
+        .limit(limit)
+        .order('created_at', { ascending: false });
+}
