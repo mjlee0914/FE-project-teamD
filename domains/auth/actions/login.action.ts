@@ -2,6 +2,7 @@
 
 import { LoginFormValues } from '@/domains/auth/types/auth.types';
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import { createServerClient } from '@/lib/supabase';
 
 export async function login(values: LoginFormValues) {
@@ -36,6 +37,9 @@ export async function login(values: LoginFormValues) {
 
     const cookieStore = await cookies();
     cookieStore.set('userName', profile?.username ?? '');
+
+    // 로그인했으니 브라우저가 기억해 둔 예전 화면(로그아웃 상태)을 버린다
+    revalidatePath('/', 'layout');
 
     return null;
 }
