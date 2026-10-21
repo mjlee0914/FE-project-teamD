@@ -3,11 +3,12 @@
 import { formatPrice } from '@/shared/utils/formatPrice';
 import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
-import { useState } from 'react';
 import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CartItem } from '@/domains/cart/types/cart.types';
+import { useState, useTransition } from 'react';
+import { removeCartItem } from '@/domains/cart/actions/removeCartItem.action';
 
 export default function CartItemList({
     initialItems,
@@ -17,6 +18,7 @@ export default function CartItemList({
     const [items, setItems] = useState(initialItems);
     const [payMessage, setPayMessage] = useState<string | null>(null);
     const router = useRouter();
+    const [isPending, startTransition] = useTransition();
 
     function changeQuantity(id: string, amount: number) {
         setItems(
@@ -34,8 +36,15 @@ export default function CartItemList({
         );
     }
 
-    function removeCartItem(id: string) {
-        setItems(items.filter((item) => item.product.id !== id));
+    function handleRemove(cartItemId: string) {
+        startTransition(async () => {
+            const result = await removeCartItem(cartItemId);
+            if (result.success) {
+                setItems(items.filter((item) => item.id !== cartItemId));
+            } else {
+                alert(result.message);
+            }
+        });
     }
     const totalPrice = items.reduce(
         (sum, item) => sum + item.product.price * item.quantity,
@@ -89,7 +98,7 @@ export default function CartItemList({
                     return (
                         <li
                             className="flex items-center gap-6 border-b py-4"
-                            key={item.product.id}
+                            key={item.id}
                         >
                             {item.product.imageUrl ? (
                                 <Image
@@ -110,6 +119,12 @@ export default function CartItemList({
                             <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-4">
                                 <p className="font-medium md:flex-1">
                                     상 품 명: {item.product.name}
+                                    {/* 옵션이 있을 때만 보여준다 */}
+                                    {item.option && (
+                                        <span className="block text-sm font-normal text-gray-500">
+                                            옵션: {item.option}
+                                        </span>
+                                    )}
                                 </p>
                                 <p className="text-sm text-gray-500">
                                     단 가: {formatPrice(item.product.price)}
@@ -150,7 +165,8 @@ export default function CartItemList({
                                 variant="ghost"
                                 size="icon-sm"
                                 type="button"
-                                onClick={() => removeCartItem(item.product.id)}
+                                disabled={isPending}
+                                onClick={() => handleRemove(item.id)}
                             >
                                 ×
                             </Button>
