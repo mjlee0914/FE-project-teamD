@@ -4,12 +4,16 @@ import { cn } from '@/shared/utils/cn';
 import Link from 'next/link';
 import { LuShoppingCart, LuUser, LuSearch } from 'react-icons/lu';
 import { PiListBold } from 'react-icons/pi';
-import useCartStore from '../store/useCartStore';
 import { MOCK_CATEGORIES } from '../mocks/mockData';
 import { logout } from '@/domains/auth/actions/logout.action';
 
-export default function Header({ userName }: { userName: string | null }) {
-    const cartCount = useCartStore((state) => state.count);
+export default function Header({
+    userName,
+    cartCount,
+}: {
+    userName: string | null;
+    cartCount: number;
+}) {
     return (
         <>
             <header

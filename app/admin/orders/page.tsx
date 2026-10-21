@@ -1,20 +1,21 @@
 'use client';
 
-import { MOCK_ORDER } from '@/shared/mocks/mockData';
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useEffect } from 'react';
 import { Order } from '@/domains/orders/types/order.types';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import OrderInfoModal from '@/domains/admin/orders/components/OrderInfoModal';
 import OrderTable from '@/domains/admin/orders/components/OrderTable';
+import { getOrderList } from '@/domains/admin/orders/actions/orders.action';
 
 export default function AdminOrderPage() {
     const [search, setSearch] = useState({
-        id: '',
-        status: '',
+        searchName: '',
+        searchStatus: '',
     });
     const [open, setOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState<Order | undefined>();
+    const [orders, setOrders] = useState<Order[]>([]);
 
     function handleSearch(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -22,8 +23,8 @@ export default function AdminOrderPage() {
         const formData = new FormData(event.currentTarget);
 
         setSearch({
-            id: String(formData.get('searchId') ?? '').trim(),
-            status: String(formData.get('searchStatus') ?? '').trim(),
+            searchName: String(formData.get('searchName') ?? '').trim(),
+            searchStatus: String(formData.get('searchStatus') ?? '').trim(),
         });
     }
 
@@ -32,15 +33,18 @@ export default function AdminOrderPage() {
         setOpen(true);
     }
 
-    const orders = MOCK_ORDER.filter((order) => {
-        const matchesId = order.id
-            .toLowerCase()
-            .includes(search.id.toLowerCase());
+    useEffect(() => {
+        async function loadOrders() {
+            const { data, error } = await getOrderList(search);
 
-        const matchesStatus = order.status.includes(search.status);
-
-        return matchesId && matchesStatus;
-    });
+            if (!error) {
+                setOrders(data ?? []);
+            } else {
+                alert('오류가 발생하였습니다.');
+            }
+        }
+        loadOrders();
+    }, [search]);
 
     return (
         <section className="space-y-6">
@@ -60,11 +64,11 @@ export default function AdminOrderPage() {
                 <div className="grid grid-cols-1 gap-5 p-5 md:grid-cols-2">
                     <label className="min-w-0 space-y-2">
                         <span className="block text-sm font-medium text-gray-700">
-                            주문 번호
+                            주문자명
                         </span>
                         <Input
                             type="text"
-                            name="searchId"
+                            name="searchName"
                             className="h-10 border-gray-300 bg-white"
                         />
                     </label>

@@ -1,8 +1,12 @@
-import { MOCK_ORDER } from '@/shared/mocks/mockData';
+'use client';
+
 import Link from 'next/link';
 import { ArrowUpRight, Bell, ShoppingBag } from 'lucide-react';
 import { formatDate } from '@/shared/utils/formatDate';
 import { formatPrice } from '@/shared/utils/formatPrice';
+import { useEffect, useState } from 'react';
+import { getOrderListByLimit } from '@/domains/admin/orders/actions/orders.action';
+import { Order } from '@/domains/orders/types/order.types';
 
 const NOTIFICATION_LIMIT = 5;
 
@@ -16,9 +20,22 @@ const statusStyles: Record<string, string> = {
 };
 
 export default function AdminPage() {
-    const recentOrders = [...MOCK_ORDER]
-        .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
-        .slice(0, NOTIFICATION_LIMIT);
+    const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+    useEffect(() => {
+        async function loadOrderListByLimit() {
+            const { data, error } =
+                await getOrderListByLimit(NOTIFICATION_LIMIT);
+
+            if (error) {
+                alert('오류가 발생하였습니다.');
+                return;
+            }
+
+            setRecentOrders(data ?? []);
+        }
+
+        loadOrderListByLimit();
+    }, []);
 
     return (
         <section className="space-y-6">
@@ -77,7 +94,7 @@ export default function AdminPage() {
                                         {order.order_name}님의 주문
                                     </p>
                                     <span
-                                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[order.status] ?? 'bg-gray-100 text-gray-700 ring-gray-200'}`}
+                                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[order.status ?? ''] ?? 'bg-gray-100 text-gray-700 ring-gray-200'}`}
                                     >
                                         {order.status}
                                     </span>
@@ -86,14 +103,15 @@ export default function AdminPage() {
                                     주문 번호 · {order.id}
                                 </p>
                                 <div className="flex flex-wrap items-center justify-between gap-2">
-                                    <time
-                                        dateTime={order.created_at}
-                                        className="text-xs text-gray-400"
-                                    >
-                                        {formatDate(order.created_at)}
-                                    </time>
+                                    <div className="text-xs text-gray-400">
+                                        {order.created_at
+                                            ? formatDate(order.created_at)
+                                            : '-'}
+                                    </div>
                                     <span className="text-sm font-semibold text-gray-900 tabular-nums">
-                                        {formatPrice(order.final_price)}
+                                        {order.final_price !== null
+                                            ? formatPrice(order.final_price)
+                                            : '-'}
                                     </span>
                                 </div>
                             </div>

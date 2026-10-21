@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import Image from 'next/image';
-import useCartStore from '@/shared/store/useCartStore';
+import { addToCart } from '@/domains/cart/actions/addToCart.action';
 
 import CartSuccessDialog from './CartSuccessDialog';
 import type { Product } from '@/domains/products/types/product.types';
@@ -32,8 +32,7 @@ export default function ProductDetail({
     );
     const [popupOpen, setPopupOpen] = useState(false);
 
-    const setCartCount = useCartStore((state) => state.setCount);
-    const cartCount = useCartStore((state) => state.count);
+    const [isAdding, startTransition] = useTransition();
 
     // 상품별 색상과 이미지 설정
     const colorsByProduct: Record<
@@ -165,9 +164,29 @@ export default function ProductDetail({
         setSize('');
     };
 
+    // CART 버튼: 고른 옵션마다 장바구니(DB)에 담는다
     const onClickCart = () => {
-        setCartCount(cartCount + 1);
-        setPopupOpen(true);
+        if (selectedOptions.length === 0) {
+            alert('옵션을 선택해 주세요.');
+            return;
+        }
+
+        startTransition(async () => {
+            for (const option of selectedOptions) {
+                const result = await addToCart(
+                    product.id,
+                    option.quantity,
+                    `${option.color} / ${option.size}`,
+                );
+
+                if (!result.success) {
+                    alert(result.message);
+                    return;
+                }
+            }
+
+            setPopupOpen(true);
+        });
     };
 
     // 선택한 모든 옵션의 총금액
@@ -365,6 +384,7 @@ export default function ProductDetail({
                         type="button"
                         className="col-span-1 h-16 cursor-pointer border border-black bg-white text-base font-semibold text-black transition-colors hover:bg-gray-100 active:bg-gray-200"
                         onClick={onClickCart}
+                        disabled={isAdding}
                     >
                         CART
                     </button>

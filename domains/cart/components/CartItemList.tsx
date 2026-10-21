@@ -1,37 +1,59 @@
 'use client';
 
 import { formatPrice } from '@/shared/utils/formatPrice';
-import { MOCK_CART_ITEMS } from '@/shared/mocks/mockData';
 import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
-import { useState } from 'react';
 import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { CartItem } from '@/domains/cart/types/cart.types';
+import { useState, useTransition } from 'react';
+import { removeCartItem } from '@/domains/cart/actions/removeCartItem.action';
+import { updateCartQuantity } from '@/domains/cart/actions/updateCartQuantity.action';
 
-export default function CartItemList() {
-    const [items, setItems] = useState(MOCK_CART_ITEMS);
+export default function CartItemList({
+    initialItems,
+}: {
+    initialItems: CartItem[];
+}) {
+    const [items, setItems] = useState(initialItems);
     const [payMessage, setPayMessage] = useState<string | null>(null);
     const router = useRouter();
+    const [isPending, startTransition] = useTransition();
 
-    function changeQuantity(id: string, amount: number) {
-        setItems(
-            items.map((item) =>
-                item.product.id === id
-                    ? {
-                          ...item,
-                          quantity: Math.min(
-                              99,
-                              Math.max(item.quantity + amount, 1),
-                          ),
-                      }
-                    : item,
-            ),
-        );
+    function changeQuantity(cartItemId: string, amount: number) {
+        const target = items.find((item) => item.id === cartItemId);
+        if (!target) return;
+        const newQuantity = target.quantity + amount;
+        if (newQuantity < 1 || newQuantity > 99) {
+            alert('수량은 1~99까지 선택가능합니다.');
+            return;
+        }
+        startTransition(async () => {
+            const result = await updateCartQuantity(cartItemId, newQuantity);
+            if (result.success) {
+                setItems(
+                    items.map((item) =>
+                        item.id === cartItemId
+                            ? { ...item, quantity: newQuantity }
+                            : item,
+                    ),
+                );
+            } else {
+                alert(result.message);
+            }
+        });
     }
 
-    function removeCartItem(id: string) {
-        setItems(items.filter((item) => item.product.id !== id));
+    function handleRemove(cartItemId: string) {
+        startTransition(async () => {
+            const result = await removeCartItem(cartItemId);
+            if (result.success) {
+                setItems(items.filter((item) => item.id !== cartItemId));
+            } else {
+                alert(result.message);
+            }
+        });
     }
     const totalPrice = items.reduce(
         (sum, item) => sum + item.product.price * item.quantity,
@@ -85,19 +107,33 @@ export default function CartItemList() {
                     return (
                         <li
                             className="flex items-center gap-6 border-b py-4"
-                            key={item.product.id}
+                            key={item.id}
                         >
-                            <Image
-                                className="h-24 w-24 shrink-0 md:h-36 md:w-36"
-                                src={item.product.imageUrl}
-                                alt="상품이미지"
-                                width={150}
-                                height={150}
-                                unoptimized
-                            ></Image>
+                            {item.product.imageUrl ? (
+                                <Image
+                                    className="h-24 w-24 shrink-0 md:h-36 md:w-36"
+                                    src={item.product.imageUrl}
+                                    alt="상품이미지"
+                                    width={150}
+                                    height={150}
+                                    unoptimized
+                                ></Image>
+                            ) : (
+                                <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border md:h-36 md:w-36">
+                                    <span className="text-gray-400">
+                                        이미지 준비중
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-4">
                                 <p className="font-medium md:flex-1">
                                     상 품 명: {item.product.name}
+                                    {/* 옵션이 있을 때만 보여준다 */}
+                                    {item.option && (
+                                        <span className="block text-sm font-normal text-gray-500">
+                                            옵션: {item.option}
+                                        </span>
+                                    )}
                                 </p>
                                 <p className="text-sm text-gray-500">
                                     단 가: {formatPrice(item.product.price)}
@@ -107,8 +143,9 @@ export default function CartItemList() {
                                         variant="outline"
                                         size="icon-sm"
                                         type="button"
+                                        disabled={isPending}
                                         onClick={() =>
-                                            changeQuantity(item.product.id, -1)
+                                            changeQuantity(item.id, -1)
                                         }
                                     >
                                         -
@@ -120,8 +157,9 @@ export default function CartItemList() {
                                         variant="outline"
                                         size="icon-sm"
                                         type="button"
+                                        disabled={isPending}
                                         onClick={() =>
-                                            changeQuantity(item.product.id, +1)
+                                            changeQuantity(item.id, +1)
                                         }
                                     >
                                         +
@@ -138,7 +176,8 @@ export default function CartItemList() {
                                 variant="ghost"
                                 size="icon-sm"
                                 type="button"
-                                onClick={() => removeCartItem(item.product.id)}
+                                disabled={isPending}
+                                onClick={() => handleRemove(item.id)}
                             >
                                 ×
                             </Button>
