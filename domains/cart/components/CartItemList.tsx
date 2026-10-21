@@ -4,11 +4,11 @@ import { formatPrice } from '@/shared/utils/formatPrice';
 import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { CartItem } from '@/domains/cart/types/cart.types';
 import { useState, useTransition } from 'react';
 import { removeCartItem } from '@/domains/cart/actions/removeCartItem.action';
 import { updateCartQuantity } from '@/domains/cart/actions/updateCartQuantity.action';
+import useCheckoutStore from '@/domains/orders/store/useCheckoutStore';
 
 export default function CartItemList({
     initialItems,
@@ -16,8 +16,11 @@ export default function CartItemList({
     initialItems: CartItem[];
 }) {
     const [items, setItems] = useState(initialItems);
-    const [payMessage, setPayMessage] = useState<string | null>(null);
     const router = useRouter();
+    const setCheckoutItems = useCheckoutStore(
+        (state) => state.setCheckoutItems,
+    );
+
     const [isPending, startTransition] = useTransition();
 
     function changeQuantity(cartItemId: string, amount: number) {
@@ -62,33 +65,10 @@ export default function CartItemList({
     const shippingFee = totalPrice === 0 || totalPrice >= 50000 ? 0 : 3000;
     const finalPrice = totalPrice - discountPrice + shippingFee;
 
-    function handlePay(formData: FormData) {
-        const recipient = String(formData.get('recipient'));
-        const phone = String(formData.get('phone'));
-        const address = String(formData.get('address'));
-        const addressDetail = String(formData.get('addressDetail'));
-        const zipcode = String(formData.get('zipcode'));
-
-        if (
-            recipient === '' ||
-            phone === '' ||
-            address === '' ||
-            addressDetail === '' ||
-            zipcode === ''
-        ) {
-            setPayMessage('빈칸을 입력해 주세요');
-            return;
-        }
-        if (!/^\d{5}$/.test(zipcode)) {
-            setPayMessage('우편번호는 숫자 5자리로 입력해 주세요.');
-            return;
-        }
-        if (!/^010\d{8}$/.test(phone)) {
-            setPayMessage('휴대전화는 010으로 시작합니다');
-            return;
-        }
-
-        router.push('/order/complete');
+    // 주문서 작성하기: 장바구니 목록을 체크아웃 저장소에 넘기고 이동
+    function goCheckout() {
+        setCheckoutItems(items);
+        router.push('/checkout');
     }
 
     return (
@@ -185,7 +165,7 @@ export default function CartItemList({
                 })}
             </ul>
             {items.length > 0 && (
-                <form action={handlePay} className="mt-10">
+                <div className="mt-10">
                     <div className="my-8 flex flex-wrap items-center justify-center gap-20 rounded-lg border p-10">
                         <div className="flex flex-col items-end gap-1">
                             <p className="text-sm text-gray-500">상품 금액</p>
@@ -221,17 +201,14 @@ export default function CartItemList({
                             </p>
                         </div>
                     </div>
-                    <Link href="/checkout">
-                        <Button type="submit" className="h-12 w-full text-base">
-                            주문서 작성하기
-                        </Button>
-                    </Link>
-                    {payMessage && (
-                        <p className="py-4 text-center text-red-600">
-                            {payMessage}
-                        </p>
-                    )}
-                </form>
+                    <Button
+                        type="button"
+                        onClick={goCheckout}
+                        className="h-12 w-full text-base"
+                    >
+                        주문서 작성하기
+                    </Button>
+                </div>
             )}
         </div>
     );
