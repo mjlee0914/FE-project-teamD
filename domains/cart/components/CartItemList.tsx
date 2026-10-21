@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { CartItem } from '@/domains/cart/types/cart.types';
 import { useState, useTransition } from 'react';
 import { removeCartItem } from '@/domains/cart/actions/removeCartItem.action';
+import { updateCartQuantity } from '@/domains/cart/actions/updateCartQuantity.action';
 
 export default function CartItemList({
     initialItems,
@@ -20,20 +21,28 @@ export default function CartItemList({
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
-    function changeQuantity(id: string, amount: number) {
-        setItems(
-            items.map((item) =>
-                item.product.id === id
-                    ? {
-                          ...item,
-                          quantity: Math.min(
-                              99,
-                              Math.max(item.quantity + amount, 1),
-                          ),
-                      }
-                    : item,
-            ),
-        );
+    function changeQuantity(cartItemId: string, amount: number) {
+        const target = items.find((item) => item.id === cartItemId);
+        if (!target) return;
+        const newQuantity = target.quantity + amount;
+        if (newQuantity < 1 || newQuantity > 99) {
+            alert('수량은 1~99까지 선택가능합니다.');
+            return;
+        }
+        startTransition(async () => {
+            const result = await updateCartQuantity(cartItemId, newQuantity);
+            if (result.success) {
+                setItems(
+                    items.map((item) =>
+                        item.id === cartItemId
+                            ? { ...item, quantity: newQuantity }
+                            : item,
+                    ),
+                );
+            } else {
+                alert(result.message);
+            }
+        });
     }
 
     function handleRemove(cartItemId: string) {
@@ -134,8 +143,9 @@ export default function CartItemList({
                                         variant="outline"
                                         size="icon-sm"
                                         type="button"
+                                        disabled={isPending}
                                         onClick={() =>
-                                            changeQuantity(item.product.id, -1)
+                                            changeQuantity(item.id, -1)
                                         }
                                     >
                                         -
@@ -147,8 +157,9 @@ export default function CartItemList({
                                         variant="outline"
                                         size="icon-sm"
                                         type="button"
+                                        disabled={isPending}
                                         onClick={() =>
-                                            changeQuantity(item.product.id, +1)
+                                            changeQuantity(item.id, +1)
                                         }
                                     >
                                         +
