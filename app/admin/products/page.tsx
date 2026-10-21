@@ -1,13 +1,18 @@
 'use client';
 
 import ProductTable from '@/domains/admin/products/components/ProductTable';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Product } from '@/domains/products/types/product.types';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import ProductModal from '@/domains/admin/products/components/ProductEditModal';
-import type { ProductFormValues } from '@/domains/admin/products/components/ProductEditModal';
-import { getProductList } from '@/domains/admin/products/actions/product.action';
+import {
+    addProduct,
+    deleteProduct,
+    getProductList,
+    updateProduct,
+} from '@/domains/admin/products/actions/product.action';
+import { ActionState } from '@/shared/types/action.types';
 
 export default function AdminProductsPage() {
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -28,12 +33,45 @@ export default function AdminProductsPage() {
         setOpen(true);
     }
 
-    function handleDelete(product: Product) {
-        console.log('삭제', product);
+    async function handleDelete(product: Product) {
+        const result = await deleteProduct(product.id);
+
+        if (result.errors) {
+            alert(result.errors.alert);
+            return;
+        }
+
+        if (result.success) {
+            alert('삭제되었습니다.');
+            await loadProducts();
+        }
+
+        return result;
     }
 
-    async function handleSave(values: ProductFormValues) {
-        console.log('저장', values);
+    async function handleSave(
+        prevState: ActionState,
+        formData: FormData,
+    ): Promise<ActionState> {
+        let result: ActionState;
+
+        if (selectedProduct) {
+            formData.set('id', selectedProduct.id);
+            result = await updateProduct(formData);
+        } else {
+            result = await addProduct(formData);
+        }
+
+        if (result.errors) {
+            alert(result.errors.alert);
+        }
+
+        if (result.success) {
+            alert('저장되었습니다.');
+            await loadProducts();
+        }
+
+        return result;
     }
 
     function handleSearch(event: FormEvent<HTMLFormElement>) {
@@ -45,20 +83,20 @@ export default function AdminProductsPage() {
         setSearchKeyword(keyword.trim());
     }
 
-    useEffect(() => {
-        async function loadProducts() {
-            const { data, error } = await getProductList(searchKeyword);
+    const loadProducts = useCallback(async () => {
+        const { data, error } = await getProductList(searchKeyword);
 
-            if (error) {
-                alert('에러가 발생하였습니다.');
-                return;
-            }
-
-            setProducts(data ?? []);
+        if (error) {
+            alert('에러가 발생하였습니다.');
+            return;
         }
 
-        loadProducts();
+        setProducts(data ?? []);
     }, [searchKeyword]);
+
+    useEffect(() => {
+        loadProducts();
+    }, [loadProducts]);
 
     return (
         <section className="space-y-6">
@@ -124,6 +162,7 @@ export default function AdminProductsPage() {
             </div>
 
             <ProductModal
+                key={String(open) + (selectedProduct?.id ?? 'new')}
                 open={open}
                 onOpenChange={setOpen}
                 product={selectedProduct}

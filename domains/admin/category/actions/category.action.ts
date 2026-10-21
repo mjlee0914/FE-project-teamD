@@ -9,6 +9,7 @@ import {
     validateUpdateCategory,
 } from '../utils/categoryValidate';
 import { Category } from '@/domains/categories/types/category.types';
+import { isAdmin } from '../../utils/adminUtils';
 
 export async function addCategory(
     _prevState: ActionState,
@@ -26,7 +27,9 @@ export async function addCategory(
     let sortOrder = 1;
     let depth = 0;
 
-    // TODO : 회원 권한 체크
+    if (!isAdmin()) {
+        return { success: false, errors: { alert: '권한이 없습니다.' } };
+    }
 
     if (parentId !== '') {
         const { data: parent, error: parentError } = await getParentCategory(
@@ -281,4 +284,14 @@ async function getChildCategoryCnt(id: string): Promise<number> {
         .eq('parent_id', id);
 
     return count ?? 0;
+}
+
+export async function getCategoryListRaw(type?: string) {
+    const supabase = createServerClient();
+    let query = supabase.from('category').select('*').is('deleted_at', null);
+
+    if (type) query.eq('type', type);
+    return await query.order('depth, sort_order', {
+        ascending: true,
+    });
 }

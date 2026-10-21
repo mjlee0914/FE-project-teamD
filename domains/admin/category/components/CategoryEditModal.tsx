@@ -22,7 +22,10 @@ import {
     INITIAL_ACTION_STATE,
     type ActionState,
 } from '@/shared/types/action.types';
-import { getParentCategoryList } from '../actions/category.action';
+import {
+    getCategoryListRaw,
+    getParentCategoryList,
+} from '../actions/category.action';
 
 interface CategoryModalProps {
     open: boolean;
@@ -57,7 +60,6 @@ export default function CategoryModal({
         type: category?.type ?? 'MAIN',
     });
     const [categories, setCategories] = useState<Category[]>([]);
-    const [errorMessage, setErrorMessage] = useState('');
 
     const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const name = e.target.name;
@@ -76,35 +78,17 @@ export default function CategoryModal({
     }, [state.success, onOpenChange, router]);
 
     useEffect(() => {
-        async function loadCategories() {
-            const { data, error } = await getParentCategoryList(form.type);
+        async function loadCategory() {
+            const { data, error } = await getCategoryListRaw();
 
             if (error) {
-                setErrorMessage('오류가 발생하였습니다.');
+                alert('오류가 발생하였습니다.');
                 return;
             }
 
-            const items: Category[] = data ?? [];
-            const excludedIds = new Set<string>();
-            if (category) excludedIds.add(category.id);
-            let changed = true;
-            while (changed) {
-                changed = false;
-                for (const item of items) {
-                    if (
-                        item.parent_id &&
-                        excludedIds.has(item.parent_id) &&
-                        !excludedIds.has(item.id)
-                    ) {
-                        excludedIds.add(item.id);
-                        changed = true;
-                    }
-                }
-            }
-            setCategories(items.filter((item) => !excludedIds.has(item.id)));
-            setErrorMessage('');
+            setCategories(data ?? []);
         }
-        loadCategories();
+        loadCategory();
     }, [form.type, category]);
 
     return (
@@ -203,9 +187,6 @@ export default function CategoryModal({
                         </section>
                         {state.errors?.form && (
                             <p className="text-red-600">{state.errors.form}</p>
-                        )}
-                        {errorMessage && (
-                            <p className="text-red-600">{errorMessage}</p>
                         )}
                     </div>
                     <div className="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-gray-50 px-6 py-4">
