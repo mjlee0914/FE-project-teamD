@@ -12,13 +12,19 @@ import { getCurrentUser } from '@/domains/boards/lib/currentUser';
 import { canWriteBoard } from '@/domains/boards/lib/permissions';
 import AskQnaBox from '@/domains/boards/components/AskQnaBox';
 import PostGallery from '@/domains/boards/components/PostGallery';
+import Link from 'next/link';
 
 export default async function BoardPage({
     params,
     searchParams,
 }: {
     params: Promise<{ boardId: string }>;
-    searchParams: Promise<{ page?: string; q?: string; category?: string }>;
+    searchParams: Promise<{
+        page?: string;
+        q?: string;
+        category?: string;
+        productId?: string;
+    }>;
 }) {
     const { boardId } = await params;
     const sp = await searchParams;
@@ -37,6 +43,7 @@ export default async function BoardPage({
         category: sp.category,
         // 갤러리이면 12장, undefined이면 구조분해기본값 (10줄)
         pageSize: board.type === 'gallery' ? 12 : undefined,
+        productId: sp.productId,
     });
 
     // 쓰기 권한이 있을 때만 글쓰기 버튼을 보여 줌
@@ -51,6 +58,18 @@ export default async function BoardPage({
             <BoardHeader board={board} />
             {board.type === 'list' || board.type === 'qna' ? (
                 <>
+                    {sp.productId && (
+                        <p className="mb-3 text-xs text-gray-500">
+                            지금은 선택한 상품의 게시글만 보고 있어요!{' '}
+                            <Link
+                                href={`/boards/${boardId}`}
+                                className="underline"
+                            >
+                                전체 글 보기
+                            </Link>
+                        </p>
+                    )}
+
                     <BoardToolbar
                         board={board}
                         q={sp.q}
@@ -70,7 +89,11 @@ export default async function BoardPage({
                         basePath={`/boards/${board.id}`}
                         page={result.page}
                         totalPages={result.totalPages}
-                        query={{ q: sp.q, category: sp.category }}
+                        query={{
+                            q: sp.q,
+                            category: sp.category,
+                            productId: sp.productId,
+                        }}
                     />
                     {board.id === 'faq' && <AskQnaBox />}
                 </>

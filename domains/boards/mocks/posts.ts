@@ -497,7 +497,7 @@ export const POSTS: Post[] = [
         author_name: '서지수',
         gid: 'post-24',
         view_count: 21,
-        product_id: '60000000-0000-4000-8000-000000000001',
+        product_id: '9dd086f5-8224-467e-9fb7-3799e177f39f',
         rating: 5,
         thumbnail_url: '/images/mock/review-1.jpg',
         created_at: '2026-10-12T20:00:00Z',
