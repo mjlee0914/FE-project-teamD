@@ -13,12 +13,6 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         >
             <h2 className="mb-8 text-2xl font-semibold">REVIEW</h2>
 
-            {/* <div className="border-y border-gray-200 py-16 text-center">
-                <p className="text-sm text-gray-500">
-                    아직 등록된 상품 리뷰가 없습니다.
-                </p>
-            </div> */}
-
             <ProductBoardSection
                 boardId="review"
                 productId={productId}
