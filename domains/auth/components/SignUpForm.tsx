@@ -6,14 +6,51 @@ import { Input } from '@/shared/components/ui/input';
 import { Button } from '@/shared/components/ui/button';
 import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
 import { signUpAction } from '@/domains/auth/actions/signup.action';
+import { FIELD_MAX_LENGTH } from '@/domains/auth/utils/authValidations';
 
 const FIELDS = [
-    { name: 'email', label: '이메일', type: 'email' },
-    { name: 'name', label: '이름', type: 'text' },
-    { name: 'password', label: '비밀번호', type: 'password' },
-    { name: 'passwordConfirm', label: '비밀번호 확인', type: 'password' },
-    { name: 'phone', label: '전화번호', type: 'tel' },
-    { name: 'address', label: '주소', type: 'text' },
+    {
+        name: 'email',
+        label: '이메일',
+        type: 'email',
+        maxLength: FIELD_MAX_LENGTH.email,
+        placeholder: 'example@email.com',
+    },
+    {
+        name: 'name',
+        label: '이름',
+        type: 'text',
+        maxLength: FIELD_MAX_LENGTH.name,
+        placeholder: '홍길동',
+    },
+    {
+        name: 'password',
+        label: '비밀번호',
+        type: 'password',
+        maxLength: FIELD_MAX_LENGTH.password,
+        placeholder: '8자 이상',
+    },
+    {
+        name: 'passwordConfirm',
+        label: '비밀번호 확인',
+        type: 'password',
+        maxLength: FIELD_MAX_LENGTH.password,
+        placeholder: '',
+    },
+    {
+        name: 'phone',
+        label: '전화번호',
+        type: 'tel',
+        maxLength: FIELD_MAX_LENGTH.phone,
+        placeholder: '010-1234-5678',
+    },
+    {
+        name: 'address',
+        label: '주소',
+        type: 'text',
+        maxLength: FIELD_MAX_LENGTH.address,
+        placeholder: '서울특별시 구로구 ...',
+    },
 ];
 
 export default function SignUpForm() {
@@ -36,6 +73,8 @@ export default function SignUpForm() {
                         id={field.name}
                         name={field.name}
                         type={field.type}
+                        maxLength={field.maxLength}
+                        placeholder={field.placeholder}
                         // 오류가 나도 입력한 값이 지워지지 않게 서버가 돌려준 값을 다시 채운다
                         defaultValue={
                             field.type === 'password'

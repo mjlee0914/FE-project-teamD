@@ -24,5 +24,9 @@ export async function getProfile() {
         console.error('Error fetching profile:', errorProfile);
         return null;
     }
-    return profile;
+
+    if (!profile) {
+        return null;
+    }
+    return { ...profile, email: user.email };
 }
