@@ -22,8 +22,6 @@ export default async function PostPage({
     const board = await getBoard(boardId);
 
     if (!board) notFound();
-    // 갤러리 상세는 U21에서 만들 예정이라 지금은 막음 (list와 qna는 통과)
-    if (board.type === 'gallery') notFound();
 
     const post = await getPost(boardId, postId);
     if (!post) notFound();

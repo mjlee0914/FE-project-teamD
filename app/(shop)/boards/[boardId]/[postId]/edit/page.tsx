@@ -18,7 +18,7 @@ export default async function EditPostPage({
     const { boardId, postId } = await params;
 
     const board = await getBoard(boardId);
-    if (!board || board.type !== 'list') notFound();
+    if (!board) notFound();
 
     const post = await getPost(boardId, postId);
     if (!post) notFound();

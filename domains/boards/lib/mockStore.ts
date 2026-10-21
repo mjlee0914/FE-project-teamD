@@ -2,6 +2,7 @@ import {
     BOARD_SETTINGS,
     BOARD_CATEGORY_ROWS,
     POSTS,
+    EVENT_POSTS,
 } from '@/shared/mocks/mockData';
 import type {
     BoardSetting,
@@ -20,6 +21,6 @@ const g = globalThis as unknown as { __boardStore?: Store };
 // 나중에 글 추가해도 목데이터 변경 없도록 클론
 export const store: Store = (g.__boardStore ??= {
     boards: structuredClone(BOARD_SETTINGS),
-    posts: structuredClone(POSTS),
+    posts: structuredClone([...POSTS, ...EVENT_POSTS]),
     categories: structuredClone(BOARD_CATEGORY_ROWS),
 });

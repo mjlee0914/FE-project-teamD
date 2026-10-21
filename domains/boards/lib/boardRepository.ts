@@ -152,6 +152,7 @@ export interface CreatePostInput {
     gid: string;
     categoryId?: string;
     isSecret?: boolean;
+    thumbnailUrl?: string;
 }
 
 // 새 글 등록
@@ -177,6 +178,7 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
         created_at: now,
         updated_at: now,
         deleted_at: null,
+        thumbnail_url: input.thumbnailUrl,
     };
 
     store.posts.push(post);
@@ -189,6 +191,7 @@ export interface UpdatePostInput {
     content: string;
     categoryId?: string;
     isSecret?: boolean;
+    thumbnailUrl?: string;
 }
 
 // 게시물 수정 - 나중에 supabase update로 교체 예정
@@ -202,6 +205,7 @@ export async function updatePost(
             p.id === postId && p.board_id === boardId && p.deleted_at === null,
     );
     if (!post) return null;
+    if (input.thumbnailUrl) post.thumbnail_url = input.thumbnailUrl;
 
     post.title = input.title;
     post.content = input.content;

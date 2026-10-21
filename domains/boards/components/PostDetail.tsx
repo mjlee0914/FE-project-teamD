@@ -5,6 +5,8 @@ import DeleteButton from './DeleteButton';
 import QnaAnswer from './QnaAnswer';
 import AnswerForm from './AnswerForm';
 import { maskName, SECRET_TITLE } from '../lib/mask';
+import { toImageSrc } from '../lib/imageUpload';
+import Image from 'next/image';
 
 interface PostDetailProps {
     board: BoardSetting;
@@ -29,6 +31,7 @@ export default function PostDetail({
     const listHref = `/boards/${board.id}`;
     const isQna = board.type === 'qna';
     const hidden = post.is_secret && !canView;
+    const src = toImageSrc(post.thumbnail_url);
 
     // 목록에서 가린 비밀글 제목이 이전/다음 글 줄에서 보이지 않게
     const showTitle = (p: Post) => (p.is_secret ? SECRET_TITLE : p.title);
@@ -60,6 +63,18 @@ export default function PostDetail({
                     {formatDate(post.created_at)} · 조회수 {post.view_count}
                 </p>
             </header>
+
+            {board.type === 'gallery' && src && (
+                <div className="relative mx-auto my-6 aspect-[4/3] w-full max-w-2xl bg-stone-100">
+                    <Image
+                        src={src}
+                        alt={post.title}
+                        fill
+                        unoptimized={src.startsWith('data:')}
+                        className="object-contain"
+                    />
+                </div>
+            )}
 
             <div className="min-h-40 border-b px-1.5 py-6 text-sm whitespace-pre-wrap text-gray-700">
                 {hidden

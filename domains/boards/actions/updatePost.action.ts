@@ -12,6 +12,7 @@ import {
 import { getCurrentUser } from '../lib/currentUser';
 import { canEditPost } from '../lib/permissions';
 import { validatePost } from '../lib/validatePost';
+import { pickImage, toDataUrl } from '../lib/imageUpload';
 
 // 공개요청
 export async function updatePostAction(
@@ -44,11 +45,19 @@ export async function updatePostAction(
         return fail({ form: '수정 권한이 없습니다.' });
 
     const categories = await getBoardCategories(board.id);
+
+    // 검증 호출
     const errors = validatePost(
         board,
         formData,
         categories.map((c) => c.id),
+        !!post.thumbnail_url, // 기존 이미지가 있는지 여부
     );
+
+    // 새로 고른 파일이 있을 때만 data URL로 변환 (안 골랐으면 기존 이미지 유지)
+    const image = pickImage(formData);
+    const thumbnailUrl = image ? await toDataUrl(image) : undefined;
+
     if (Object.keys(errors).length > 0) return fail(errors);
 
     await updatePost(board.id, post.id, {
@@ -56,10 +65,12 @@ export async function updatePostAction(
         content: values.content.trim(),
         categoryId: board.use_category ? values.category : undefined,
         isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
+        thumbnailUrl,
     });
 
     // 목록 갱신
     revalidatePath(`/boards/${board.id}`);
     revalidatePath(`/boards/${board.id}/${post.id}`);
+    revalidatePath('/'); // 홈 배너 갱신 (이벤트 게시판일 때만 해도 됨: if (board.id === 'events'))
     redirect(`/boards/${board.id}/${post.id}`);
 }

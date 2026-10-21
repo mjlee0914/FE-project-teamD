@@ -37,7 +37,7 @@ export default function AnswerForm({
                     className="w-24 cursor-pointer border bg-stone-50 text-xs disabled:opacity-50"
                 >
                     {isPending
-                        ? '저장 중'
+                        ? '저장 중...'
                         : current
                           ? '답변 수정'
                           : '답변 등록'}
