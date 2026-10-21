@@ -151,6 +151,7 @@ export default function CategoryModal({
                                     value={form.type}
                                     onChange={onChange}
                                     className="w-full bg-white"
+                                    disabled={isEdit}
                                 >
                                     {CATEGORY_TYPES.map((item) => (
                                         <NativeSelectOption
@@ -176,6 +177,7 @@ export default function CategoryModal({
                                     value={form.parent_id}
                                     onChange={onChange}
                                     className="w-full bg-white"
+                                    disabled={isEdit}
                                 >
                                     <NativeSelectOption value="">
                                         없음 (최상위 카테고리)

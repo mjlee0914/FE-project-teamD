@@ -106,7 +106,7 @@ export default function CategoryTable({
                             <AdminAlertDialog
                                 buttonName="삭제"
                                 title="삭제하시겠습니까?"
-                                description="삭제시 하위 카테고리까지 전부 삭제됩니다."
+                                description="하위 카테고리가 있을시 삭제가 불가능합니다."
                                 onClick={() => onDelete(category)}
                             />
                         </TableCell>

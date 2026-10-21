@@ -4,7 +4,10 @@ import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { createServerClient } from '@/lib/supabase';
 import type { ActionState } from '@/shared/types/action.types';
-import { validateCreateCategory } from '../utils/categoryValidate';
+import {
+    validateCreateCategory,
+    validateUpdateCategory,
+} from '../utils/categoryValidate';
 import { Category } from '@/domains/categories/types/category.types';
 
 export async function addCategory(
@@ -202,147 +205,21 @@ export async function updateCategory(
     _prevState: ActionState,
     formData: FormData,
 ): Promise<ActionState> {
-    const errors = validateCreateCategory(formData);
-    const id = formData.get('id');
-    if (typeof id !== 'string' || !id.trim()) {
-        errors.form = '수정할 카테고리를 선택해주세요.';
-    }
+    const errors = validateUpdateCategory(formData);
+
     if (Object.keys(errors).length > 0) {
         return { success: false, errors: errors };
     }
 
+    const id = formData.get('id');
     const name = (formData.get('name') as string).trim();
-    const parentId = ((formData.get('parent_id') as string) ?? '').trim();
-    const type = formData.get('type') as string;
     const supabase = createServerClient();
-    const { data: categories, error: listError } = await getCategoryRows();
-    if (listError || !categories) {
-        return {
-            success: false,
-            errors: { form: '카테고리를 조회하지 못했습니다.' },
-        };
-    }
 
-    const category = categories.find((item) => item.id === id);
-    if (!category) {
-        return {
-            success: false,
-            errors: { form: '카테고리를 찾을 수 없습니다.' },
-        };
-    }
-
-    const children = getChildCategories(categories, category.id);
-    if (
-        parentId === category.id ||
-        children.some((item) => item.id === parentId)
-    ) {
-        return {
-            success: false,
-            errors: {
-                parent_id: '자기 자신이나 하위 카테고리를 선택할 수 없습니다.',
-            },
-        };
-    }
-
-    if (category.type !== type) {
-        if (children.length > 0) {
-            return {
-                success: false,
-                errors: {
-                    type: '하위 카테고리가 있으면 타입을 변경할 수 없습니다.',
-                },
-            };
-        }
-        const { count: productCount, error: productError } = await supabase
-            .from('products')
-            .select('id', { count: 'exact', head: true })
-            .eq('category_id', id);
-        const { count: boardCount, error: boardError } = await supabase
-            .from('boards')
-            .select('id', { count: 'exact', head: true })
-            .eq('category_id', id);
-        if (productError || boardError) {
-            return {
-                success: false,
-                errors: { form: '연결된 데이터를 확인하지 못했습니다.' },
-            };
-        }
-        if ((productCount ?? 0) > 0 || (boardCount ?? 0) > 0) {
-            return {
-                success: false,
-                errors: {
-                    type: '연결된 상품 또는 게시판이 있어 타입을 변경할 수 없습니다.',
-                },
-            };
-        }
-    }
-
-    let depth = 0;
-    if (parentId !== '') {
-        const { data: parent, error: parentError } = await getParentCategory(
-            parentId,
-            type,
-        );
-        if (
-            parentError ||
-            !parent ||
-            !Number.isInteger(parent.depth) ||
-            parent.depth < 0
-        ) {
-            return {
-                success: false,
-                errors: {
-                    parent_id: '동일한 타입의 상위 카테고리를 선택해주세요.',
-                },
-            };
-        }
-        depth = parent.depth + 1;
-    }
-
-    let sortOrder = category.sort_order;
-    if ((category.parent_id ?? '') !== parentId || category.type !== type) {
-        const { data: lastCategory, error: orderError } =
-            await getLastSortOrder(parentId, type);
-        if (orderError) {
-            return {
-                success: false,
-                errors: { form: '표시 순서를 조회하지 못했습니다.' },
-            };
-        }
-        sortOrder = (lastCategory?.sort_order ?? 0) + 1;
-    }
-
-    if (
-        !Number.isInteger(category.depth) ||
-        category.depth < 0 ||
-        children.some((item) => !Number.isInteger(item.depth) || item.depth < 0)
-    ) {
-        return {
-            success: false,
-            errors: { form: '기존 카테고리의 단계 설정을 확인해주세요.' },
-        };
-    }
-
-    const depthDifference = depth - category.depth;
-    const updates = [
-        {
-            ...category,
-            name: name,
-            parent_id: parentId,
-            type: type,
-            depth: depth,
-            sort_order: sortOrder,
-        },
-    ];
-    if (depthDifference !== 0) {
-        for (const child of children) {
-            updates.push({ ...child, depth: child.depth + depthDifference });
-        }
-    }
-
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from('category')
-        .upsert(updates, { onConflict: 'id' });
+        .update({ name: name })
+        .eq('id', id);
+
     if (error) {
         return {
             success: false,
@@ -354,35 +231,6 @@ export async function updateCategory(
     return { success: true };
 }
 
-async function getCategoryRows() {
-    const supabase = createServerClient();
-    return await supabase.from('category').select('*').is('deleted_at', null);
-}
-
-function getChildCategories(
-    categories: Category[],
-    parentId: string,
-): Category[] {
-    const result: Category[] = [];
-    const parentIds = [parentId];
-    const visitedIds = new Set<string>([parentId]);
-
-    while (parentIds.length > 0) {
-        const currentParentId = parentIds.shift();
-        for (const category of categories) {
-            if (
-                category.parent_id === currentParentId &&
-                !visitedIds.has(category.id)
-            ) {
-                visitedIds.add(category.id);
-                result.push(category);
-                parentIds.push(category.id);
-            }
-        }
-    }
-    return result;
-}
-
 export async function getParentCategoryList(type: string) {
     const supabase = createServerClient();
     return await supabase
@@ -392,4 +240,45 @@ export async function getParentCategoryList(type: string) {
         .is('deleted_at', null)
         .order('depth', { ascending: true })
         .order('sort_order', { ascending: true, nullsFirst: false });
+}
+
+export async function deleteCategory(category: Category): Promise<ActionState> {
+    const supabase = createServerClient();
+
+    if ((await getChildCategoryCnt(category.id)) > 0) {
+        return {
+            success: false,
+            errors: { alert: '하위 카테고리가 있어 삭제 불가능합니다.' },
+        };
+    }
+    const { data, error } = await supabase
+        .from('category')
+        .update({
+            deleted_at: new Date().toISOString(),
+        })
+        .eq('id', category.id);
+
+    if (error) {
+        console.log(error);
+        return {
+            success: false,
+            errors: {
+                alert: '삭제에 실패하였습니다.',
+            },
+        };
+    }
+
+    revalidatePath('/admin/category');
+    return { success: true };
+}
+
+async function getChildCategoryCnt(id: string): Promise<number> {
+    const supabase = createServerClient();
+
+    const { count } = await supabase
+        .from('category')
+        .select('*', { count: 'exact', head: true })
+        .eq('parent_id', id);
+
+    return count ?? 0;
 }

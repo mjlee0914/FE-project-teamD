@@ -7,6 +7,7 @@ import CategoryModal from '@/domains/admin/category/components/CategoryEditModal
 import { useState, type FormEvent, useEffect, useCallback } from 'react';
 import {
     addCategory,
+    deleteCategory,
     getCategoryList,
     updateCategory,
 } from '@/domains/admin/category/actions/category.action';
@@ -62,7 +63,21 @@ export default function AdminCategoryPage() {
     }
 
     function handleDelete(category: Category) {
-        console.log('삭제', category);
+        async function removeCategory() {
+            const result = await deleteCategory(category);
+
+            if (result.success) {
+                alert('삭제되었습니다.');
+                loadCategories();
+            } else {
+                alert(
+                    result.errors?.alert
+                        ? result.errors?.alert
+                        : '알수없는 오류',
+                );
+            }
+        }
+        removeCategory();
     }
 
     function handleSearch(event: FormEvent<HTMLFormElement>) {
