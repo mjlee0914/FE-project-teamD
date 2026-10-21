@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react';
 import Image from 'next/image';
-import useCartStore from '@/shared/store/useCartStore';
 import { addToCart } from '@/domains/cart/actions/addToCart.action';
 
 import CartSuccessDialog from './CartSuccessDialog';
@@ -33,8 +32,6 @@ export default function ProductDetail({
     );
     const [popupOpen, setPopupOpen] = useState(false);
 
-    const setCartCount = useCartStore((state) => state.setCount);
-    const cartCount = useCartStore((state) => state.count);
     const [isAdding, startTransition] = useTransition();
 
     // 상품별 색상과 이미지 설정
@@ -188,7 +185,6 @@ export default function ProductDetail({
                 }
             }
 
-            setCartCount(cartCount + 1);
             setPopupOpen(true);
         });
     };
