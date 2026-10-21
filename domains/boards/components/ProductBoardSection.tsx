@@ -53,9 +53,7 @@ export default async function ProductBoardSection({
                                 : post.title}
                         </Link>
                         <span className="w-16 text-center text-xs text-gray-500">
-                            {isQna
-                                ? maskName(post.author_name)
-                                : post.author_name}
+                            {maskName(post.author_name)}
                         </span>
                         <span className="w-24 text-center text-xs text-gray-500">
                             {formatDate(post.created_at)}

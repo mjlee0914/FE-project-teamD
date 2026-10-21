@@ -1,7 +1,9 @@
 import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, CategoryOption, Post } from '../types/board.types';
 import Link from 'next/link';
-import { maskName, SECRET_TITLE } from '../lib/mask';
+import Image from 'next/image';
+import { displayAuthor, SECRET_TITLE } from '../lib/mask';
+import { toImageSrc } from '../lib/imageUpload';
 
 interface PostListProps {
     board: BoardSetting;
@@ -31,6 +33,9 @@ export default function PostList({
     // 상품 연결 글이 하나라도 있으면 상품 컬럼 표출
     const showProduct = posts.some((p) => p.product_id);
 
+    // 썸네일 주소 (public/ 접두사 변환, 없으면 undefined)
+    const thumbSrc = (p: Post) => toImageSrc(p.thumbnail_url);
+
     if (posts.length === 0) {
         return (
             <p className="text-muted-foreground py-16 text-center text-sm">
@@ -47,6 +52,7 @@ export default function PostList({
                     {board.use_category && <th className="w-24">분류</th>}
                     {showProduct && <th className="w-40">상품</th>}
                     <th>제목</th>
+                    {board.use_rating && <th className="w-24">별점</th>}
                     <th className="w-24">작성자</th>
                     <th className="w-28">작성일</th>
                     <th className="w-16">조회수</th>
@@ -89,20 +95,50 @@ export default function PostList({
                             </td>
                         )}
                         {/* 제목을 클릭하면 해당 게시물로 이동 */}
-                        <td>
+                        {/* 썸네일이 붙는 글은 이미지가 답답해 보이지 않게 위아래 여백을 더 줌 (py-4, 줄이려면 py-3) */}
+                        <td
+                            className={
+                                board.use_thumbnail && thumbSrc(post)
+                                    ? 'py-2'
+                                    : ''
+                            }
+                        >
                             <Link
                                 href={`/boards/${board.id}/${post.id}`}
-                                className="hover:underline"
+                                className="flex items-center gap-3 hover:underline"
                             >
-                                {isQna && post.is_secret
-                                    ? SECRET_TITLE
-                                    : post.title}
+                                {/* 썸네일이 있는 글만 작은 이미지를 붙임 (없는 글은 빈 칸 없이 일반 목록처럼 보임) */}
+                                {board.use_thumbnail && thumbSrc(post) && (
+                                    <span className="relative block h-10 w-10 shrink-0 overflow-hidden bg-stone-100">
+                                        <Image
+                                            src={thumbSrc(post)!}
+                                            alt=""
+                                            fill
+                                            sizes="40px"
+                                            unoptimized={thumbSrc(
+                                                post,
+                                            )!.startsWith('data:')}
+                                            className="object-cover"
+                                        />
+                                    </span>
+                                )}
+                                <span className="truncate">
+                                    {isQna && post.is_secret
+                                        ? SECRET_TITLE
+                                        : post.title}
+                                </span>
                             </Link>
                         </td>
+                        {board.use_rating && (
+                            <td className="text-center text-xs text-amber-500">
+                                {post.rating
+                                    ? '★'.repeat(post.rating) +
+                                      '☆'.repeat(5 - post.rating)
+                                    : '-'}
+                            </td>
+                        )}
                         <td className="text-center">
-                            {isQna
-                                ? maskName(post.author_name)
-                                : post.author_name}
+                            {displayAuthor(board, post.author_name)}
                         </td>
                         <td className="text-center">
                             {formatDate(post.created_at)}

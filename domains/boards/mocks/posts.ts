@@ -499,7 +499,7 @@ export const POSTS: Post[] = [
         view_count: 21,
         product_id: '9dd086f5-8224-467e-9fb7-3799e177f39f',
         rating: 5,
-        thumbnail_url: '/images/mock/review-1.jpg',
+        thumbnail_url: '/products/Black-anorak.png', // 리뷰 썸네일 (public에 있는 파일)
         created_at: '2026-10-12T20:00:00Z',
         updated_at: '2026-10-12T20:00:00Z',
         deleted_at: null,

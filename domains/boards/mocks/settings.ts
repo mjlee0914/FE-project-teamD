@@ -67,6 +67,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         use_rating: true,
         category_id: 'cat-board-review',
         created_at: '2026-10-14T00:00:00Z',
+        use_thumbnail: true,
     },
     {
         id: 'free',

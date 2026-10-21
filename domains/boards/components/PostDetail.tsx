@@ -4,7 +4,7 @@ import type { BoardSetting, Post } from '../types/board.types';
 import DeleteButton from './DeleteButton';
 import QnaAnswer from './QnaAnswer';
 import AnswerForm from './AnswerForm';
-import { maskName, SECRET_TITLE } from '../lib/mask';
+import { displayAuthor, SECRET_TITLE } from '../lib/mask';
 import { toImageSrc } from '../lib/imageUpload';
 import Image from 'next/image';
 
@@ -59,7 +59,7 @@ export default function PostDetail({
                     {hidden ? SECRET_TITLE : post.title}
                 </h1>
                 <p className="text-xs text-gray-500">
-                    {isQna ? maskName(post.author_name) : post.author_name} ·{' '}
+                    {displayAuthor(board, post.author_name)} ·{' '}
                     {formatDate(post.created_at)} · 조회수 {post.view_count}
                 </p>
             </header>

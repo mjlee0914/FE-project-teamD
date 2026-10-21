@@ -1,8 +1,18 @@
+import type { BoardSetting } from '../types/board.types';
+
 // 작성자 이름 마스킹
 export function maskName(name: string): string {
     const chars = [...name];
     if (chars.length <= 1) return '*';
     return chars[0] + '*'.repeat(chars.length - 1);
+}
+
+// 작성자 표시: 관리자만 쓰는 게시판(공지·이벤트·FAQ)은 작성자가 관리자라 그대로, 그 외 게시판은 이름을 가림
+export function displayAuthor(
+    board: Pick<BoardSetting, 'write_role'>,
+    name: string,
+): string {
+    return board.write_role === 'admin' ? name : maskName(name);
 }
 
 // 비밀글은 제목을 가림

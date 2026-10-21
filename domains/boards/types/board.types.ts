@@ -52,6 +52,7 @@ export interface BoardSetting {
     use_rating?: boolean; // 별점 사용 (review) → Post.rating
     created_at: string;
     gallery_layout?: GalleryLayout;
+    use_thumbnail?: boolean;
 }
 
 // 게시물 인터페이스(규격에 대입될 값)

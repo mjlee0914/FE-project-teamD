@@ -17,6 +17,7 @@ export interface GetPostsParams {
     //       섹션별로 reviewPage / qnaPage 처럼 이름을 나눠서 page props로 넘길 것
     productId?: string;
     excludeCategoryName?: string; // 이 이름의 분류 글은 제외할 떄 사용
+    hasImage?: boolean;
 }
 
 export interface PostListResult {
@@ -63,6 +64,7 @@ export async function getPosts({
     category,
     productId,
     excludeCategoryName,
+    hasImage,
 }: GetPostsParams): Promise<PostListResult> {
     // 게시판 확인
     const board = await getBoard(boardId);
@@ -91,6 +93,10 @@ export async function getPosts({
         //     return b.created_at.localeCompare(a.created_at);
         // });
         .filter((post) => !excludedId || post.category_id !== excludedId)
+        .filter(
+            (post) =>
+                hasImage === undefined || !!post.thumbnail_url === hasImage,
+        )
         .sort(sorterFor(board));
 
     // 페이지 계산

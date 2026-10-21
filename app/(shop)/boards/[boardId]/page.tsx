@@ -14,6 +14,7 @@ import AskQnaBox from '@/domains/boards/components/AskQnaBox';
 import PostGallery from '@/domains/boards/components/PostGallery';
 import Link from 'next/link';
 import { getProductNamesByIds } from '@/domains/products/queries/getProductNamesByIds.query';
+import PhotoFilter from '@/domains/boards/components/PhotoFilter';
 
 export default async function BoardPage({
     params,
@@ -25,6 +26,7 @@ export default async function BoardPage({
         q?: string;
         category?: string;
         productId?: string;
+        photo?: string; // '1': 포토 리뷰만, '0': 일반 리뷰만 (분류가 아니라 이미지 유무)
     }>;
 }) {
     const { boardId } = await params;
@@ -37,6 +39,10 @@ export default async function BoardPage({
     const board = await getBoard(boardId);
     if (!board) notFound();
 
+    // 포토/일반 리뷰 필터: ?photo=1 → true, ?photo=0 → false, 없으면 전체
+    const hasImage =
+        sp.photo === '1' ? true : sp.photo === '0' ? false : undefined;
+
     const result = await getPosts({
         boardId,
         page,
@@ -45,11 +51,17 @@ export default async function BoardPage({
         // 갤러리이면 12장, undefined이면 구조분해기본값 (10줄)
         pageSize: board.type === 'gallery' ? 12 : undefined,
         productId: sp.productId,
+        hasImage,
     });
 
+    // 칩·검색·페이지 이동 중에도 유지할 쿼리 (조건이 늘면 여기에만 추가)
+    const extraQuery = { productId: sp.productId, photo: sp.photo };
+
     // 쓰기 권한이 있을 때만 글쓰기 버튼을 보여 줌
+    // 리뷰처럼 반드시 상품에 속한 글은 상품페이지에서 쓰므로 목록에서는 글쓰기 버튼을 숨김
     const user = await getCurrentUser();
-    const canWrite = canWriteBoard(board, user);
+    const canWrite =
+        canWriteBoard(board, user) && board.product_scope !== 'required';
 
     // 분류 목록
     const categories = await getBoardCategories(boardId);
@@ -80,11 +92,24 @@ export default async function BoardPage({
                         </p>
                     )}
 
+                    {/* 썸네일을 쓰는 게시판(리뷰): 전체 / 포토 리뷰 / 일반 리뷰 */}
+                    {board.use_thumbnail && (
+                        <PhotoFilter
+                            basePath={`/boards/${board.id}`}
+                            photo={sp.photo}
+                            query={{
+                                q: sp.q,
+                                category: sp.category,
+                                productId: sp.productId,
+                            }}
+                        />
+                    )}
+
                     <BoardToolbar
                         board={board}
                         q={sp.q}
                         category={sp.category}
-                        productId={sp.productId}
+                        extraQuery={extraQuery}
                         canWrite={canWrite}
                         categories={categories}
                     />
@@ -104,7 +129,7 @@ export default async function BoardPage({
                         query={{
                             q: sp.q,
                             category: sp.category,
-                            productId: sp.productId,
+                            ...extraQuery,
                         }}
                     />
                     {board.id === 'faq' && <AskQnaBox />}
@@ -122,6 +147,7 @@ export default async function BoardPage({
                         boardId={board.id}
                         posts={result.items}
                         layout={board.gallery_layout}
+                        maskAuthor={board.write_role !== 'admin'}
                         categories={categories}
                     />
                     <Pagination
