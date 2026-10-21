@@ -3,7 +3,6 @@
 import { formatPrice } from '@/shared/utils/formatPrice';
 import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
-import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CartItem } from '@/domains/cart/types/cart.types';
@@ -234,7 +233,6 @@ export default function CartItemList({
                     )}
                 </form>
             )}
-            <RecommendedProducts />
         </div>
     );
 }
