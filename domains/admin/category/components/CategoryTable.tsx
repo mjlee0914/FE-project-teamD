@@ -13,19 +13,18 @@ import {
 } from '@/shared/components/ui/table';
 import { Button } from '@/shared/components/ui/button';
 import { AdminAlertDialog } from '@/domains/admin/components/AlertDialog';
+import { CATEGORY_TYPES } from '../types/category.type';
 
 interface CategoryTableProps {
     categories: Category[];
     onEdit: (category: Category) => void;
     onDelete: (category: Category) => void;
-    searching: boolean;
 }
 
 export default function CategoryTable({
     categories,
     onEdit,
     onDelete,
-    searching,
 }: CategoryTableProps) {
     const [expandedIds, setExpandedIds] = useState<Set<string>>(
         () => new Set(),
@@ -49,7 +48,7 @@ export default function CategoryTable({
         return items.map((category) => {
             const children = category.children ?? [];
             const hasChildren = children.length > 0;
-            const isExpanded = searching || expandedIds.has(category.id);
+            const isExpanded = expandedIds.has(category.id);
 
             return (
                 <Fragment key={category.id}>
@@ -93,7 +92,9 @@ export default function CategoryTable({
                         </TableCell>
 
                         <TableCell className="text-center">
-                            {category.sort_order}
+                            {CATEGORY_TYPES.find(
+                                (item) => item.value === category.type,
+                            )?.label ?? category.type}
                         </TableCell>
                         <TableCell className="text-center">
                             <Button
@@ -105,7 +106,7 @@ export default function CategoryTable({
                             <AdminAlertDialog
                                 buttonName="삭제"
                                 title="삭제하시겠습니까?"
-                                description="삭제시 하위 카테고리까지 전부 삭제됩니다."
+                                description="하위 카테고리가 있을시 삭제가 불가능합니다."
                                 onClick={() => onDelete(category)}
                             />
                         </TableCell>
@@ -126,9 +127,7 @@ export default function CategoryTable({
                     <TableRow className="bg-gray-50">
                         <TableHead>카테고리명</TableHead>
                         <TableHead>카테고리 ID</TableHead>
-                        <TableHead className="w-24 text-center">
-                            정렬 순서
-                        </TableHead>
+                        <TableHead className="w-24 text-center">분류</TableHead>
                         <TableHead className="text-center">작업</TableHead>
                     </TableRow>
                 </TableHeader>

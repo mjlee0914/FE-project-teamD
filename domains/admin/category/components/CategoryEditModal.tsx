@@ -1,6 +1,7 @@
 'use client';
 
-import { type FormEvent } from 'react';
+import { ChangeEvent, useActionState, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { Category } from '@/domains/categories/types/category.types';
 import {
     Dialog,
@@ -16,17 +17,24 @@ import {
     NativeSelectOption,
 } from '@/shared/components/ui/native-select';
 
-import { MOCK_CATEGORY_ROWS } from '@/shared/mocks/mockData';
+import { CATEGORY_TYPES } from '../types/category.type';
+import {
+    INITIAL_ACTION_STATE,
+    type ActionState,
+} from '@/shared/types/action.types';
+import {
+    getCategoryListRaw,
+    getParentCategoryList,
+} from '../actions/category.action';
 
 interface CategoryModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     category?: Category; // 있으면 수정, 없으면 추가
-    onSave: (values: {
-        name: string;
-        parent_id: string;
-        sort_order: number;
-    }) => Promise<void>;
+    onSave: (
+        prevState: ActionState,
+        formData: FormData,
+    ) => Promise<ActionState>;
 }
 
 export default function CategoryModal({
@@ -36,22 +44,52 @@ export default function CategoryModal({
     onSave,
 }: CategoryModalProps) {
     const isEdit = !!category;
+    const router = useRouter();
+    const [state, formAction, isPending] = useActionState(
+        onSave,
+        INITIAL_ACTION_STATE,
+    );
 
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
+    const [form, setForm] = useState<{
+        name: string;
+        parent_id: string;
+        type: string;
+    }>({
+        name: category?.name ?? '',
+        parent_id: category?.parent_id ?? '',
+        type: category?.type ?? 'MAIN',
+    });
+    const [categories, setCategories] = useState<Category[]>([]);
 
-        const formData = new FormData(event.currentTarget);
-        const name = String(formData.get('name') ?? '').trim();
-        const parent_id = String(formData.get('parent_id') ?? '').trim();
-        const sortOrder = Number(formData.get('sort_order'));
-
-        if (!name || !Number.isInteger(sortOrder) || sortOrder < 1) {
-            return;
+    const onChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        if (name === 'type') {
+            setForm((prev) => ({ ...prev, type: value, parent_id: '' }));
+        } else {
+            setForm((prev) => ({ ...prev, [name]: value }));
         }
+    };
+    useEffect(() => {
+        if (state.success) {
+            onOpenChange(false);
+            router.refresh();
+        }
+    }, [state.success, onOpenChange, router]);
 
-        await onSave({ name, parent_id, sort_order: sortOrder });
-        onOpenChange(false);
-    }
+    useEffect(() => {
+        async function loadCategory() {
+            const { data, error } = await getCategoryListRaw();
+
+            if (error) {
+                alert('오류가 발생하였습니다.');
+                return;
+            }
+
+            setCategories(data ?? []);
+        }
+        loadCategory();
+    }, [form.type, category]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -61,12 +99,13 @@ export default function CategoryModal({
                         카테고리 {isEdit ? '수정' : '추가'}
                     </DialogTitle>
                     <DialogDescription>
-                        카테고리 이름과 상위 분류, 표시 순서를 설정하세요.
+                        카테고리 이름과 구분, 상위 분류를 설정하세요.
                     </DialogDescription>
                 </DialogHeader>
                 <form
                     key={category?.id ?? 'new'}
-                    onSubmit={handleSubmit}
+                    action={formAction}
+                    noValidate
                     className="flex min-h-0 flex-1 flex-col"
                 >
                     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
@@ -76,32 +115,58 @@ export default function CategoryModal({
                             </span>
                             <Input
                                 name="name"
-                                defaultValue={category?.name ?? ''}
-                                placeholder="예: 티셔츠"
-                                required
-                                maxLength={100}
+                                value={form.name}
+                                onChange={onChange}
                             />
                         </label>
-                        <section
-                            className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4"
-                            aria-label="분류 및 표시 설정"
-                        >
+                        {state.errors?.name && (
+                            <p className="text-red-600">{state.errors.name}</p>
+                        )}
+                        <section className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
                             <h3 className="text-sm font-semibold text-gray-900">
                                 분류 및 표시 설정
                             </h3>
+                            <label className="block space-y-2">
+                                <span className="text-sm font-medium text-gray-700">
+                                    카테고리 구분
+                                </span>
+                                <NativeSelect
+                                    name="type"
+                                    value={form.type}
+                                    onChange={onChange}
+                                    className="w-full bg-white"
+                                    disabled={isEdit}
+                                >
+                                    {CATEGORY_TYPES.map((item) => (
+                                        <NativeSelectOption
+                                            key={item.value}
+                                            value={item.value}
+                                        >
+                                            {item.label}
+                                        </NativeSelectOption>
+                                    ))}
+                                </NativeSelect>
+                            </label>
+                            {state.errors?.type && (
+                                <p className="text-red-600">
+                                    {state.errors.type}
+                                </p>
+                            )}
                             <label className="block space-y-2">
                                 <span className="text-sm font-medium text-gray-700">
                                     상위 카테고리
                                 </span>
                                 <NativeSelect
                                     name="parent_id"
-                                    defaultValue={category?.parent_id ?? ''}
+                                    value={form.parent_id}
+                                    onChange={onChange}
                                     className="w-full bg-white"
+                                    disabled={isEdit}
                                 >
                                     <NativeSelectOption value="">
                                         없음 (최상위 카테고리)
                                     </NativeSelectOption>
-                                    {MOCK_CATEGORY_ROWS.map((item) => (
+                                    {categories.map((item) => (
                                         <NativeSelectOption
                                             key={item.id}
                                             value={item.id}
@@ -114,25 +179,15 @@ export default function CategoryModal({
                                     선택한 카테고리 아래에 배치됩니다.
                                 </span>
                             </label>
-                            <label className="block space-y-2">
-                                <span className="text-sm font-medium text-gray-700">
-                                    표시 순서
-                                </span>
-                                <Input
-                                    name="sort_order"
-                                    type="number"
-                                    defaultValue={category?.sort_order ?? 1}
-                                    min={1}
-                                    step={1}
-                                    required
-                                    className="bg-white sm:max-w-32"
-                                />
-                                <span className="block text-xs text-gray-500">
-                                    같은 상위 카테고리 안에서 숫자가 작을수록
-                                    먼저 표시됩니다.
-                                </span>
-                            </label>
+                            {state.errors?.parent_id && (
+                                <p className="text-red-600">
+                                    {state.errors.parent_id}
+                                </p>
+                            )}
                         </section>
+                        {state.errors?.form && (
+                            <p className="text-red-600">{state.errors.form}</p>
+                        )}
                     </div>
                     <div className="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-gray-50 px-6 py-4">
                         <Button
@@ -142,8 +197,8 @@ export default function CategoryModal({
                         >
                             취소
                         </Button>
-                        <Button type="submit">
-                            {isEdit ? '변경사항 저장' : '카테고리 추가'}
+                        <Button type="submit" disabled={isPending}>
+                            저장
                         </Button>
                     </div>
                 </form>

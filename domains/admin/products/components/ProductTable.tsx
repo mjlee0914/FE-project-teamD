@@ -53,7 +53,10 @@ export default function ProductTable({
                                 <TableCell>
                                     {formatPrice(product.price)}
                                 </TableCell>
-                                <TableCell>{product.category_id}</TableCell>
+                                <TableCell>
+                                    {product.category?.name ??
+                                        product.category_id}
+                                </TableCell>
                                 <TableCell>
                                     <Button
                                         type="button"
