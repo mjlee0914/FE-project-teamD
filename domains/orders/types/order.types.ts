@@ -15,8 +15,8 @@ export interface Order {
     discount_price: number | null; // INT
     final_price: number | null; // INT
     payment_method: string | null; // VARCHAR(50)
-    created_at: Date | null; // TIMESTAMPTZ
-    updated_at: Date | null; // TIMESTAMPTZ
+    created_at: string | null; // TIMESTAMPTZ
+    updated_at: string | null; // TIMESTAMPTZ
     shipping_fee: number | null; // INT
 }
 

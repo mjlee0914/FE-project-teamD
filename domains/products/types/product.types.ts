@@ -1,3 +1,5 @@
+import { Category } from '@/domains/categories/types/category.types';
+
 export interface Product {
     id: string; // 상품 고유 식별자
     gid: string; // ERD의 file_info.gid와 연결하는 파일 그룹 ID
@@ -8,4 +10,6 @@ export interface Product {
     description: string; // 상품 요약 설명
     isNew?: boolean; // 신상품 여부 (선택 속성)
     viewCount?: number; // 조회수
+
+    category?: Category;
 }

@@ -1,8 +1,11 @@
 {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
+    "eslint.enable": false,
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
+        "source.fixAll": "never",
+        "source.fixAll.eslint": "never",
+        "source.organizeImports": "never"
     },
     "specstory.cloudSync.enabled": "never",
     "git.decorations.enabled": false
