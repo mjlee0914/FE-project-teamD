@@ -21,7 +21,10 @@ export async function GET(request: Request) {
         : store.posts;
 
     // 들여쓰기(2칸)로 보기 좋게 출력: Response.json은 한 줄로 붙여서 내보내서 직접 JSON.stringify(값, null, 2) 사용
-    return new Response(JSON.stringify({ count: posts.length, posts }, null, 2), {
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    });
+    return new Response(
+        JSON.stringify({ count: posts.length, posts }, null, 2),
+        {
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        },
+    );
 }

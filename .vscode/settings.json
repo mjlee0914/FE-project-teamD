@@ -6,5 +6,6 @@
         "source.fixAll.eslint": "never",
         "source.organizeImports": "never"
     },
-    "specstory.cloudSync.enabled": "never"
+    "specstory.cloudSync.enabled": "never",
+    "git.decorations.enabled": false
 }

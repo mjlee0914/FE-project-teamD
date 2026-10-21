@@ -72,7 +72,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="/boards/event"
+                                    href="/boards/events"
                                     className="hover:text-blue-600"
                                 >
                                     EVENT

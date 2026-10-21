@@ -1,8 +1,30 @@
+import { Category } from '@/domains/categories/types/category.types';
+import type { CategoryType } from '@/shared/types/category.types';
+
+// type은 공통 CATEGORY_TYPES의 값 ('BOARD' / 'MAIN')
+export interface BoardCategoryRow extends Category {
+    type: CategoryType;
+    created_at: string;
+    deleted_at: string | null;
+}
+
+// 화면(칩·select·분류 칸)에서 쓰는 분류 선택지
+export interface CategoryOption {
+    id: string;
+    name: string;
+}
+
+// 목록 정렬 방식 정의
+export type BoardSortMode = 'latest' | 'manual';
+
 // 향후 목데이터에 추가 (나중에 정리)
 export type BoardWriteRole = 'all' | 'user' | 'admin';
 
 // 게시판 구분하기 (boradId 아래에 모두 넣을 예정이기 때문)
-export type BoardType = 'list' | 'faq' | 'qna' | 'gallery';
+export type BoardType = 'list' | 'qna' | 'gallery';
+
+// 갤러리 카드 모양 - portrait(3:4) / landscape(4:3)
+export type GalleryLayout = 'portrait' | 'landscape';
 
 // 게시판과 상품의 연결 방식
 // none: 상품과 무관 / optional: 상품에서 쓴 글과 일반 글이 섞임(qna) / required: 반드시 상품에 속함(review)
@@ -11,6 +33,7 @@ export type BoardProductScope = 'none' | 'optional' | 'required';
 // 게시판 인터페이스(규격)
 export interface BoardSetting {
     id: string; // notice, qna, review 등
+    category_id: string; // DB boards.category_id (FK → category.id): 이 게시판의 분류 루트 행. 칩(선택지)은 이 루트의 자식 행
     eyebrow: string;
     name: string;
     description: string;
@@ -19,12 +42,11 @@ export interface BoardSetting {
     use_secret?: boolean; // qna 비밀글 허용 여부
     use_attachment?: boolean; // 파일 첨부 허용 여부
     use_category?: boolean; // 게시물 카테고리 (게시판 안의 세부 카테고리)
-    categories?: string[]; // user_category를 담을 배열
-    // 상품 연동 (review, qna). 없으면 'none'으로 취급
-    // 주의: boards 테이블에는 컬럼을 추가하지 않고 코드 설정표(BOARD_CONFIG)로 관리
+    sort?: BoardSortMode; // 기본값은 latest
     product_scope?: BoardProductScope;
     use_rating?: boolean; // 별점 사용 (review) → Post.rating
     created_at: string;
+    gallery_layout?: GalleryLayout;
 }
 
 // 게시물 인터페이스(규격에 대입될 값)
@@ -32,13 +54,14 @@ export interface BoardSetting {
 export interface Post {
     id: string; // DB: UUID (mock은 'post-1' 형태)
     board_id: string;
-    category?: string; // use_category가 있는 경우만
+    category_id?: string; // use_category가 있는 경우만
     title: string;
     content: string;
     user_id: string | null; // DB: profiles.id (탈퇴 시 null)
     author_name: string;
     gid: string; // file_info.gid (첨부/본문 이미지 묶음)
     view_count: number;
+    sort_order?: number; // 수동 정렬 번호
     is_pinned?: boolean; // 공지 고정 여부
     is_secret?: boolean; // qna 비밀글 여부
     thumbnail_url?: string; // 룩북 섬네일
@@ -63,14 +86,14 @@ export interface QnaAnswer {
 }
 
 // 게시물 인터페이스 - FaQ
-// 향후 Supabase faqs 테이블로 생성 예정 (posts와 같은 규칙: UUID, 소프트 삭제)
-export interface FaqItem {
-    id: string; // DB: UUID (mock은 'faq-1' 형태)
-    category: string;
-    question: string;
-    answer: string;
-    sort_order: number; // 게시물 수동 정렬
-    created_at: string;
-    updated_at: string;
-    deleted_at: string | null; // 소프트 삭제: null인 항목만 노출
-}
+// deprecated - QnA 게시판 하위로 통합
+// export interface FaqItem {
+//     id: string; // DB: UUID (mock은 'faq-1' 형태)
+//     category: string;
+//     question: string;
+//     answer: string;
+//     sort_order: number; // 게시물 수동 정렬
+//     created_at: string;
+//     updated_at: string;
+//     deleted_at: string | null; // 소프트 삭제: null인 항목만 노출
+// }

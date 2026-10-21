@@ -1,0 +1,17 @@
+[
+  {
+    "path": "c:/Users/AX0130/Documents/FE-project-teamD/domains/boards",
+    "colorName": "Yellow",
+    "badgeType": "circle"
+  },
+  {
+    "path": "c:/Users/AX0130/Documents/FE-project-teamD/app/(shop)/boards",
+    "colorName": "Yellow",
+    "badgeType": "circle"
+  },
+  {
+    "path": "c:/Users/AX0130/Documents/FE-project-teamD/app/api/debug",
+    "colorName": "Red",
+    "badgeType": "circle"
+  }
+]

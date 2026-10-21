@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, Post } from '../types/board.types';
 import DeleteButton from './DeleteButton';
+import QnaAnswer from './QnaAnswer';
+import { maskName, SECRET_TITLE } from '../lib/mask';
 
 interface PostDetailProps {
     board: BoardSetting;
@@ -9,6 +11,7 @@ interface PostDetailProps {
     prev: Post | null;
     next: Post | null;
     canEdit: boolean;
+    canView: boolean;
 }
 
 // 이벤트가 없어서 use client 불필요
@@ -18,8 +21,14 @@ export default function PostDetail({
     prev,
     next,
     canEdit,
+    canView,
 }: PostDetailProps) {
     const listHref = `/boards/${board.id}`;
+    const isQna = board.type === 'qna';
+    const hidden = post.is_secret && !canView;
+
+    // 목록에서 가린 비밀글 제목이 이전/다음 글 줄에서 보이지 않게
+    const showTitle = (p: Post) => (p.is_secret ? SECRET_TITLE : p.title);
 
     return (
         <article>
@@ -40,16 +49,28 @@ export default function PostDetail({
                         {post.category}
                     </p>
                 )} */}
-                <h1 className="my-1 text-xl font-extrabold">{post.title}</h1>
+                <h1 className="my-1 text-xl font-extrabold">
+                    {hidden ? SECRET_TITLE : post.title}
+                </h1>
                 <p className="text-xs text-gray-500">
-                    {post.author_name} · {formatDate(post.created_at)} ·
-                    조회수{' '}
+                    {isQna ? maskName(post.author_name) : post.author_name} ·{' '}
+                    {formatDate(post.created_at)} · 조회수 {post.view_count}
                 </p>
             </header>
 
             <div className="min-h-40 border-b px-1.5 py-6 text-sm whitespace-pre-wrap text-gray-700">
-                {post.content}
+                {hidden
+                    ? '🔒 작성자와 관리자만 볼 수 있는 글입니다.'
+                    : post.content}
             </div>
+
+            {/* 답변: 볼 수 있을 때만 (비밀글을 못 보는 사람에게는 답변도 그리지 않음) */}
+            {!hidden && post.answer && <QnaAnswer answer={post.answer} />}
+            {!hidden && isQna && !post.answer && (
+                <p className="border-b px-4 py-5 text-xs text-gray-400">
+                    답변 대기 중
+                </p>
+            )}
 
             <ul className="border-b text-xs">
                 <li className="flex gap-4 px-1.5 py-2.5">
@@ -59,7 +80,7 @@ export default function PostDetail({
                             href={`${listHref}/${prev.id}`}
                             className="hover:underline"
                         >
-                            {prev.title}
+                            {showTitle(prev)}
                         </Link>
                     ) : (
                         <span className="text-gray-400">
@@ -74,7 +95,7 @@ export default function PostDetail({
                             href={`${listHref}/${next.id}`}
                             className="hover:underline"
                         >
-                            {next.title}
+                            {showTitle(next)}
                         </Link>
                     ) : (
                         <span className="text-gray-400">

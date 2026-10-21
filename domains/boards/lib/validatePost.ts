@@ -5,6 +5,7 @@ import type { BoardSetting } from '../types/board.types';
 export function validatePost(
     board: BoardSetting,
     formData: FormData,
+    categoryIds: string[],
 ): Record<string, string> {
     const errors: Record<string, string> = {};
 
@@ -15,7 +16,7 @@ export function validatePost(
     if (!title) errors.title = '제목을 입력해 주세요.';
     if (!content) errors.content = '내용을 입력해 주세요.';
 
-    if (board.use_category && !board.categories?.includes(category)) {
+    if (board.use_category && !categoryIds.includes(category)) {
         errors.category = '분류를 선택해 주세요.';
     }
     return errors;
