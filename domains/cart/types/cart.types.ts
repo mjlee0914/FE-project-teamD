@@ -1,8 +1,10 @@
 import { Product } from '@/domains/products/types/product.types';
 
 export interface CartItem {
-    product: Product;
+    id: string;
     quantity: number;
+    product: Product;
+    option: string | null;
 }
 
 export interface ShippingAddress {
