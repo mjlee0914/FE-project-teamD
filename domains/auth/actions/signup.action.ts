@@ -76,6 +76,9 @@ export async function signUpAction(
             values: { name, email, phone, address },
         };
     }
+    // 이메일 인증이 꺼져 있으면 가입과 동시에 로그인되므로, 로그아웃시킨 뒤 로그인 페이지로 보낸다
+    await supabase.auth.signOut();
+
     //회원가입 완료 후 화면전환
     redirect('/login');
 }

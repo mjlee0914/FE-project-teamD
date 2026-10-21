@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
-import { MOCK_PRODUCTS, MOCK_CATEGORY_ROWS, } from '@/shared/mocks/mockData';
+import { MOCK_CATEGORY_ROWS } from '@/shared/mocks/mockData';
+import { getProductById } from '@/domains/products/queries/getProductById.query';
 
 import ProductDetail from '@/domains/products/components/ProductDetail';
 import ProductDescription from '@/domains/products/components/ProductDescription';
@@ -8,7 +9,7 @@ import ProductReviews from '@/domains/products/components/ProductReviews';
 import ProductInquiries from '@/domains/products/components/ProductInquiries';
 
 interface ProductPageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export default async function ProductPage({
@@ -18,23 +19,26 @@ export default async function ProductPage({
     const { id } = await params;
 
     // ID에 맞는 상품 데이터 찾기
-    const product = MOCK_PRODUCTS.find((item) => item.id === String(id));
+    const product = await getProductById(id);
 
     // 해당 상품 없으면 404
     if (!product) {
         notFound();
     }
 
-    
     const categoryName =
         MOCK_CATEGORY_ROWS.find(
-            (category) => category.id === product.category_id
+            (category) => category.id === product.category_id,
         )?.name ?? '카테고리';
 
     return (
         <main className="mx-auto max-w-6xl px-6 py-12">
             {/* 상품 이미지, 상품명, 가격, 옵션 */}
-            <ProductDetail key={product.id} product={product} categoryName={categoryName} />
+            <ProductDetail
+                key={product.id}
+                product={product}
+                categoryName={categoryName}
+            />
 
             {/* 하단 이동 메뉴 */}
             <nav className="mt-20 grid grid-cols-4 border-b border-gray-300">
