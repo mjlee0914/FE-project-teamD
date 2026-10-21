@@ -1,3 +1,5 @@
+import { createServerClientq } from "@/lib/supabase";
+
 interface GetPagedProductsParams {
     categoryIds?: string[];
     keyword?: string;
@@ -63,4 +65,28 @@ export async function getPagedProducts({
         products: data ?? [],
         totalCount: count ?? 0,
     };
+}
+
+export async function getCategoryProducts({
+    categoryId,
+}: { categoryId?: string } = {}) {
+    const supabase = createServerClient();
+
+    let query = supabase
+        .from('products')
+        .select(
+            'id, name, price, description, category_id, gid, isNew, viewCount',
+        );
+
+    if (categoryId?.trim()) {
+        query = query.eq('category_id', categoryId.trim());
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        throw new Error(`상품 목록 조회 실패: ${error.message}`);
+    }
+
+    return data ?? [];
 }
