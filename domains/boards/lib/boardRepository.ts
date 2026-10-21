@@ -16,6 +16,7 @@ export interface GetPostsParams {
     // 주의: 상품페이지에 리뷰·Q&A 섹션이 같이 있으면 page 파라미터가 겹치므로
     //       섹션별로 reviewPage / qnaPage 처럼 이름을 나눠서 page props로 넘길 것
     productId?: string;
+    excludeCategoryName?: string; // 이 이름의 분류 글은 제외할 떄 사용
 }
 
 export interface PostListResult {
@@ -61,9 +62,13 @@ export async function getPosts({
     q,
     category,
     productId,
+    excludeCategoryName,
 }: GetPostsParams): Promise<PostListResult> {
     // 게시판 확인
     const board = await getBoard(boardId);
+    const excludedId = excludeCategoryName
+        ? await findCategoryIdByName(boardId, excludeCategoryName)
+        : null;
 
     // 검색어 준비
     const keyword = q?.trim().toLowerCase();
@@ -85,6 +90,7 @@ export async function getPosts({
         //     if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
         //     return b.created_at.localeCompare(a.created_at);
         // });
+        .filter((post) => !excludedId || post.category_id !== excludedId)
         .sort(sorterFor(board));
 
     // 페이지 계산
@@ -243,6 +249,15 @@ export async function getBoardCategories(
         .filter((c) => c.deleted_at === null) // 삭제된 분류는 제외 (글·게시판과 같은 소프트 삭제 규칙)
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((c) => ({ id: c.id, name: c.name }));
+}
+
+// 게시판 안에서 이름으로 분류(칩) id 찾기. 못 찾으면 null
+export async function findCategoryIdByName(
+    boardId: string,
+    name: string,
+): Promise<string | null> {
+    const chips = await getBoardCategories(boardId);
+    return chips.find((c) => c.name === name)?.id ?? null;
 }
 
 // Q&A 답변 저장 (글당 1개, 이미 글이 있으면 덮어쓰기(수정))

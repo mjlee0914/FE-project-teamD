@@ -11,7 +11,8 @@ export default function EventBanner({ posts }: EventBannerProps) {
         (post) =>
             post.board_id === 'events' &&
             post.deleted_at === null &&
-            post.category_id !== 'cat-events-ended' &&
+            // (코드 삭제 대신 주석처리) 종료된 이벤트는 메인 page.tsx에서 처리합니다.
+            // post.category_id !== 'cat-events-ended' &&
             post.thumbnail_url,
     );
 
