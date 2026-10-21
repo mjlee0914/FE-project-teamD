@@ -1,25 +1,8 @@
 import type { Order } from '@/domains/orders/types/order.types';
-import { User } from '@/domains/auth/types/auth.types';
 import { Category } from '@/domains/categories/types/category.types';
 import { FileInfo } from '@/domains/files/types/file.types';
 import { Product } from '@/domains/products/types/product.types';
 import { CartItem } from '@/domains/cart/types/cart.types';
-
-// 로그인 테스트용 회원 관리자, 테스트 Mock Data * 게시판 개발에 이용 중*
-export const MOCK_USERS: User[] = [
-    {
-        id: 1,
-        loginId: 'admin',
-        password: 'admin',
-        name: '관리자',
-    },
-    {
-        id: 2,
-        loginId: 'test',
-        password: 'test',
-        name: '테스터',
-    },
-];
 
 // DB category 테이블과 같은 평탄한 데이터. 신상품·베스트·세일은 상품 분류 대신 별도 필터로 처리합니다.
 export const MOCK_CATEGORY_ROWS: Category[] = [
