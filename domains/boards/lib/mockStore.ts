@@ -1,9 +1,6 @@
-import {
-    BOARD_SETTINGS,
-    BOARD_CATEGORY_ROWS,
-    POSTS,
-    EVENT_POSTS,
-} from '@/shared/mocks/mockData';
+import { BOARD_SETTINGS } from '../mocks/settings';
+import { BOARD_CATEGORY_ROWS } from '../mocks/categories';
+import { POSTS, EVENT_POSTS } from '../mocks/posts';
 import type {
     BoardSetting,
     BoardCategoryRow,
