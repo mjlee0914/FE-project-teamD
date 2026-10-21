@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
-
-import { MOCK_CATEGORY_ROWS } from '@/shared/mocks/mockData';
+import { getCategoryNameById } from '@/domains/categories/queries/getCategoryNameById.query';
 import { getProductById } from '@/domains/products/queries/getProductById.query';
 
 import ProductDetail from '@/domains/products/components/ProductDetail';
@@ -27,9 +26,7 @@ export default async function ProductPage({
     }
 
     const categoryName =
-        MOCK_CATEGORY_ROWS.find(
-            (category) => category.id === product.category_id,
-        )?.name ?? '카테고리';
+        (await getCategoryNameById(product.category_id)) ?? '카테고리';
 
     return (
         <main className="mx-auto max-w-6xl px-6 py-12">

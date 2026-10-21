@@ -6,7 +6,11 @@ import {
 } from '@/domains/boards/lib/boardRepository';
 import PostDetail from '@/domains/boards/components/PostDetail';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
-import { canEditPost, canViewPost } from '@/domains/boards/lib/permissions';
+import {
+    canAnswerPost,
+    canEditPost,
+    canViewPost,
+} from '@/domains/boards/lib/permissions';
 
 // 게시글 상세
 export default async function PostPage({
@@ -18,8 +22,6 @@ export default async function PostPage({
     const board = await getBoard(boardId);
 
     if (!board) notFound();
-    // 갤러리 상세는 U21에서 만들 예정이라 지금은 막음 (list와 qna는 통과)
-    if (board.type === 'gallery') notFound();
 
     const post = await getPost(boardId, postId);
     if (!post) notFound();
@@ -27,6 +29,7 @@ export default async function PostPage({
     const user = await getCurrentUser();
     const canEdit = canEditPost(post, user);
     const canView = canViewPost(post, user);
+    const canAnswer = canAnswerPost(board, user);
 
     const { prev, next } = await getAdjacentPosts(boardId, postId);
 
@@ -39,6 +42,7 @@ export default async function PostPage({
                 next={next}
                 canEdit={canEdit}
                 canView={canView}
+                canAnswer={canAnswer}
             />
         </div>
     );
