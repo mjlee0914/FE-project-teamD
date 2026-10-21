@@ -15,6 +15,10 @@ export async function addCategory(
     _prevState: ActionState,
     formData: FormData,
 ): Promise<ActionState> {
+    if (!isAdmin()) {
+        return { success: false, errors: { alert: '권한이 없습니다.' } };
+    }
+
     const errors = validateCreateCategory(formData);
     if (Object.keys(errors).length > 0) {
         return { success: false, errors: errors };
@@ -208,6 +212,10 @@ export async function updateCategory(
     _prevState: ActionState,
     formData: FormData,
 ): Promise<ActionState> {
+    if (!isAdmin()) {
+        return { success: false, errors: { alert: '권한이 없습니다.' } };
+    }
+
     const errors = validateUpdateCategory(formData);
 
     if (Object.keys(errors).length > 0) {
@@ -246,6 +254,10 @@ export async function getParentCategoryList(type: string) {
 }
 
 export async function deleteCategory(category: Category): Promise<ActionState> {
+    if (!isAdmin()) {
+        return { success: false, errors: { alert: '권한이 없습니다.' } };
+    }
+
     const supabase = createServerClient();
 
     if ((await getChildCategoryCnt(category.id)) > 0) {

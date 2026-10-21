@@ -86,6 +86,10 @@ export async function updateProduct(formData: FormData): Promise<ActionState> {
 }
 
 export async function deleteProduct(id: string) {
+    if (!isAdmin()) {
+        return { success: false, errors: { alert: '권한이 없습니다.' } };
+    }
+
     const supabase = createServerClient();
 
     // TODO : 연결된 gid나 board 삭제
