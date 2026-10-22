@@ -62,8 +62,8 @@ export default function ProfileForm({
             )}
 
             {/* 로그인 정보: 이메일은 바꿀 수 없어서 글자로만 보여준다 */}
-            <section className="flex flex-col gap-6 rounded-xs border p-6">
-                <h2 className="text-lg font-bold">로그인 정보</h2>
+            <section className="flex flex-col gap-6 border border-gray-100 p-6 shadow-sm">
+                <h2 className="text-lg font-bold text-gray-900">로그인 정보</h2>
                 <div className="grid items-center gap-x-30 gap-y-8 md:grid-cols-[6rem_1fr]">
                     <span className="text-md font-bold md:justify-self-end">
                         이메일
@@ -82,9 +82,9 @@ export default function ProfileForm({
                 action={formAction}
                 noValidate
                 autoComplete="off"
-                className="flex flex-col gap-6 rounded-xs border p-6"
+                className="flex flex-col gap-6 border border-gray-100 p-6 shadow-sm"
             >
-                <h2 className="text-lg font-bold">기본 정보</h2>
+                <h2 className="text-lg font-bold text-gray-900">기본 정보</h2>
 
                 <div className="grid items-center gap-x-30 gap-y-8 md:grid-cols-[6rem_1fr]">
                     {FIELDS.map((field) => (

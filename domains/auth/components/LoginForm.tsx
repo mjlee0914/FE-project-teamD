@@ -33,7 +33,7 @@ export default function LoginForm() {
 
             <form
                 action={handleSubmit}
-                className="flex flex-col gap-6 rounded-xs border p-6"
+                className="flex flex-col gap-6 border border-gray-100 p-6 shadow-sm"
             >
                 <div className="flex flex-col gap-2">
                     <label htmlFor="email" className="text-sm font-bold">

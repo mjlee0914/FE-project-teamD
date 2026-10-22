@@ -71,7 +71,7 @@ export default function SignUpForm() {
                 action={formAction}
                 noValidate
                 autoComplete="off"
-                className="flex flex-col gap-6 rounded-xs border p-6"
+                className="flex flex-col gap-6 border border-gray-100 p-6 shadow-sm"
             >
                 {FIELDS.map((field) => (
                     <div key={field.name} className="flex flex-col gap-2">

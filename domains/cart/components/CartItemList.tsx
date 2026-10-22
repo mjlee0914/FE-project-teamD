@@ -78,13 +78,15 @@ export default function CartItemList({
                 장바구니 ({items.length})
             </h3>
             {items.length === 0 && (
-                <p className="rounded-xs border py-20 text-center text-sm text-gray-500">
+                <p className="border border-gray-100 py-20 text-center text-sm text-gray-500 shadow-sm">
                     장바구니가 비었습니다.
                 </p>
             )}
             {items.length > 0 && (
-                <section className="flex flex-col gap-2 rounded-xs border p-6">
-                    <h2 className="text-lg font-bold">담은 상품</h2>
+                <section className="flex flex-col gap-2 border border-gray-100 p-6 shadow-sm">
+                    <h2 className="text-lg font-bold text-gray-900">
+                        담은 상품
+                    </h2>
                     <ul className="divide-y divide-gray-100">
                         {items.map((item) => {
                             return (
@@ -173,7 +175,7 @@ export default function CartItemList({
             )}
             {items.length > 0 && (
                 <div className="mt-6 space-y-4">
-                    <div className="flex flex-wrap items-center justify-center gap-6 rounded-lg border border-gray-100 bg-gray-50/80 p-6 shadow-sm md:gap-12">
+                    <div className="flex flex-wrap items-center justify-center gap-6 border border-gray-100 bg-gray-50/80 p-6 shadow-sm md:gap-12">
                         <div className="flex flex-col items-center gap-1">
                             <p className="text-xs text-gray-600">상품 금액</p>
                             <p className="font-semibold text-gray-900">
