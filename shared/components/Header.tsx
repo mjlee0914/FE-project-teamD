@@ -4,15 +4,17 @@ import { cn } from '@/shared/utils/cn';
 import Link from 'next/link';
 import { LuShoppingCart, LuUser, LuSearch } from 'react-icons/lu';
 import { PiListBold } from 'react-icons/pi';
-import { MOCK_CATEGORIES } from '../mocks/mockData';
+import type { HeaderCategory } from '@/domains/categories/queries/getHeaderCategories.query';
 import { logout } from '@/domains/auth/actions/logout.action';
 
 export default function Header({
     userName,
     cartCount,
+    categories,
 }: {
     userName: string | null;
     cartCount: number;
+    categories: HeaderCategory[];
 }) {
     return (
         <>
@@ -101,7 +103,7 @@ export default function Header({
             <nav className="sticky top-0 z-50 w-full bg-white/70 p-0.5 text-base backdrop-blur-md transition-all">
                 <div>
                     <div className="max-w-auto mx-auto flex justify-center gap-10 p-3 text-sm md:px-4">
-                        {MOCK_CATEGORIES.map((category) => (
+                        {categories.map((category) => (
                             <Link
                                 key={category.id}
                                 href={{
