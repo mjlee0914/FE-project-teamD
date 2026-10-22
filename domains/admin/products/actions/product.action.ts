@@ -22,7 +22,7 @@ export async function addProduct(formData: FormData): Promise<ActionState> {
         return { success: false, errors: errors };
     }
 
-    if (!isAdmin()) {
+    if (!(await isAdmin())) {
         return { success: false, errors: { alert: '권한이 없습니다.' } };
     }
 
@@ -58,7 +58,7 @@ export async function updateProduct(formData: FormData): Promise<ActionState> {
         return { success: false, errors: errors };
     }
 
-    if (!isAdmin()) {
+    if (!(await isAdmin())) {
         return { success: false, errors: { alert: '권한이 없습니다.' } };
     }
 
@@ -86,7 +86,7 @@ export async function updateProduct(formData: FormData): Promise<ActionState> {
 }
 
 export async function deleteProduct(id: string) {
-    if (!isAdmin()) {
+    if (!(await isAdmin())) {
         return { success: false, errors: { alert: '권한이 없습니다.' } };
     }
 

@@ -23,6 +23,9 @@ const nextConfig: NextConfig = {
         agentFeedback: true,
         authInterrupts: true, // unauthorized() 및 forbidden() 인터럽트 함수 사용을 활성화합니다.
         taint: true,
+        serverActions: {
+            bodySizeLimit: '50mb',
+        },
     },
     cacheComponents: true,
     partialPrefetching: true,
