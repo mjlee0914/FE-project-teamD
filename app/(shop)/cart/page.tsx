@@ -27,7 +27,13 @@ async function CartContent() {
 
 export default function Page() {
     return (
-        <Suspense fallback={<p className="text-center">불러오는 중...</p>}>
+        <Suspense
+            fallback={
+                <p className="py-20 text-center text-sm text-gray-500">
+                    장바구니를 불러오는 중...
+                </p>
+            }
+        >
             <CartContent />
         </Suspense>
     );

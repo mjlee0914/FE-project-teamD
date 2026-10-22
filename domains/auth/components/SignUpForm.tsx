@@ -59,48 +59,72 @@ export default function SignUpForm() {
         INITIAL_ACTION_STATE,
     );
 
+    // 주문서(체크아웃)와 같은 모양: 굵은 제목 + 테두리 카드 + 검은 둥근 버튼
     return (
-        <form
-            action={formAction}
-            noValidate
-            autoComplete="off"
-            className="mx-auto flex max-w-sm flex-col gap-2 py-16"
-        >
-            {FIELDS.map((field) => (
-                <div key={field.name} className="flex flex-col gap-1">
-                    <label htmlFor={field.name}>{field.label}</label>
-                    <Input
-                        id={field.name}
-                        name={field.name}
-                        type={field.type}
-                        maxLength={field.maxLength}
-                        placeholder={field.placeholder}
-                        // 오류가 나도 입력한 값이 지워지지 않게 서버가 돌려준 값을 다시 채운다
-                        defaultValue={
-                            field.type === 'password'
-                                ? ''
-                                : state.values?.[field.name]
-                        }
-                    />
-                    {state.errors?.[field.name] && (
-                        <p className="text-sm text-red-600">
-                            {state.errors[field.name]}
-                        </p>
-                    )}
-                </div>
-            ))}
-            {state.errors?.form && (
-                <p className="text-sm text-red-600">{state.errors.form}</p>
-            )}
-            <Button type="submit" disabled={isPending}>
-                {isPending ? '처리 중...' : '가입하기'}
-            </Button>
-            <p className="text-center text-sm text-gray-500">
+        <div className="mx-auto max-w-md px-4 py-12 md:py-16">
+            <h3 className="text-2xl font-black text-gray-900">회원가입</h3>
+            <p className="mt-1 mb-6 text-sm text-gray-500">
+                정보를 입력하고 DN MALL 회원이 되어 보세요.
+            </p>
+
+            <form
+                action={formAction}
+                noValidate
+                autoComplete="off"
+                className="flex flex-col gap-6 rounded-xs border p-6"
+            >
+                {FIELDS.map((field) => (
+                    <div key={field.name} className="flex flex-col gap-2">
+                        <label
+                            htmlFor={field.name}
+                            className="text-sm font-bold"
+                        >
+                            {field.label}
+                        </label>
+                        <Input
+                            id={field.name}
+                            name={field.name}
+                            type={field.type}
+                            maxLength={field.maxLength}
+                            placeholder={field.placeholder}
+                            aria-invalid={!!state.errors?.[field.name]}
+                            // 오류가 나도 입력한 값이 지워지지 않게 서버가 돌려준 값을 다시 채운다
+                            defaultValue={
+                                field.type === 'password'
+                                    ? ''
+                                    : state.values?.[field.name]
+                            }
+                        />
+                        {state.errors?.[field.name] && (
+                            <p className="text-xs text-red-600">
+                                {state.errors[field.name]}
+                            </p>
+                        )}
+                    </div>
+                ))}
+
+                {state.errors?.form && (
+                    <p className="text-xs text-red-600">{state.errors.form}</p>
+                )}
+
+                <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="h-12 w-full rounded-2xl bg-black font-bold text-white hover:bg-zinc-700"
+                >
+                    {isPending ? '처리 중...' : '가입하기'}
+                </Button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-gray-500">
                 이미 회원이신가요?{' '}
-                <Link href="/login" className="underline">
+                <Link
+                    href="/login"
+                    className="font-bold text-gray-900 underline"
+                >
                     로그인
                 </Link>
             </p>
-        </form>
+        </div>
     );
 }
