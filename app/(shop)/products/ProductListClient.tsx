@@ -213,41 +213,51 @@ export default function ProductList({
                         </div>
                     </form>
                 </section>
+
                 {/* 상품 영역 */}
-                <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <section className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {pageProducts.length === 0 && (
                         <p className="col-span-full py-10 text-center text-gray-500">
                             상품이 없습니다.
                         </p>
                     )}
+
                     {pageProducts.map((product) => (
                         <Link
                             href={`/products/${product.id}`}
                             key={product.id}
-                            className="flex cursor-pointer flex-col items-center justify-center"
+                            className="flex w-full max-w-[300px] cursor-pointer flex-col justify-self-center"
                         >
-                            <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100">
+
+
+                            <div className="relative aspect-[500/666] w-full overflow-hidden">
                                 <Image
                                     src={product.imageUrl}
                                     alt={product.name}
                                     fill
                                     unoptimized
-                                    sizes="(min-width: 1024px) 33vw, 100vw"
-                                    className="object-cover"
+                                    sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw"
+                                    className="object-cover object-center"
                                 />
                             </div>
+
+
+
                             <div className="w-full text-left">
                                 {product.name}
                             </div>
+
                             <div className="text-bold w-full text-left text-xl">
                                 {formatPrice(product.price)}
                             </div>
+
                             <div className="w-full text-left text-xs text-gray-400">
                                 조회수 {product.viewCount}
                             </div>
                         </Link>
                     ))}
                 </section>
+
                 {/* 페이징 영역 */}
                 <nav className="mt-7.5 flex justify-center">
                     {totalPage > 0 && (
