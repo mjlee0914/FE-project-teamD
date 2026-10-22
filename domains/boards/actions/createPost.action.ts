@@ -101,22 +101,28 @@ export async function createPostAction(
     const thumbnailUrl = image ? await toDataUrl(image) : undefined;
 
     // 4) 저장
-    await createPost({
-        boardId: board.id,
-        userId: user.id,
-        authorName: user.name,
-        title: values.title.trim(),
-        content: values.content.trim(),
-        gid,
-        isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
-        thumbnailUrl,
-        rating: board.use_rating ? Number(values.rating) : undefined,
-        productId,
-        categoryId: board.use_category
-            ? (fixedCategoryId ?? values.category)
-            : undefined,
-    });
-
+    try {
+        await createPost({
+            boardId: board.id,
+            userId: user.id,
+            authorName: user.name,
+            title: values.title.trim(),
+            content: values.content.trim(),
+            gid,
+            isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
+            thumbnailUrl,
+            rating: board.use_rating ? Number(values.rating) : undefined,
+            productId,
+            categoryId: board.use_category
+                ? (fixedCategoryId ?? values.category)
+                : undefined,
+        });
+    } catch (error) {
+        console.error('글 저장 실패:', error);
+        return fail({
+            form: '글을 저장하지 못했습니다. 잠시 후 다시 시도해주세요.',
+        });
+    }
     // 5) 목록 캐시 갱신 후 목록 이동
     //  - redirect()는 이동 신호를 에러처럼 던지는 함수이기 때문에
     //  - 나중에 DB 처리하려고 try/catch 추가할 때 redirect()는 구문 안에 넣으면 안됨

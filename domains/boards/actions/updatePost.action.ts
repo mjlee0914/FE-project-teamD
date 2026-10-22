@@ -13,6 +13,7 @@ import { getCurrentUser } from '../lib/currentUser';
 import { canEditPost } from '../lib/permissions';
 import { validatePost } from '../lib/validatePost';
 import { pickImage, toDataUrl } from '../lib/imageUpload';
+import type { Post } from '../types/board.types';
 
 // 공개요청
 export async function updatePostAction(
@@ -62,14 +63,23 @@ export async function updatePostAction(
 
     if (Object.keys(errors).length > 0) return fail(errors);
 
-    await updatePost(board.id, post.id, {
-        title: values.title.trim(),
-        content: values.content.trim(),
-        categoryId: board.use_category ? values.category : undefined,
-        isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
-        thumbnailUrl,
-        rating: board.use_rating ? Number(values.rating) : undefined,
-    });
+    let updated: Post | null = null;
+    try {
+        updated = await updatePost(board.id, post.id, {
+            title: values.title.trim(),
+            content: values.content.trim(),
+            categoryId: board.use_category ? values.category : undefined,
+            isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
+            thumbnailUrl,
+            rating: board.use_rating ? Number(values.rating) : undefined,
+        });
+    } catch (error) {
+        console.error('글 수정 실패:', error);
+        return fail({
+            form: '글을 수정하지 못했습니다. 잠시 후에 다시 시도해주세요.',
+        });
+    }
+    if (!updated) return fail({ form: '게시글을 찾을 수 없습니다.' });
 
     // 목록 갱신
     revalidatePath(`/boards/${board.id}`);
