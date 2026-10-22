@@ -3,6 +3,7 @@ import {
     getAdjacentPosts,
     getBoard,
     getPost,
+    increaseViewCount,
 } from '@/domains/boards/lib/boardRepository';
 import PostDetail from '@/domains/boards/components/PostDetail';
 import { getCurrentUser } from '@/domains/boards/lib/currentUser';
@@ -32,6 +33,17 @@ export default async function PostPage({
     const canEdit = canEditPost(post, user);
     const canView = canViewPost(post, user);
     const canAnswer = canAnswerPost(board, user);
+    let shownPost = post;
+    if (canView) {
+        try {
+            await increaseViewCount(boardId, postId);
+            // 이미 읽은 글은 +1 전 값이 있으므로 화면에는 +1을 반영
+            shownPost = { ...post, view_count: post.view_count + 1 };
+        } catch (error) {
+            // 조회수 갱신 실패는 글을 못 보게 할 이유는 아니니까 알리지 않음
+            console.error('조회수 증가 실패:', error);
+        }
+    }
 
     const { prev, next } = await getAdjacentPosts(boardId, postId);
 
@@ -45,7 +57,7 @@ export default async function PostPage({
         <div className="mx-auto max-w-5xl px-4 py-10">
             <PostDetail
                 board={board}
-                post={post}
+                post={shownPost}
                 prev={prev}
                 next={next}
                 canEdit={canEdit}

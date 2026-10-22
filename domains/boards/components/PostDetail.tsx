@@ -52,11 +52,6 @@ export default function PostDetail({
             </p>
 
             <header className="border-t-2 border-b border-black px-1.5 py-4">
-                {/* {board.use_category && post.category && (
-                    <p className="text-xs font-bold text-stone-500">
-                        {post.category}
-                    </p>
-                )} */}
                 <h1 className="my-1 text-xl font-extrabold">
                     {hidden ? SECRET_TITLE : post.title}
                 </h1>

@@ -1,5 +1,5 @@
 import type { BoardSetting, Post } from '../types/board.types';
-import { BOARD_SETTINGS } from '../mocks/settings';
+import { BOARD_SETTINGS } from './boardSettings';
 import {
     fetchBoardRow,
     fetchCategoryChildren,
@@ -9,6 +9,7 @@ import {
     softDeletePostRow,
     updatePostRow,
     insertPostRow,
+    increaseViewCountRow,
 } from './boardDb';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -132,7 +133,7 @@ export async function getPosts({
     };
 }
 
-// 게시물 가져오기 (조회수 올리기)
+// 게시물 가져오기
 export async function getPost(
     boardId: string,
     postId: string,
@@ -249,4 +250,12 @@ export async function saveAnswer(
     answeredBy: string,
 ): Promise<boolean> {
     return saveAnswerRow(boardId, postId, content, answeredBy);
+}
+
+// 조회수 올리기
+export async function increaseViewCount(
+    boardId: string,
+    postId: string,
+): Promise<void> {
+    return increaseViewCountRow(boardId, postId);
 }
