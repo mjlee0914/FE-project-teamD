@@ -1,7 +1,7 @@
 import { Category } from '@/domains/categories/types/category.types';
-import type { CategoryType } from '@/shared/types/category.types';
+import type { CategoryType } from '@/domains/admin/category/types/category.type';
 
-// type은 공통 CATEGORY_TYPES의 값 ('BOARD' / 'MAIN')
+// type은 카테고리 담당 CATEGORY_TYPES의 값 ('BOARD' / 'MAIN', domains/admin/category/types/category.type.ts)
 export interface BoardCategoryRow extends Category {
     type: CategoryType;
     created_at: string;
@@ -30,6 +30,10 @@ export type GalleryLayout = 'portrait' | 'landscape';
 // none: 상품과 무관 / optional: 상품에서 쓴 글과 일반 글이 섞임(qna) / required: 반드시 상품에 속함(review)
 export type BoardProductScope = 'none' | 'optional' | 'required';
 
+// 같은 랜딩 페이지로 묶이는 게시판 그룹
+// support: faq·qna → /boards/support (고객센터) / community: free·lookbook → /boards/community (커뮤니티)
+export type BoardGroup = 'support' | 'community';
+
 // 게시판 인터페이스(규격)
 export interface BoardSetting {
     id: string; // notice, qna, review 등
@@ -37,6 +41,7 @@ export interface BoardSetting {
     eyebrow: string;
     name: string;
     description: string;
+    group?: BoardGroup; // 랜딩 페이지로 묶이는 게시판이면 지정 (← 고객센터 홈 / ← 커뮤니티 홈 링크가 붙음)
     type: BoardType;
     write_role: BoardWriteRole;
     use_secret?: boolean; // qna 비밀글 허용 여부
@@ -83,6 +88,7 @@ export interface QnaAnswer {
     content: string;
     answered_by: string;
     answered_at: string;
+    updated_at?: string;
 }
 
 // 게시물 인터페이스 - FaQ

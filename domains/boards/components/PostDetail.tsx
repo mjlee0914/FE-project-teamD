@@ -3,7 +3,10 @@ import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, Post } from '../types/board.types';
 import DeleteButton from './DeleteButton';
 import QnaAnswer from './QnaAnswer';
+import AnswerForm from './AnswerForm';
 import { maskName, SECRET_TITLE } from '../lib/mask';
+import { toImageSrc } from '../lib/imageUpload';
+import Image from 'next/image';
 
 interface PostDetailProps {
     board: BoardSetting;
@@ -12,6 +15,7 @@ interface PostDetailProps {
     next: Post | null;
     canEdit: boolean;
     canView: boolean;
+    canAnswer: boolean;
 }
 
 // 이벤트가 없어서 use client 불필요
@@ -22,10 +26,12 @@ export default function PostDetail({
     next,
     canEdit,
     canView,
+    canAnswer,
 }: PostDetailProps) {
     const listHref = `/boards/${board.id}`;
     const isQna = board.type === 'qna';
     const hidden = post.is_secret && !canView;
+    const src = toImageSrc(post.thumbnail_url);
 
     // 목록에서 가린 비밀글 제목이 이전/다음 글 줄에서 보이지 않게
     const showTitle = (p: Post) => (p.is_secret ? SECRET_TITLE : p.title);
@@ -58,6 +64,18 @@ export default function PostDetail({
                 </p>
             </header>
 
+            {board.type === 'gallery' && src && (
+                <div className="relative mx-auto my-6 aspect-[4/3] w-full max-w-2xl bg-stone-100">
+                    <Image
+                        src={src}
+                        alt={post.title}
+                        fill
+                        unoptimized={src.startsWith('data:')}
+                        className="object-contain"
+                    />
+                </div>
+            )}
+
             <div className="min-h-40 border-b px-1.5 py-6 text-sm whitespace-pre-wrap text-gray-700">
                 {hidden
                     ? '🔒 작성자와 관리자만 볼 수 있는 글입니다.'
@@ -70,6 +88,13 @@ export default function PostDetail({
                 <p className="border-b px-4 py-5 text-xs text-gray-400">
                     답변 대기 중
                 </p>
+            )}
+            {canAnswer && (
+                <AnswerForm
+                    boardId={board.id}
+                    postId={post.id}
+                    current={post.answer?.content}
+                />
             )}
 
             <ul className="border-b text-xs">

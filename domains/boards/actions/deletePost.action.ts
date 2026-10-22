@@ -39,5 +39,6 @@ export async function deletePostAction(
     await deletePost(board.id, post.id);
 
     revalidatePath(`/boards/${board.id}`);
+    revalidatePath('/'); // 홈 배너 갱신 (이벤트 게시판일 때만 해도 됨: if (board.id === 'events'))
     redirect(`/boards/${board.id}`);
 }

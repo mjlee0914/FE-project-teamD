@@ -21,6 +21,7 @@ export default function EventCard({ post }: EventCardProps) {
                         alt={post.title}
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover"
+                        unoptimized={imageSrc.startsWith('data:')} // 목데이터 기반 (임시)
                     ></Image>
                     <div className="absolute bottom-5 flex flex-col gap-1 p-5 text-white">
                         <h1 className="text-3xl font-extrabold">
