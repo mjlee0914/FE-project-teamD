@@ -3,50 +3,45 @@ import { redirect } from 'next/navigation';
 import { getProfile } from '@/domains/auth/queries/getProfile.query';
 import ProfileForm from '@/domains/auth/components/ProfileForm';
 
-async function MyPageContent() {
+type SearchParams = Promise<{ saved?: string }>;
+
+async function MyPageContent({ searchParams }: { searchParams: SearchParams }) {
     const profile = await getProfile();
 
     if (!profile) {
         redirect('/login');
     }
 
+    // 저장 후 /mypage?saved=1 로 돌아오면 완료 안내를 보여준다
+    const { saved } = await searchParams;
+
     return (
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 p-4 pb-16 md:gap-8 md:p-6 lg:gap-10 lg:p-8">
-            {/* 페이지 제목 */}
-            <h2 className="text-center text-xl font-semibold md:text-2xl lg:text-3xl">
-                정보수정 페이지
-            </h2>
-
-            {/* 메인 콘텐츠 */}
-            <div className="grid gap-6 lg:grid-cols-[250px_1fr]">
-                {/* 사이드바 */}
-                <aside className="hidden border-r pr-4 lg:block">
-                    <nav className="space-y-1.5">
-                        {/* 클릭 시 이동할 링크 */}
-                    </nav>
-                </aside>
-
-                {/* 컨텐츠 영역 */}
-                <section className="w-full">
-                    <ProfileForm
-                        email={profile.email ?? ''}
-                        name={profile.username ?? ''}
-                        phone={profile.phone ?? ''}
-                        address={profile.address ?? ''}
-                    />
-                </section>
-            </div>
-        </div>
+        <ProfileForm
+            email={profile.email ?? ''}
+            name={profile.username ?? ''}
+            phone={profile.phone ?? ''}
+            address={profile.address ?? ''}
+            saved={saved === '1'}
+        />
     );
 }
 
-export default function MyPage() {
+// 체크아웃(주문/결제) 페이지와 같은 레이아웃: 굵은 제목 + 카드
+export default function MyPage({ searchParams }: { searchParams: SearchParams }) {
     return (
-        <div className="flex min-h-[calc(100vh-56px)] flex-col">
+        <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
+            <h3 className="text-2xl font-black text-gray-900">마이페이지</h3>
+            <p className="mt-1 mb-6 text-sm text-gray-500">
+                회원 정보를 확인하고 수정할 수 있어요.
+            </p>
             <Suspense
-                fallback={<p className="text-center text-lg">로딩중...</p>}
+                fallback={
+                    <p className="py-20 text-center text-sm text-gray-500">
+                        회원 정보를 불러오는 중...
+                    </p>
+                }
             >
-                <MyPageContent />
+                <MyPageContent searchParams={searchParams} />
             </Suspense>
         </div>
     );
