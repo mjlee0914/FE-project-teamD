@@ -15,5 +15,8 @@ export function displayAuthor(
     return board.write_role === 'admin' ? name : maskName(name);
 }
 
+// 상품 정보를 찾을 수 없을 때(삭제됐거나 DB에 없음) 대신 보여 주는 이름
+export const DELETED_PRODUCT_NAME = '삭제된 상품';
+
 // 비밀글은 제목을 가림
 export const SECRET_TITLE = '🔒 비밀글입니다.';

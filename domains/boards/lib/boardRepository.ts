@@ -166,6 +166,7 @@ export interface CreatePostInput {
     isSecret?: boolean;
     thumbnailUrl?: string;
     rating?: number;
+    productId?: string;
 }
 
 // 새 글 등록
@@ -193,6 +194,7 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
         deleted_at: null,
         thumbnail_url: input.thumbnailUrl,
         rating: input.rating,
+        product_id: input.productId,
     };
 
     store.posts.push(post);

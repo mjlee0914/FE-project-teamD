@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { getPosts } from '../lib/boardRepository';
-import { formatDate } from '../lib/formatDate';
-import { maskName, SECRET_TITLE } from '../lib/mask';
+import { getBoard, getBoardCategories, getPosts } from '../lib/boardRepository';
+import PostList from './PostList';
 
 interface ProductBoardSectionProps {
     boardId: 'review' | 'qna';
@@ -15,58 +14,58 @@ export default async function ProductBoardSection({
     productId,
     emptyText,
 }: ProductBoardSectionProps) {
-    const { items } = await getPosts({
+    const { items, total, page, pageSize } = await getPosts({
         boardId,
         productId,
         pageSize: 5,
     });
-    const isQna = boardId === 'qna';
+    const writeLabel = boardId === 'review' ? '리뷰 쓰기' : '문의 하기';
+
+    const board = await getBoard(boardId);
+    if (!board) return null;
+    const categories = await getBoardCategories(boardId);
 
     if (items.length === 0) {
         return (
-            <div className="border-y border-gray-200 py-16 text-center">
-                <p className="text-sm text-gray-500">{emptyText}</p>
+            <div>
+                <div className="border-y border-gray-200 py-16 text-center">
+                    <p className="text-sm text-gray-500">{emptyText}</p>
+                </div>
+                <div className="mt-3 flex items-center justify-end gap-3">
+                    <Link
+                        href={`/boards/${boardId}/new?productId=${productId}`}
+                        className="border border-black bg-black px-4 py-1.5 text-xs text-white"
+                    >
+                        {writeLabel}
+                    </Link>
+                </div>
             </div>
         );
     }
 
     return (
         <div>
-            <ul className="border-y border-gray-200 text-sm">
-                {items.map((post) => (
-                    <li
-                        key={post.id}
-                        className="flex items-center gap-4 border-b px-2 py-3 last:border-b-0"
-                    >
-                        {post.rating ? (
-                            <span className="text-xs text-amber-500">
-                                {'★'.repeat(post.rating)}
-                                {'☆'.repeat(5 - post.rating)}
-                            </span>
-                        ) : null}
-                        <Link
-                            href={`/boards/${boardId}/${post.id}`}
-                            className="min-w-0 flex-1 truncate hover:underline"
-                        >
-                            {isQna && post.is_secret
-                                ? SECRET_TITLE
-                                : post.title}
-                        </Link>
-                        <span className="w-16 text-center text-xs text-gray-500">
-                            {maskName(post.author_name)}
-                        </span>
-                        <span className="w-24 text-center text-xs text-gray-500">
-                            {formatDate(post.created_at)}
-                        </span>
-                    </li>
-                ))}
-            </ul>
-            <div className="mt-3 text-right">
+            <PostList
+                board={board}
+                posts={items}
+                total={total}
+                page={page}
+                pageSize={pageSize}
+                categories={categories}
+                hideProduct // 이 상품 페이지의 글이니까 상품 컬럼은 필요 없음
+            />
+            <div className="mt-3 flex items-center justify-end gap-3">
                 <Link
                     href={`/boards/${boardId}?productId=${productId}`}
-                    className="text-xs underline"
+                    className="border border-black bg-white px-4 py-1.5 text-xs text-black"
                 >
                     전체 보기
+                </Link>
+                <Link
+                    href={`/boards/${boardId}/new?productId=${productId}`}
+                    className="border border-black bg-black px-4 py-1.5 text-xs text-white"
+                >
+                    {writeLabel}
                 </Link>
             </div>
         </div>

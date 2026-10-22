@@ -2,7 +2,7 @@ import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, CategoryOption, Post } from '../types/board.types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { displayAuthor, SECRET_TITLE } from '../lib/mask';
+import { DELETED_PRODUCT_NAME, displayAuthor, SECRET_TITLE } from '../lib/mask';
 import { toImageSrc } from '../lib/imageUpload';
 
 interface PostListProps {
@@ -13,6 +13,7 @@ interface PostListProps {
     pageSize: number;
     categories: CategoryOption[]; // 분류 id → 이름 변환용
     productNames?: Record<string, string>;
+    hideProduct?: boolean;
 }
 
 export default function PostList({
@@ -23,6 +24,7 @@ export default function PostList({
     pageSize,
     categories,
     productNames,
+    hideProduct,
 }: PostListProps) {
     // board는 이 함수가 받은 인자라서 함수 안에서만 쓸 수 있음 (함수 밖에서 만들면 board를 못 찾음)
     const isQna = board.type === 'qna';
@@ -30,8 +32,8 @@ export default function PostList({
     // 고정글 강조 및 페이징이 연번을 해치지 않게 하기
     const offset = (page - 1) * pageSize;
 
-    // 상품 연결 글이 하나라도 있으면 상품 컬럼 표출
-    const showProduct = posts.some((p) => p.product_id);
+    // 상품 연결 글이 하나라도 있으면 상품 컬럼 표출하고 상품 상세 페이지에서는 상품 컬럼을 숨기기
+    const showProduct = !hideProduct && posts.some((p) => p.product_id);
 
     // 썸네일 주소 (public/ 접두사 변환, 없으면 undefined)
     const thumbSrc = (p: Post) => toImageSrc(p.thumbnail_url);
@@ -51,7 +53,7 @@ export default function PostList({
                     <th className="w-16 py-3">No.</th>
                     {board.use_category && <th className="w-24">분류</th>}
                     {showProduct && <th className="w-40">상품</th>}
-                    <th>제목</th>
+                    <th className="px-3">제목</th>
                     {board.use_rating && <th className="w-24">별점</th>}
                     <th className="w-24">작성자</th>
                     <th className="w-28">작성일</th>
@@ -82,12 +84,12 @@ export default function PostList({
                                         href={`/products/${post.product_id}`}
                                         title={
                                             productNames?.[post.product_id] ??
-                                            '삭제된 상품'
+                                            DELETED_PRODUCT_NAME
                                         }
                                         className="block max-w-36 truncate hover:underline"
                                     >
                                         {productNames?.[post.product_id] ??
-                                            '삭제된 상품'}
+                                            DELETED_PRODUCT_NAME}
                                     </Link>
                                 ) : (
                                     '-'
@@ -95,12 +97,11 @@ export default function PostList({
                             </td>
                         )}
                         {/* 제목을 클릭하면 해당 게시물로 이동 */}
-                        {/* 썸네일이 붙는 글은 이미지가 답답해 보이지 않게 위아래 여백을 더 줌 (py-4, 줄이려면 py-3) */}
                         <td
                             className={
                                 board.use_thumbnail && thumbSrc(post)
-                                    ? 'py-2'
-                                    : ''
+                                    ? 'px-3 py-2'
+                                    : 'px-3'
                             }
                         >
                             <Link

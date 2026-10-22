@@ -4,7 +4,7 @@ import type { BoardSetting, Post } from '../types/board.types';
 import DeleteButton from './DeleteButton';
 import QnaAnswer from './QnaAnswer';
 import AnswerForm from './AnswerForm';
-import { displayAuthor, SECRET_TITLE } from '../lib/mask';
+import { DELETED_PRODUCT_NAME, displayAuthor, SECRET_TITLE } from '../lib/mask';
 import { toImageSrc } from '../lib/imageUpload';
 import Image from 'next/image';
 
@@ -16,6 +16,7 @@ interface PostDetailProps {
     canEdit: boolean;
     canView: boolean;
     canAnswer: boolean;
+    productName?: string; // 상품에 연결된 글(리뷰·상품 Q&A)의 상품명
 }
 
 // 이벤트가 없어서 use client 불필요
@@ -27,6 +28,7 @@ export default function PostDetail({
     canEdit,
     canView,
     canAnswer,
+    productName,
 }: PostDetailProps) {
     const listHref = `/boards/${board.id}`;
     const isQna = board.type === 'qna';
@@ -61,13 +63,35 @@ export default function PostDetail({
                 <p className="text-xs text-gray-500">
                     {displayAuthor(board, post.author_name)} ·{' '}
                     {formatDate(post.created_at)} · 조회수 {post.view_count}
-                    {post.rating ? (
-                        <p className="mt-1 text-sm text-amber-500">
-                            {'★'.repeat(post.rating) +
-                                '☆'.repeat(5 - post.rating)}
-                        </p>
-                    ) : null}
                 </p>
+                {/* 비밀글을 못 보는 사람에게는 상품명도 가림(무슨 상품 문의인지도 비밀 정보) */}
+                {!hidden && (productName || post.rating) && (
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 text-sm">
+                        {productName &&
+                            (productName !== DELETED_PRODUCT_NAME &&
+                            post.product_id ? (
+                                <Link
+                                    href={`/products/${post.product_id}`}
+                                    className="text-xs text-gray-500 hover:underline"
+                                >
+                                    {productName}
+                                </Link>
+                            ) : (
+                                <span className="text-xs text-gray-400">
+                                    {productName}
+                                </span>
+                            ))}
+                        {productName && post.rating ? (
+                            <span className="text-gray-400">·</span>
+                        ) : null}
+                        {post.rating ? (
+                            <span className="text-amber-500">
+                                {'★'.repeat(post.rating) +
+                                    '☆'.repeat(5 - post.rating)}
+                            </span>
+                        ) : null}
+                    </div>
+                )}
             </header>
 
             {(board.type === 'gallery' || board.use_thumbnail) && src && (

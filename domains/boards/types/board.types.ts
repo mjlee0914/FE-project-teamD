@@ -50,6 +50,7 @@ export interface BoardSetting {
     sort?: BoardSortMode; // 기본값은 latest
     product_scope?: BoardProductScope;
     use_rating?: boolean; // 별점 사용 (review) → Post.rating
+    require_purchase?: boolean; // 해당 상품을 구매한 사용자만 쓰기 (review)
     created_at: string;
     gallery_layout?: GalleryLayout;
     use_thumbnail?: boolean;

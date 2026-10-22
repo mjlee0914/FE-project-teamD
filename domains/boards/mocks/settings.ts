@@ -65,6 +65,7 @@ export const BOARD_SETTINGS: BoardSetting[] = [
         // 상품에 속한 글만 존재. 상품페이지 하단에 뿌리는 것이 주 용도이고 /boards/review는 전체 모아보기
         product_scope: 'required',
         use_rating: true,
+        require_purchase: true, // 구매한 상품만 리뷰 작성 (개발 중 확인이 필요하면 false)
         category_id: 'cat-board-review',
         created_at: '2026-10-14T00:00:00Z',
         use_thumbnail: true,

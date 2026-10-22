@@ -87,7 +87,7 @@ export default async function BoardPage({
                                 href={`/boards/${boardId}`}
                                 className="underline"
                             >
-                                전체 상품 리뷰 보기
+                                전체 {board.name} 보기
                             </Link>
                         </p>
                     )}

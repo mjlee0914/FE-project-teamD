@@ -1,5 +1,6 @@
 import type { BoardSetting } from '../types/board.types';
-import { pickImage, MAX_IMAGE_BYTES } from './imageUpload';
+import { pickImage } from './imageUpload';
+import { MAX_IMAGE_BYTES, MAX_IMAGE_LABEL } from './imageLimits';
 
 // 입력값 검증
 // 지금은 클라이언트 액션을 쓰지만 나중에 바꿈
@@ -32,7 +33,7 @@ export function validatePost(
         else if (file && !file.type.startsWith('image/'))
             errors.image = '이미지 파일만 올릴 수 있습니다.';
         else if (file && file.size > MAX_IMAGE_BYTES)
-            errors.image = '이미지는 800KB 이하로 올려주세요.';
+            errors.image = `이미지는 ${MAX_IMAGE_LABEL} 이하로 올려 주세요.`;
     }
 
     if (board.use_rating) {
