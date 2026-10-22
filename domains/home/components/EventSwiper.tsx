@@ -14,17 +14,13 @@ interface EventSwiperProps {
 
 export default function EventSwiper({ post }: EventSwiperProps) {
     return (
-        <section className="pr-30 pl-30">
+        <div className="w-full px-4 sm:px-6 md:px-10 lg:px-20 xl:px-30">
             <Suspense fallback={<div>이벤트 로딩중...</div>}>
                 <Swiper
-                    effect={'fade'}
                     slidesPerView={1}
+                    spaceBetween={16}
                     navigation
-                    spaceBetween={0}
                     loop={post.length >= 4}
-                    pagination={{
-                        clickable: true,
-                    }}
                     autoplay={{
                         delay: 2500,
                         disableOnInteraction: false,
@@ -32,17 +28,23 @@ export default function EventSwiper({ post }: EventSwiperProps) {
                     }}
                     modules={[Autoplay, Navigation]}
                     breakpoints={{
-                        640: { slidesPerView: 2 },
-                        1024: { slidesPerView: 3 },
+                        640: {
+                            slidesPerView: 2,
+                            spaceBetween: 20,
+                        },
+                        1024: {
+                            slidesPerView: 3,
+                            spaceBetween: 24,
+                        },
                     }}
                 >
                     {post.map((post) => (
-                        <SwiperSlide key={post.id} className="h-30">
+                        <SwiperSlide key={post.id} className="h-auto">
                             <EventCard post={post} />
                         </SwiperSlide>
                     ))}
                 </Swiper>
             </Suspense>
-        </section>
+        </div>
     );
 }

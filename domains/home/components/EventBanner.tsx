@@ -20,16 +20,16 @@ export default function EventBanner({ posts }: EventBannerProps) {
 
     return (
         <>
-            <section className="p-20">
-                <div className="mb-4 flex items-center justify-between p-10">
-                    <h1 className="text-xl font-bold tracking-tight text-gray-900 md:text-2xl">
-                        진행 중 이벤트
-                    </h1>
-
-                    <Link href="/boards/events">
-                        <p className="cursor-pointer text-sm underline">
-                            전체 이벤트
-                        </p>
+            <section className="p-20 pb-40">
+                <div className="mb-8 flex items-end justify-between px-10">
+                    <div className="flex flex-col gap-4">
+                        <p className="tracking-widest text-zinc-500">EVENT</p>
+                        <h1 className="text-xl font-bold tracking-tight text-gray-900 md:text-2xl">
+                            진행 중 이벤트
+                        </h1>
+                    </div>
+                    <Link href="/boards/events" className="text-sm underline">
+                        전체 이벤트
                     </Link>
                 </div>
                 <EventSwiper post={visiblePosts}></EventSwiper>
