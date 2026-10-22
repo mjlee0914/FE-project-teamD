@@ -167,7 +167,10 @@ export default function ShippingInfo() {
                     </button>
                 </div>
 
-                <form className="grid items-center gap-x-30 gap-y-8 md:grid-cols-[6rem_1fr]">
+                <form
+                    id="shipping-form"
+                    className="grid items-center gap-x-30 gap-y-8 md:grid-cols-[6rem_1fr]"
+                >
                     <label
                         className="text-md justify-self-end font-bold"
                         htmlFor="recipient"
