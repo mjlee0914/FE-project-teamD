@@ -3,6 +3,10 @@ import { getPagedProducts } from '@/domains/categories/queries/getCategoryProduc
 import { getCategories } from '@/domains/categories/queries/getCategories.query';
 import type { Category } from '@/domains/categories/types/category.types';
 import type { Product } from '@/domains/products/types/product.types';
+import {
+    getProductImageUrls,
+    DEFAULT_PRODUCT_IMAGE,
+} from '@/domains/products/queries/getProductImageUrls.query';
 import ProductListClient from './ProductListClient';
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -85,6 +89,10 @@ export default async function ProductsPage({
                   page: currentPage,
               });
 
+    // 현재 페이지 상품들의 이미지를 한 번에 조회
+    const imageUrls = await getProductImageUrls(
+        result.products.map((item) => item.gid),
+    );
     const products: Product[] = result.products.flatMap((item): Product[] => {
         if (item.name == null || item.price == null) {
             return [];
@@ -100,7 +108,10 @@ export default async function ProductsPage({
                 category_id: item.category_id,
                 isNew: item.isNew ?? false,
                 viewCount: item.viewCount ?? 0,
-                imageUrl: '/products/black-anorak.png',
+                imageUrl:
+                    item.gid == null
+                        ? DEFAULT_PRODUCT_IMAGE
+                        : (imageUrls.get(item.gid) ?? DEFAULT_PRODUCT_IMAGE),
             },
         ];
     });
