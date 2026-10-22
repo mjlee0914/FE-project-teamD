@@ -1,4 +1,4 @@
-import { createServerClientq } from "@/lib/supabase";
+import { createServerClient } from '@/lib/supabase';
 
 interface GetPagedProductsParams {
     categoryIds?: string[];
