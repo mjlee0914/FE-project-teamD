@@ -53,6 +53,7 @@ export default async function ProductBoardSection({
                 pageSize={pageSize}
                 categories={categories}
                 hideProduct // 이 상품 페이지의 글이니까 상품 컬럼은 필요 없음
+                hideCategory // 문의는 모두 '상품' 분류라서 분류 컬럼도 필요 없음
             />
             <div className="mt-3 flex items-center justify-end gap-3">
                 <Link

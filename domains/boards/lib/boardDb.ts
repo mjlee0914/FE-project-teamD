@@ -275,3 +275,32 @@ export async function saveAnswerRow(
     }
     return true;
 }
+
+// 조회수 증가 코드 (단순 방식으로 구현)
+// - 두 사람이 동시에 열면 한 번이 사라질 수 있음 (지금 SQL 함수로 구현하는 건 능력밖...)
+// - updated_at은 건들지 않음 (조회가 글 수정으로 보이면 안 됨)
+export async function increaseViewCountRow(
+    boardId: string,
+    postId: string,
+): Promise<void> {
+    if (!UUID_REGEX.test(postId)) return;
+
+    const supabase = createServerClient();
+    const { data, error: readError } = await supabase
+        .from('posts')
+        .select('view_count')
+        .eq('id', postId)
+        .eq('board_id', boardId)
+        .is('deleted_at', null)
+        .maybeSingle();
+
+    if (readError) throw new Error(`조회수 조회 실패: ${readError.message}`);
+    if (!data) return; // 글이 없으면 올릴 조회수가 없음
+
+    const { error } = await supabase
+        .from('posts')
+        .update({ view_count: (data.view_count ?? 0) + 1 })
+        .eq('id', postId);
+
+    if (error) throw new Error(`조회수 증가 실패: ${error.message}`);
+}

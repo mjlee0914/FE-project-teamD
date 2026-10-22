@@ -14,6 +14,7 @@ interface PostListProps {
     categories: CategoryOption[]; // 분류 id → 이름 변환용
     productNames?: Record<string, string>;
     hideProduct?: boolean;
+    hideCategory?: boolean; // 상품 페이지처럼 분류가 모두 같을 때 분류 열을 숨김
 }
 
 export default function PostList({
@@ -25,6 +26,7 @@ export default function PostList({
     categories,
     productNames,
     hideProduct,
+    hideCategory,
 }: PostListProps) {
     // board는 이 함수가 받은 인자라서 함수 안에서만 쓸 수 있음 (함수 밖에서 만들면 board를 못 찾음)
     const isQna = board.type === 'qna';
@@ -34,6 +36,7 @@ export default function PostList({
 
     // 상품 연결 글이 하나라도 있으면 상품 컬럼 표출하고 상품 상세 페이지에서는 상품 컬럼을 숨기기
     const showProduct = !hideProduct && posts.some((p) => p.product_id);
+    const showCategory = board.use_category && !hideCategory;
 
     // 썸네일 주소 (public/ 접두사 변환, 없으면 undefined)
     const thumbSrc = (p: Post) => toImageSrc(p.thumbnail_url);
@@ -51,7 +54,7 @@ export default function PostList({
             <thead>
                 <tr className="border-b text-center">
                     <th className="w-16 py-3">No.</th>
-                    {board.use_category && <th className="w-24">분류</th>}
+                    {showCategory && <th className="w-24">분류</th>}
                     {showProduct && <th className="w-40">상품</th>}
                     <th className="px-3">제목</th>
                     {board.use_rating && <th className="w-24">별점</th>}
@@ -70,7 +73,7 @@ export default function PostList({
                         <td className="py-3 text-center">
                             {post.is_pinned ? '📌' : total - offset - i}
                         </td>
-                        {board.use_category && (
+                        {showCategory && (
                             <td className="text-center">
                                 {categories.find(
                                     (c) => c.id === post.category_id,
