@@ -35,7 +35,7 @@ export default function Header({
                     {/* 로고 영역 */}
                     <Link
                         href="/"
-                        className="text-lg tracking-tight text-gray-900 transition-colors hover:text-blue-600 md:text-xl"
+                        className="text-lg tracking-tight text-gray-900 transition-colors md:text-xl"
                     >
                         <span className="brand-logo font-semibold tracking-wide">
                             DN Mall
@@ -109,7 +109,13 @@ export default function Header({
                                     query: { categoryId: category.id },
                                 }}
                             >
-                                <span className="hover:text-orange-500">
+                                <span
+                                    className={
+                                        category.name === 'Sale'
+                                            ? 'text-red-400 hover:text-red-600'
+                                            : 'hover:text-zinc-500'
+                                    }
+                                >
                                     {category.name}
                                 </span>
                             </Link>

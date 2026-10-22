@@ -22,7 +22,7 @@ export default function CheckoutOrderItems() {
     );
 
     return (
-        <section className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
+        <section className="border border-gray-100 bg-white p-6 shadow-sm">
             <h2 className="mb-4 text-lg font-bold text-gray-900">
                 주문 상품 ({totalQuantity}개)
             </h2>

@@ -61,10 +61,10 @@ export default function TossPaymentWidget({
     }, [amount]);
 
     return (
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+        <div className="border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
                 <FiCreditCard className="h-5 w-5 text-blue-600" />
-                <h2 className="text-base font-bold text-gray-900">결제 수단</h2>
+                <h2 className="text-lg font-bold text-gray-900">결제 수단</h2>
             </div>
 
             {error ? (

@@ -22,11 +22,11 @@ export default function CheckoutPaymentSummary({
 }: CheckoutPaymentSummaryProps) {
     return (
         <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-4 rounded-lg border border-gray-100 bg-gray-50/80 p-6 shadow-sm">
-                <h3 className="text-sm font-black text-gray-900">
+            <div className="sticky top-24 space-y-4 border border-gray-100 bg-gray-50/80 p-6 shadow-sm">
+                <h2 className="text-lg font-black text-gray-900">
                     최종 결제 금액
-                </h3>
-                <div className="space-y-2.5 text-xs text-gray-600">
+                </h2>
+                <div className="text-s space-y-2.5 text-gray-600">
                     <div className="flex justify-between">
                         <span>총 상품금액</span>
                         <span className="font-semibold text-gray-900">
@@ -45,7 +45,7 @@ export default function CheckoutPaymentSummary({
 
                 <div className="border-t border-gray-200 pt-3">
                     <div className="flex items-baseline justify-between">
-                        <span className="text-xs font-bold text-gray-900">
+                        <span className="text-s font-bold text-gray-900">
                             총 결제금액
                         </span>
                         <span className="text-xl font-black text-blue-600">
