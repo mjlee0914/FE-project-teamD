@@ -17,6 +17,7 @@ export default async function HeaderWithUser() {
             userName={profile?.username ?? null}
             cartCount={cartCount}
             categories={categories}
+            isAdmin={profile?.role === 'ADMIN'}
         />
     );
 }

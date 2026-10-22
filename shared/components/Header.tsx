@@ -2,7 +2,7 @@
 
 import { cn } from '@/shared/utils/cn';
 import Link from 'next/link';
-import { LuShoppingCart, LuUser, LuSearch } from 'react-icons/lu';
+import { LuShoppingCart, LuUser } from 'react-icons/lu';
 import { PiListBold } from 'react-icons/pi';
 import type { HeaderCategory } from '@/domains/categories/queries/getHeaderCategories.query';
 import { logout } from '@/domains/auth/actions/logout.action';
@@ -11,10 +11,12 @@ export default function Header({
     userName,
     cartCount,
     categories,
+    isAdmin = false,
 }: {
     userName: string | null;
     cartCount: number;
     categories: HeaderCategory[];
+    isAdmin?: boolean;
 }) {
     return (
         <>
@@ -46,13 +48,14 @@ export default function Header({
 
                     {/* 네비게이션 영역 */}
                     <nav className="flex items-center gap-1 justify-self-end md:gap-3">
-                        <Link
-                            href="/search"
-                            aria-label="상품검색"
-                            className="flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
-                        >
-                            <LuSearch className="h-4 w-4 shrink-0"></LuSearch>
-                        </Link>
+                        {isAdmin && (
+                            <Link
+                                href="/admin"
+                                className="flex h-7 items-center rounded-full border border-gray-200 px-2.5 text-[11px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:border-gray-900 hover:text-gray-900"
+                            >
+                                관리자 페이지
+                            </Link>
+                        )}
                         {/* 장바구니 링크 */}
                         <Link
                             href="/cart"
