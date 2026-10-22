@@ -50,3 +50,5 @@ next-env.d.ts
 
 .env*
 !.env.example
+# 개발 전용 확인 주소(내 PC에서만 사용, 배포·PR에 포함하지 않음)
+/app/api/debug/

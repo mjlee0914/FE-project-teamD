@@ -1,6 +1,7 @@
 import type { BoardSetting } from '../types/board.types';
 
-// 게시판 인터페이스(규격) 기본값
+// 게시판별 화면 설정 (코드로 관리: 종류·권한·옵션 등)
+// - DB boards 표에는 id와 category_id만 있고, 아래 category_id는 getBoard에서 DB 값으로 덮어씀
 export const BOARD_SETTINGS: BoardSetting[] = [
     {
         id: 'notice',
