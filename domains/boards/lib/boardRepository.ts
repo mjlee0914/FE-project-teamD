@@ -1,5 +1,5 @@
 import type { BoardSetting, Post } from '../types/board.types';
-import { BOARD_SETTINGS } from '../mocks/settings';
+import { BOARD_SETTINGS } from './boardSettings';
 import {
     fetchBoardRow,
     fetchCategoryChildren,

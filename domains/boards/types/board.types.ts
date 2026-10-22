@@ -1,13 +1,3 @@
-import { Category } from '@/domains/categories/types/category.types';
-import type { CategoryType } from '@/domains/admin/category/types/category.type';
-
-// type은 카테고리 담당 CATEGORY_TYPES의 값 ('BOARD' / 'MAIN', domains/admin/category/types/category.type.ts)
-export interface BoardCategoryRow extends Category {
-    type: CategoryType;
-    created_at: string;
-    deleted_at: string | null;
-}
-
 // 화면(칩·select·분류 칸)에서 쓰는 분류 선택지
 export interface CategoryOption {
     id: string;
