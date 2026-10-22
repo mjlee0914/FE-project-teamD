@@ -14,6 +14,7 @@ export function validatePost(
     const title = String(formData.get('title') ?? '').trim();
     const content = String(formData.get('content') ?? '').trim();
     const category = String(formData.get('category') ?? '');
+    const usesImage = board.type === 'gallery' || board.use_thumbnail;
 
     if (!title) errors.title = '제목을 입력해 주세요.';
     if (!content) errors.content = '내용을 입력해 주세요.';
@@ -22,14 +23,22 @@ export function validatePost(
         errors.category = '분류를 선택해 주세요.';
     }
 
-    if (board.type === 'gallery') {
+    if (usesImage) {
         const file = pickImage(formData);
-        if (!file && !hasExistingImage)
+        // 갤러리 타입만 필수, 리뷰 게시판은 선택
+
+        if (!file && board.type === 'gallery' && !hasExistingImage)
             errors.image = '이미지를 선택해 주세요.';
         else if (file && !file.type.startsWith('image/'))
             errors.image = '이미지 파일만 올릴 수 있습니다.';
         else if (file && file.size > MAX_IMAGE_BYTES)
             errors.image = '이미지는 800KB 이하로 올려주세요.';
+    }
+
+    if (board.use_rating) {
+        const rating = Number(formData.get('rating'));
+        if (!Number.isInteger(rating) || rating < 1 || rating > 5)
+            errors.rating = '별점을 선택해주세요.';
     }
     return errors;
 }

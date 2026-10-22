@@ -61,10 +61,16 @@ export default function PostDetail({
                 <p className="text-xs text-gray-500">
                     {displayAuthor(board, post.author_name)} ·{' '}
                     {formatDate(post.created_at)} · 조회수 {post.view_count}
+                    {post.rating ? (
+                        <p className="mt-1 text-sm text-amber-500">
+                            {'★'.repeat(post.rating) +
+                                '☆'.repeat(5 - post.rating)}
+                        </p>
+                    ) : null}
                 </p>
             </header>
 
-            {board.type === 'gallery' && src && (
+            {(board.type === 'gallery' || board.use_thumbnail) && src && (
                 <div className="relative mx-auto my-6 aspect-[4/3] w-full max-w-2xl bg-stone-100">
                     <Image
                         src={src}

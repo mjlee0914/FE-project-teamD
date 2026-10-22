@@ -27,6 +27,7 @@ export async function updatePostAction(
         title: String(formData.get('title') ?? ''),
         content: String(formData.get('content') ?? ''),
         isSecret: formData.get('isSecret') ? 'on' : '',
+        rating: String(formData.get('rating') ?? ''),
     };
     const fail = (errors: Record<string, string>): ActionState => ({
         success: false,
@@ -55,7 +56,8 @@ export async function updatePostAction(
     );
 
     // 새로 고른 파일이 있을 때만 data URL로 변환 (안 골랐으면 기존 이미지 유지)
-    const image = pickImage(formData);
+    const usesImage = board.type === 'gallery' || board.use_thumbnail;
+    const image = usesImage ? pickImage(formData) : null;
     const thumbnailUrl = image ? await toDataUrl(image) : undefined;
 
     if (Object.keys(errors).length > 0) return fail(errors);
@@ -66,6 +68,7 @@ export async function updatePostAction(
         categoryId: board.use_category ? values.category : undefined,
         isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
         thumbnailUrl,
+        rating: board.use_rating ? Number(values.rating) : undefined,
     });
 
     // 목록 갱신

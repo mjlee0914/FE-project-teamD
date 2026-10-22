@@ -1,6 +1,4 @@
 import { getProfile } from '@/domains/auth/queries/getProfile.query';
-import { cookies } from 'next/headers';
-import { MOCK_USERS } from '../mocks/users';
 
 // 현재 로그인한 사용자 (supabase 인증 연동)
 

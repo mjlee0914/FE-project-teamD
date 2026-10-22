@@ -7,6 +7,7 @@ import type { BoardSetting, CategoryOption, Post } from '../types/board.types';
 import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
 import { createPostAction } from '../actions/createPost.action';
 import { updatePostAction } from '../actions/updatePost.action';
+import StarRatingInput from './StarRatingInput';
 
 interface PostFormProps {
     board: BoardSetting;
@@ -100,7 +101,6 @@ export default function PostForm({
                         </select>
                     </FormRow>
                 )}
-
                 <FormRow label="제목" htmlFor="title" error={errors?.title}>
                     <input
                         id="title"
@@ -110,7 +110,6 @@ export default function PostForm({
                         className={`w-full border px-3 py-2 text-xs ${errors?.title ? 'border-red-500' : ''}`}
                     />
                 </FormRow>
-
                 <FormRow label="내용" htmlFor="content" error={errors?.content}>
                     <textarea
                         id="content"
@@ -120,13 +119,18 @@ export default function PostForm({
                         className={`h-40 w-full border px-3 py-2 text-xs ${errors?.content ? 'border-red-500' : ''}`}
                     />
                 </FormRow>
-
-                {board.type === 'gallery' && (
-                    <FormRow
-                        label="이미지"
-                        htmlFor="image"
-                        error={errors?.image}
-                    >
+                {board.use_rating && (
+                    <FormRow label="별점" error={errors?.rating}>
+                        <StarRatingInput
+                            defaultValue={Number(
+                                v?.rating ?? post?.rating ?? 0,
+                            )}
+                        />
+                    </FormRow>
+                )}
+                {/* 게시판 타입이 리뷰일 때는 이미지 선택, 갤러리 타입은 필수 */}
+                {(board.type === 'gallery' || board.use_thumbnail) && (
+                    <FormRow label="첨부" htmlFor="image" error={errors?.image}>
                         <input
                             id="image"
                             name="image"
@@ -142,7 +146,6 @@ export default function PostForm({
                         )}
                     </FormRow>
                 )}
-
                 {board.use_secret && (
                     <FormRow label="옵션">
                         <label className="flex items-center gap-2 py-1 text-xs">

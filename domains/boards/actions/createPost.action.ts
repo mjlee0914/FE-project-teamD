@@ -26,6 +26,7 @@ export async function createPostAction(
         title: String(formData.get('title') ?? ''),
         content: String(formData.get('content') ?? ''),
         isSecret: formData.get('isSecret') ? 'on' : '',
+        rating: String(formData.get('rating') ?? ''),
     };
     const fail = (errors: Record<string, string>): ActionState => ({
         success: false,
@@ -57,8 +58,9 @@ export async function createPostAction(
     const gid = String(formData.get('gid') ?? '');
     if (!gid) return fail({ form: '잘못된 요청입니다.' });
 
-    // 3-1) 이미지 확인
-    const image = pickImage(formData);
+    // 3-1) 이미지 확인 (이미지를 쓰는 게시판일 때만 읽는 영역)
+    const usesImage = board.type === 'gallery' || board.use_thumbnail;
+    const image = usesImage ? pickImage(formData) : null;
     const thumbnailUrl = image ? await toDataUrl(image) : undefined;
 
     // 4) 저장
@@ -72,13 +74,13 @@ export async function createPostAction(
         categoryId: board.use_category ? values.category : undefined,
         isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
         thumbnailUrl,
+        rating: board.use_rating ? Number(values.rating) : undefined,
     });
 
     // 5) 목록 캐시 갱신 후 목록 이동
     //  - redirect()는 이동 신호를 에러처럼 던지는 함수이기 때문에
     //  - 나중에 DB 처리하려고 try/catch 추가할 때 redirect()는 구문 안에 넣으면 안됨
     //  - 저장은 try/catch로 감싸더라도 redirect는 그 밖이나 맨 마지막에 호출해야 함
-
     revalidatePath(`/boards/${board.id}`);
     revalidatePath('/'); // 홈 배너 갱신 (이벤트 게시판일 때만 해도 됨: if (board.id === 'events'))
     redirect(`/boards/${board.id}`);
