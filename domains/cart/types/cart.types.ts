@@ -6,12 +6,3 @@ export interface CartItem {
     product: Product;
     option: string | null;
 }
-
-export interface ShippingAddress {
-    recipient: string;
-    phone: string;
-    address: string;
-    addressDetail: string;
-    zipcode: string;
-    deliveryMemo?: string;
-}
