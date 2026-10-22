@@ -13,6 +13,10 @@ import { canWriteBoard } from '../lib/permissions';
 import { validatePost } from '../lib/validatePost';
 import { toDataUrl } from '../lib/imageUpload';
 import { pickImage } from '../lib/imageUpload';
+import { findCategoryIdByName } from '../lib/boardRepository';
+import { CATEGORY_NAMES } from '../lib/categoryNames';
+import { getProductNamesByIds } from '@/domains/products/queries/getProductNamesByIds.query';
+import { hasPurchasedProduct } from '../lib/purchase';
 
 // 공개요청
 export async function createPostAction(
@@ -26,6 +30,7 @@ export async function createPostAction(
         title: String(formData.get('title') ?? ''),
         content: String(formData.get('content') ?? ''),
         isSecret: formData.get('isSecret') ? 'on' : '',
+        rating: String(formData.get('rating') ?? ''),
     };
     const fail = (errors: Record<string, string>): ActionState => ({
         success: false,
@@ -46,6 +51,39 @@ export async function createPostAction(
     // 2-1) 카테고리 검증
     const categories = await getBoardCategories(board.id);
 
+    // 2-2) 상품 연결 검증
+    const rawProductId = String(formData.get('productId') ?? '');
+    let productId: string | undefined;
+    if (board.product_scope !== 'none' && rawProductId) {
+        const names = await getProductNamesByIds([rawProductId]);
+        if (!names[rawProductId])
+            return fail({ form: '존재하지 않는 상품입니다.' });
+        productId = rawProductId;
+    }
+    if (board.product_scope === 'required' && !productId) {
+        return fail({ form: '리뷰는 상품 페이지에서 작성할 수 있습니다.' });
+    }
+
+    // 2-2-1) 구매자만 쓸 수 있는 게시판(리뷰): 폼을 거치지 않은 요청도 막도록 서버에서 다시 확인
+    // (구매 확인에는 화면이 넘긴 값이 아니라 서버에서 읽은 user.id를 사용)
+    if (board.require_purchase && productId) {
+        if (!(await hasPurchasedProduct(user.id, productId))) {
+            return fail({ form: '구매하신 상품만 리뷰를 작성할 수 있어요.' });
+        }
+    }
+
+    // 2-3) 상품 Q&A 게시판 칩 생성
+    let fixedCategoryId: string | undefined;
+    if (productId && board.product_scope === 'optional') {
+        const id = await findCategoryIdByName(
+            board.id,
+            CATEGORY_NAMES.qnaProduct,
+        );
+        if (!id) return fail({ form: '상품 분류를 찾을 수 없습니다.' });
+        fixedCategoryId = id;
+        formData.set('category', id); // 아래 validatePost 검증 통과
+    }
+
     // 3) 검증 재실행
     const errors = validatePost(
         board,
@@ -57,28 +95,45 @@ export async function createPostAction(
     const gid = String(formData.get('gid') ?? '');
     if (!gid) return fail({ form: '잘못된 요청입니다.' });
 
-    // 3-1) 이미지 확인
-    const image = pickImage(formData);
+    // 3-1) 이미지 확인 (이미지를 쓰는 게시판일 때만 읽는 영역)
+    const usesImage = board.type === 'gallery' || board.use_thumbnail;
+    const image = usesImage ? pickImage(formData) : null;
     const thumbnailUrl = image ? await toDataUrl(image) : undefined;
 
     // 4) 저장
-    await createPost({
-        boardId: board.id,
-        userId: user.id,
-        authorName: user.name,
-        title: values.title.trim(),
-        content: values.content.trim(),
-        gid,
-        categoryId: board.use_category ? values.category : undefined,
-        isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
-        thumbnailUrl,
-    });
-
+    try {
+        await createPost({
+            boardId: board.id,
+            userId: user.id,
+            authorName: user.name,
+            title: values.title.trim(),
+            content: values.content.trim(),
+            gid,
+            isSecret: board.use_secret ? values.isSecret === 'on' : undefined,
+            thumbnailUrl,
+            rating: board.use_rating ? Number(values.rating) : undefined,
+            productId,
+            categoryId: board.use_category
+                ? (fixedCategoryId ?? values.category)
+                : undefined,
+        });
+    } catch (error) {
+        console.error('글 저장 실패:', error);
+        return fail({
+            form: '글을 저장하지 못했습니다. 잠시 후 다시 시도해주세요.',
+        });
+    }
     // 5) 목록 캐시 갱신 후 목록 이동
     //  - redirect()는 이동 신호를 에러처럼 던지는 함수이기 때문에
     //  - 나중에 DB 처리하려고 try/catch 추가할 때 redirect()는 구문 안에 넣으면 안됨
     //  - 저장은 try/catch로 감싸더라도 redirect는 그 밖이나 맨 마지막에 호출해야 함
-
+    //  - 그리고 상품 상세에서 이동했으면 상품 상세 페이지 캐시를 갱신해서 복귀함
+    if (productId) {
+        revalidatePath(`/products/${productId}`);
+        redirect(
+            `/products/${productId}#${board.id === 'review' ? 'review' : 'qna'}`,
+        );
+    }
     revalidatePath(`/boards/${board.id}`);
     revalidatePath('/'); // 홈 배너 갱신 (이벤트 게시판일 때만 해도 됨: if (board.id === 'events'))
     redirect(`/boards/${board.id}`);

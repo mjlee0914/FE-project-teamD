@@ -31,7 +31,15 @@ export async function answerPostAction(
     if (!content) return fail({ content: '답변 내용을 입력해주세요.' });
 
     //user가 null이 아님을 확인하면
-    const ok = await saveAnswer(board.id, postId, content, user!.name);
+    let ok = false;
+    try {
+        ok = await saveAnswer(board.id, postId, content, user!.id);
+    } catch (error) {
+        console.error('답변 저장 실패:', error);
+        return fail({
+            form: '답변을 저장하지 못했습니다. 잠시 후 다시 시도해주세요.',
+        });
+    }
     if (!ok) return fail({ form: '게시글을 찾을 수 없습니다.' });
 
     revalidatePath(`/boards/${board.id}`); // 답변 완료
