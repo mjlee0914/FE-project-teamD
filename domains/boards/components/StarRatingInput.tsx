@@ -21,7 +21,7 @@ export default function StarRatingInput({
             className="flex items-center gap-1"
             onMouseLeave={() => setHover(0)}
         >
-            <input type="hidden" name="'rating" value={value || ''} />
+            <input type="hidden" name="rating" value={value || ''} />
             {[1, 2, 3, 4, 5].map((n) => (
                 <button
                     key={n}
@@ -33,7 +33,7 @@ export default function StarRatingInput({
                     onMouseEnter={() => setHover(n)}
                     onFocus={() => setHover(n)}
                     onBlur={() => setHover(0)}
-                    className={`cusor-pointer text-2xl leading-none ${n <= shown ? 'text-amber-500' : 'text-gray-300'}`}
+                    className={`cursor-pointer text-2xl leading-none ${n <= shown ? 'text-amber-500' : 'text-gray-300'}`}
                 >
                     ★
                 </button>
