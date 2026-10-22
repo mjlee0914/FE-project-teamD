@@ -18,6 +18,7 @@ interface PostGalleryProps {
     posts: Post[];
     layout?: GalleryLayout;
     categories?: { id: string; name: string }[]; // 이벤트 종료 분류
+    maskAuthor?: boolean; // 작성자 이름 가림
 }
 
 // 카드 그리드
@@ -26,6 +27,7 @@ export default function PostGallery({
     posts,
     layout = 'portrait',
     categories = [],
+    maskAuthor,
 }: PostGalleryProps) {
     if (posts.length === 0) {
         return (
@@ -43,6 +45,7 @@ export default function PostGallery({
                     boardId={boardId}
                     post={post}
                     aspect={aspect}
+                    maskAuthor={maskAuthor}
                     categoryName={
                         categories.find((c) => c.id === post.category_id)?.name
                     }

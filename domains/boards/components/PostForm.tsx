@@ -1,18 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { BoardSetting, CategoryOption, Post } from '../types/board.types';
 import { INITIAL_ACTION_STATE } from '@/shared/types/action.types';
 import { createPostAction } from '../actions/createPost.action';
 import { updatePostAction } from '../actions/updatePost.action';
+import StarRatingInput from './StarRatingInput';
+import { MAX_IMAGE_BYTES, MAX_IMAGE_LABEL } from '../lib/imageLimits';
 
 interface PostFormProps {
     board: BoardSetting;
     gid: string; // 첨부파일은 글 저장 전에 올라가기 때문에 폼을 열 때 서버 내림
     post?: Post; // 수정일 때 기존 글 가져오기
     categories: CategoryOption[]; // select에 보여 줄 분류 목록 (서버 페이지에서 조회해 내림)
+    productId?: string;
+    productName?: string;
 }
 
 function FormRow({
@@ -47,8 +51,13 @@ export default function PostForm({
     gid,
     post,
     categories,
+    productId,
+    productName,
 }: PostFormProps) {
     const isEdit = !!post;
+
+    // 큰 이미지는 서버 액션 본문 제한(1MB)에 서버 코드보다 먼저 걸리므로 브라우저에서 미리 안내
+    const [imageError, setImageError] = useState('');
 
     const [state, formAction, isPending] = useActionState(
         isEdit ? updatePostAction : createPostAction, // 등록/수정 여부에 따라 서버함수 변경
@@ -70,13 +79,16 @@ export default function PostForm({
             <input type="hidden" name="boardId" value={board.id} />
             <input type="hidden" name="gid" value={gid} />
             {post && <input type="hidden" name="postId" value={post.id} />}
+            {productId && (
+                <input type="hidden" name="productId" value={productId} />
+            )}
 
             {errors?.form && (
                 <p className="mb-3 text-xs text-red-500">{errors.form}</p>
             )}
 
             <div className="border-t-2 border-black">
-                {board.use_category && categories.length > 0 && (
+                {board.use_category && categories.length > 0 && !productId && (
                     <FormRow
                         label="분류"
                         htmlFor="category"
@@ -100,7 +112,11 @@ export default function PostForm({
                         </select>
                     </FormRow>
                 )}
-
+                {productId && (
+                    <FormRow label="상품">
+                        <p className="py-2 text-xs">{productName}</p>
+                    </FormRow>
+                )}
                 <FormRow label="제목" htmlFor="title" error={errors?.title}>
                     <input
                         id="title"
@@ -110,7 +126,6 @@ export default function PostForm({
                         className={`w-full border px-3 py-2 text-xs ${errors?.title ? 'border-red-500' : ''}`}
                     />
                 </FormRow>
-
                 <FormRow label="내용" htmlFor="content" error={errors?.content}>
                     <textarea
                         id="content"
@@ -120,18 +135,38 @@ export default function PostForm({
                         className={`h-40 w-full border px-3 py-2 text-xs ${errors?.content ? 'border-red-500' : ''}`}
                     />
                 </FormRow>
-
-                {board.type === 'gallery' && (
+                {board.use_rating && (
+                    <FormRow label="별점" error={errors?.rating}>
+                        <StarRatingInput
+                            defaultValue={Number(
+                                v?.rating ?? post?.rating ?? 0,
+                            )}
+                        />
+                    </FormRow>
+                )}
+                {/* 게시판 타입이 리뷰일 때는 이미지 선택, 갤러리 타입은 필수 */}
+                {(board.type === 'gallery' || board.use_thumbnail) && (
                     <FormRow
-                        label="이미지"
+                        label="첨부"
                         htmlFor="image"
-                        error={errors?.image}
+                        error={errors?.image ?? imageError}
                     >
                         <input
                             id="image"
                             name="image"
                             type="file"
                             accept="image/*"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file && file.size > MAX_IMAGE_BYTES) {
+                                    setImageError(
+                                        `이미지는 ${MAX_IMAGE_LABEL} 이하로 올려 주세요.`,
+                                    );
+                                    e.target.value = ''; // 선택 취소
+                                } else {
+                                    setImageError('');
+                                }
+                            }}
                             className="text-xs file:mr-3 file:cursor-pointer file:border file:border-black file:bg-white file:px-3 file:py-1.5 file:text-xs"
                         />
                         {post?.thumbnail_url && (
@@ -142,7 +177,6 @@ export default function PostForm({
                         )}
                     </FormRow>
                 )}
-
                 {board.use_secret && (
                     <FormRow label="옵션">
                         <label className="flex items-center gap-2 py-1 text-xs">

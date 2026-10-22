@@ -1,5 +1,5 @@
-// 서버 액션 본문이 1MB로 제한되어 있어서 감안해서 개발 (실제 업로드 시 제약 불필요)
-export const MAX_IMAGE_BYTES = 800 * 1024;
+// 이미지 크기 제한 값은 브라우저(PostForm)와 함께 쓰려고 imageLimits.ts로 분리함 (여기서는 기존 import 경로 유지용으로 다시 내보냄)
+export { MAX_IMAGE_BYTES } from './imageLimits';
 
 // 새로 고른 파일이 있으면 File, 없으면 null, 파일 안 고르면 size 0
 export function pickImage(formData: FormData): File | null {

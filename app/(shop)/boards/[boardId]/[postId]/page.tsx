@@ -11,6 +11,8 @@ import {
     canEditPost,
     canViewPost,
 } from '@/domains/boards/lib/permissions';
+import { DELETED_PRODUCT_NAME } from '@/domains/boards/lib/mask';
+import { getProductNamesByIds } from '@/domains/products/queries/getProductNamesByIds.query';
 
 // 게시글 상세
 export default async function PostPage({
@@ -33,6 +35,12 @@ export default async function PostPage({
 
     const { prev, next } = await getAdjacentPosts(boardId, postId);
 
+    // 상품에 연결된 글(리뷰·상품 Q&A)이면 상품명 조회, 상품을 못 찾으면 '삭제된 상품'
+    const productName = post.product_id
+        ? ((await getProductNamesByIds([post.product_id]))[post.product_id] ??
+          DELETED_PRODUCT_NAME)
+        : undefined;
+
     return (
         <div className="mx-auto max-w-5xl px-4 py-10">
             <PostDetail
@@ -43,6 +51,7 @@ export default async function PostPage({
                 canEdit={canEdit}
                 canView={canView}
                 canAnswer={canAnswer}
+                productName={productName}
             />
         </div>
     );
