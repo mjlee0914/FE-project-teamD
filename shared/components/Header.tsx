@@ -2,8 +2,6 @@
 
 import { cn } from '@/shared/utils/cn';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
 import { LuShoppingCart, LuUser } from 'react-icons/lu';
 import { PiListBold } from 'react-icons/pi';
 import type { HeaderCategory } from '@/domains/categories/queries/getHeaderCategories.query';
@@ -108,58 +106,28 @@ export default function Header({
             <nav className="sticky top-0 z-50 w-full bg-white/70 p-0.5 text-base backdrop-blur-md transition-all">
                 <div>
                     <div className="max-w-auto mx-auto flex justify-center gap-10 p-3 text-sm md:px-4">
-                        {/* 주소를 읽는 부분(useSearchParams)은 Suspense 로 감싸야 빌드가 멈추지 않는다 */}
-                        <Suspense
-                            fallback={
-                                <CategoryLinks
-                                    categories={categories}
-                                    activeId={null}
-                                />
-                            }
-                        >
-                            <ActiveCategoryLinks categories={categories} />
-                        </Suspense>
+                        {categories.map((category) => (
+                            <Link
+                                key={category.id}
+                                href={{
+                                    pathname: '/products',
+                                    query: { categoryId: category.id },
+                                }}
+                            >
+                                <span
+                                    className={
+                                        category.name === 'Sale'
+                                            ? 'text-red-400 hover:text-red-600'
+                                            : 'hover:text-zinc-500'
+                                    }
+                                >
+                                    {category.name}
+                                </span>
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </nav>
         </>
     );
-}
-
-// 주소(/products?categoryId=...)로 지금 보고 있는 카테고리를 알아낸다
-function ActiveCategoryLinks({ categories }: { categories: HeaderCategory[] }) {
-    const pathname = usePathname();
-    const categoryId = useSearchParams().get('categoryId');
-    const activeId = pathname === '/products' ? categoryId : null;
-
-    return <CategoryLinks categories={categories} activeId={activeId} />;
-}
-
-function CategoryLinks({
-    categories,
-    activeId,
-}: {
-    categories: HeaderCategory[];
-    activeId: string | null;
-}) {
-    return categories.map((category) => (
-        <Link
-            key={category.id}
-            href={{
-                pathname: '/products',
-                query: { categoryId: category.id },
-            }}
-        >
-            {/* 지금 보고 있는 카테고리만 빨간 글씨 */}
-            <span
-                className={
-                    activeId === category.id
-                        ? 'font-bold text-red-500'
-                        : 'hover:text-zinc-500'
-                }
-            >
-                {category.name}
-            </span>
-        </Link>
-    ));
 }
