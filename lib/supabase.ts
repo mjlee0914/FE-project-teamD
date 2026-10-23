@@ -1,8 +1,7 @@
-import {
-    createBrowserClient,
-    createServerClient as createSSRServerClient,
-} from '@supabase/ssr';
-import { SupabaseClient } from '@supabase/supabase-js';
+import 'server-only';
+
+import { createServerClient as createSSRServerClient } from '@supabase/ssr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 // 로그인 유지 시간(초): 이 시간 동안 로그인·담기 같은 서버 동작이 없으면 쿠키가 사라져 자동 로그아웃
 // (@supabase/ssr 의 cookieOptions.maxAge 는 라이브러리가 400일로 덮어써서, 아래 setAll 에서 직접 바꾼다)
@@ -16,22 +15,19 @@ if (!supabaseUrl || !supabaseKey) {
     );
 }
 
-// CSR supabse 연결객체
-export const supabase = createBrowserClient(supabaseUrl, supabaseKey);
-
 // SSR supabse 연결 객체
-export function createServerClient(): SupabaseClient {
+export async function createServerClient(): Promise<SupabaseClient> {
+    // 인증 클라이언트가 시간·난수를 사용하기 전에 요청 경계를 확정합니다.
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+
     return createSSRServerClient(supabaseUrl, supabaseKey, {
         cookies: {
-            async getAll() {
-                const { cookies } = await import('next/headers');
-                const cookieStore = await cookies();
+            getAll() {
                 return cookieStore.getAll();
             },
-            async setAll(cookiesToSet) {
+            setAll(cookiesToSet) {
                 try {
-                    const { cookies } = await import('next/headers');
-                    const cookieStore = await cookies();
                     cookiesToSet.forEach(({ name, value, options }) => {
                         // 로그아웃처럼 지우는 쿠키(maxAge 0)는 그대로, 저장하는 쿠키는 수명을 SESSION_MAX_AGE로
                         const maxAge =

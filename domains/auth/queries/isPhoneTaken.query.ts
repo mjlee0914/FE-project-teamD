@@ -6,7 +6,7 @@ export async function isPhoneTaken(
     phone: string,
     exceptUserId?: string,
 ): Promise<boolean> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const digits = phone.replace(/\D/g, '');
 
     // 예전에 하이픈 없이 저장된 번호도 같이 찾는다

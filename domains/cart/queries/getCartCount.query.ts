@@ -4,7 +4,7 @@ import { createServerClient } from '@/lib/supabase';
 export async function getCartCount(): Promise<number> {
     await connection();
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const {
         data: { user },
     } = await supabase.auth.getUser();

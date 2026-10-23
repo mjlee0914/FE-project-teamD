@@ -15,7 +15,7 @@ export async function getProductById(
         return null;
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('products')
@@ -43,7 +43,7 @@ export async function getProductById(
     const imageUrl =
         data.gid == null
             ? DEFAULT_PRODUCT_IMAGE
-            : (imageUrls.get(data.gid) ?? DEFAULT_PRODUCT_IMAGE);
+            : (imageUrls.get(String(data.gid)) ?? DEFAULT_PRODUCT_IMAGE);
 
     return {
         id: data.id,

@@ -23,7 +23,8 @@ export default async function ProductPage({
     const categoryName =
         (await getCategoryNameById(product.category_id)) ?? '카테고리';
 
-    const { data: variants, error: variantsError } = await createServerClient()
+    const supabase = await createServerClient();
+    const { data: variants, error: variantsError } = await supabase
         .from('product_variants')
         .select('color_name,color_hex,size,stock')
         .eq('product_id', product.id)

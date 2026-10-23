@@ -9,7 +9,7 @@ export async function getOrderList({
     searchName?: string;
     searchStatus?: string;
 } = {}) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     let query = supabase.from('orders').select('*');
 
@@ -21,7 +21,7 @@ export async function getOrderList({
 }
 
 export async function getOrderListByLimit(limit: number) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     return await supabase
         .from('orders')
         .select('*')

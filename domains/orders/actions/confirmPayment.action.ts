@@ -15,7 +15,7 @@ export async function confirmPayment(params: {
     amount: number;
 }): Promise<ConfirmPaymentResult> {
     const { paymentKey, orderId, amount } = params;
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const {
         data: { user },
     } = await supabase.auth.getUser();

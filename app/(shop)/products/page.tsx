@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import { getPagedProducts } from '@/domains/categories/queries/getCategoryProducts.query';
 import { getCategories } from '@/domains/categories/queries/getCategories.query';
 import type { Category } from '@/domains/categories/types/category.types';
@@ -45,9 +46,17 @@ function getCategoryIds(categories: Category[], targetId: string): string[] {
     return [];
 }
 
-export default async function ProductsPage({
-    searchParams,
-}: ProductsPageProps) {
+export default function ProductsPage(props: ProductsPageProps) {
+    return (
+        <Suspense fallback={<p>상품 목록을 불러오는 중...</p>}>
+            <ProductResults {...props} />
+        </Suspense>
+    );
+}
+
+async function ProductResults({ searchParams }: ProductsPageProps) {
+    // 검색 조건과 DB 조회 전체를 Suspense 내부의 요청 시점으로 미룹니다.
+    await connection();
     const params = await searchParams;
 
     const categoryId = getParam(params.categoryId);
@@ -111,19 +120,18 @@ export default async function ProductsPage({
                 imageUrl:
                     item.gid == null
                         ? DEFAULT_PRODUCT_IMAGE
-                        : (imageUrls.get(item.gid) ?? DEFAULT_PRODUCT_IMAGE),
+                        : (imageUrls.get(String(item.gid)) ??
+                          DEFAULT_PRODUCT_IMAGE),
             },
         ];
     });
 
     return (
-        <Suspense fallback={<p>상품 목록을 불러오는 중...</p>}>
-            <ProductListClient
-                dbProducts={products}
-                dbCategories={categories}
-                totalCount={result.totalCount}
-                currentPage={currentPage}
-            />
-        </Suspense>
+        <ProductListClient
+            dbProducts={products}
+            dbCategories={categories}
+            totalCount={result.totalCount}
+            currentPage={currentPage}
+        />
     );
 }
