@@ -1,8 +1,7 @@
-import {
-    createBrowserClient,
-    createServerClient as createSSRServerClient,
-} from '@supabase/ssr';
-import { SupabaseClient } from '@supabase/supabase-js';
+import 'server-only';
+
+import { createServerClient as createSSRServerClient } from '@supabase/ssr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 // 로그인 유지 시간(초): 이 시간 동안 로그인·담기 같은 서버 동작이 없으면 쿠키가 사라져 자동 로그아웃
 // (@supabase/ssr 의 cookieOptions.maxAge 는 라이브러리가 400일로 덮어써서, 아래 setAll 에서 직접 바꾼다)
@@ -15,9 +14,6 @@ if (!supabaseUrl || !supabaseKey) {
         'NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 가 설정되지 않았습니다.',
     );
 }
-
-// CSR supabse 연결객체
-export const supabase = createBrowserClient(supabaseUrl, supabaseKey);
 
 // SSR supabse 연결 객체
 export async function createServerClient(): Promise<SupabaseClient> {
