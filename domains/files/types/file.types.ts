@@ -1,9 +1,16 @@
 export type FileLocation =
     'profile' | 'product_main' | 'product_desc' | 'post_attach' | 'post_image';
 
+export type StoredAttachment = {
+    id: string;
+    original_name: string;
+    content_type: string | null;
+    url?: string;
+    file_size?: number;
+};
+
 export interface FileInfo {
     id: number;
-    gid: string;
     location: FileLocation;
     original_name: string;
     content_type: string;

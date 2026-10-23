@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    ChangeEvent,
-    useActionState,
-    useEffect,
-    useState,
-    type FormEvent,
-} from 'react';
-import Image from 'next/image';
+import { ChangeEvent, useActionState, useEffect, useState } from 'react';
 import { Product } from '@/domains/products/types/product.types';
 import {
     Dialog,
@@ -27,6 +20,10 @@ import { Category } from '@/domains/categories/types/category.types';
 import { getCategoryListRaw } from '../../category/actions/category.action';
 import { useRouter } from 'next/navigation';
 import { ActionState, INITIAL_ACTION_STATE } from '@/shared/types/action.types';
+import FileAttachment, {
+    type AttachmentValue,
+} from '@/shared/components/FileAttachment';
+import { getProductAttachments } from '../actions/product.action';
 
 interface ProductModalProps {
     open: boolean;
@@ -45,6 +42,7 @@ export default function ProductModal({
     onSave,
 }: ProductModalProps) {
     const isEdit = !!product;
+    const productId = product?.id;
     const [form, setForm] = useState<{
         name: string;
         price: number;
@@ -59,6 +57,16 @@ export default function ProductModal({
         category_id: product?.category_id ?? '',
     });
     const [categories, setCategories] = useState<Category[]>([]);
+    const [attachments, setAttachments] = useState<AttachmentValue>({
+        existingFiles: [],
+        newFiles: [],
+        deletedIds: [],
+    });
+    const [attachmentsLoading, setAttachmentsLoading] = useState(
+        open && !!product,
+    );
+    const [attachmentsError, setAttachmentsError] = useState('');
+    const [attachmentRetry, setAttachmentRetry] = useState(0);
     const router = useRouter();
     const [state, formAction, isPending] = useActionState(
         onSave,
@@ -81,6 +89,38 @@ export default function ProductModal({
             router.refresh();
         }
     }, [state.success, onOpenChange, router]);
+
+    useEffect(() => {
+        if (!open || !productId) return;
+        const currentProductId = productId;
+        let cancelled = false;
+
+        async function loadAttachments() {
+            try {
+                const result = await getProductAttachments(currentProductId);
+                if (cancelled) return;
+                if (result.error) {
+                    setAttachmentsError(result.error);
+                    return;
+                }
+                setAttachments((current) => ({
+                    ...current,
+                    existingFiles: result.data,
+                }));
+                setAttachmentsError('');
+            } catch {
+                if (!cancelled)
+                    setAttachmentsError('상품 이미지를 불러오지 못했습니다.');
+            } finally {
+                if (!cancelled) setAttachmentsLoading(false);
+            }
+        }
+
+        void loadAttachments();
+        return () => {
+            cancelled = true;
+        };
+    }, [open, productId, attachmentRetry]);
 
     useEffect(() => {
         async function loadCategory() {
@@ -109,9 +149,26 @@ export default function ProductModal({
                 </DialogHeader>
                 <form
                     key={product?.id ?? 'new'}
-                    action={formAction}
+                    action={(formData) => {
+                        if (attachmentsLoading || attachmentsError) return;
+                        attachments.newFiles.forEach((file) => {
+                            formData.append('files', file);
+                        });
+
+                        formData.set(
+                            'deletedIds',
+                            JSON.stringify(attachments.deletedIds),
+                        );
+
+                        formAction(formData);
+                    }}
                     className="flex min-h-0 flex-1 flex-col"
                 >
+                    <input
+                        type="hidden"
+                        name="gid"
+                        value={product?.gid ?? ''}
+                    />
                     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
                         <section
                             className="space-y-4"
@@ -235,7 +292,44 @@ export default function ProductModal({
                             <h3 className="text-sm font-semibold text-gray-900">
                                 상품 이미지
                             </h3>
-                            {/* TODO : 이미지 첨부파일 컴포넌트 추가하기 */}
+                            <FileAttachment
+                                value={attachments}
+                                onChange={setAttachments}
+                                disabled={
+                                    isPending ||
+                                    attachmentsLoading ||
+                                    !!attachmentsError
+                                }
+                            />
+                            {attachmentsLoading && (
+                                <p
+                                    role="status"
+                                    className="text-sm text-gray-500"
+                                >
+                                    상품 이미지를 불러오는 중입니다.
+                                </p>
+                            )}
+                            {attachmentsError && (
+                                <div
+                                    role="alert"
+                                    className="space-y-2 text-sm text-red-600"
+                                >
+                                    <p>{attachmentsError}</p>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => {
+                                            setAttachmentsLoading(true);
+                                            setAttachmentsError('');
+                                            setAttachmentRetry(
+                                                (current) => current + 1,
+                                            );
+                                        }}
+                                    >
+                                        다시 불러오기
+                                    </Button>
+                                </div>
+                            )}
                         </section>
                         {state.errors?.form && (
                             <p className="text-red-600">{state.errors.form}</p>
@@ -249,7 +343,14 @@ export default function ProductModal({
                         >
                             취소
                         </Button>
-                        <Button type="submit" disabled={isPending}>
+                        <Button
+                            type="submit"
+                            disabled={
+                                isPending ||
+                                attachmentsLoading ||
+                                !!attachmentsError
+                            }
+                        >
                             저장
                         </Button>
                     </div>

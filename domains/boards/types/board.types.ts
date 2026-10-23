@@ -59,7 +59,7 @@ export interface Post {
     content: string;
     user_id: string | null; // DB: profiles.id (탈퇴 시 null)
     author_name: string;
-    gid: string; // file_info.gid (첨부/본문 이미지 묶음)
+    gid: string; // file_group.id (첨부/본문 이미지 묶음)
     view_count: number;
     sort_order?: number; // 수동 정렬 번호
     is_pinned?: boolean; // 공지 고정 여부
