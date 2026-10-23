@@ -193,79 +193,29 @@ components/                  # shadcn/ui 컴포넌트
 public/                      # 이미지(이벤트 배너 등)
 ```
 
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+---
 
-<!-- TEAM -->
+## 마지막에 합칠 부분
 
-## 팀과 담당
+| 합칠 부분                 | 누가                     | 내용                                                          |
+| ------------------------- | ------------------------ | ------------------------------------------------------------- |
+| 헤더 ↔ 로그인/장바구니    | 이명지 + 최지훈          | 헤더에 로그인 버튼, 장바구니 아이콘 연결                      |
+| 헤더 ↔ 게시판             | 이명지 + 이승주          | 헤더 메뉴에 공지사항, 고객센터 링크 연결                      |
+| 상품 카드 (`ProductCard`) | 정현구 + 이명지 + 최지훈 | 상품 리스트, 메인 인기 상품, 장바구니 추천 상품에서 같이 사용 |
+| 상품 리스트 → 상품 상세   | 정현구 + 배유민          | 상품 카드 클릭 시 `/products/[id]`로 이동                     |
+| 상품 상세 → 장바구니      | 배유민 + 최지훈          | 장바구니 담기 버튼 → `/cart`에 상품 추가                      |
+| 목업 데이터               | 전원                     | `shared/mocks/mockData.ts` 한 곳에 모아서 사용                |
 
-<a id="team"></a>
-
-| 이름          | 브랜치 접두사 | 주요 담당                                                                      |
-| ------------- | ------------- | ------------------------------------------------------------------------------ |
-| 정현구 (팀장) | `jhg`         | 관리자(카테고리·상품·주문), 헤더 카테고리·관리자 버튼, 파일·카테고리 구조      |
-| 이명지        | `lmj`         | 메인(이벤트 배너·인기 상품), 헤더·푸터 레이아웃, 주문서(체크아웃) 화면         |
-| 배유민        | `BYM`         | 상품 상세, 상품 검색·가격 필터·페이지네이션, 카테고리·상품 이미지 연동         |
-| 최지훈        | `cjh`         | 로그인·회원가입, 장바구니·추천 상품, 토스 결제 연결, 마이페이지, 자동 로그아웃 |
-| 이승주        | `lsj`         | 게시판(공지·이벤트·FAQ·문의·리뷰·자유·룩북), 상품 상세의 리뷰·문의             |
-
-> 담당은 커밋과 브랜치 기록을 기준으로 정리했습니다. 실제 역할과 다르면 고쳐 주세요.
-
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
-
-<!-- RULES -->
+---
 
 ## 작업 규칙
 
-<a id="rules"></a>
+- 브랜치: `feature/작업명` (예: `feature/login`) → 작업 후 `main`으로 PR
+- 커밋: `feat: 장바구니 상품 목록 추가` 처럼 `feat` / `fix` / `style` / `chore` / `docs` 사용
+- 빈 `page.tsx`는 실행 에러가 나니 최소한 아래처럼 만들어 두기
 
-- **브랜치**: `feature/작업명`(예: `feature/lsj-board-product`) → 작업 후 `main`으로 PR
-- **커밋**: `feat: 장바구니 상품 목록 추가`처럼 `feat` / `fix` / `refactor` / `style` / `chore` / `docs` 중 하나로 시작
-- **보안**: `.env*`와 키 값은 올리지 않고, 서버 전용 키에는 `NEXT_PUBLIC_`을 붙이지 않습니다.
-- **서버 액션**: 폼이 보낸 값을 믿지 않고 서버에서 다시 조회·검증하며, `redirect()`는 `try/catch` 밖에서 호출합니다.
-- **다른 사람 파일**을 고칠 때는 PR 설명에 이유를 적습니다.
-
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
-
-<!-- ROADMAP -->
-
-## 배포 전 체크리스트
-
-<a id="roadmap"></a>
-
-- [ ] `npm install` 후 `npm run build`가 통과하는지 확인(타입 오류·Suspense 경고 포함)
-- [ ] 환경변수 4개를 배포 환경에 등록(서버 전용 키 주의)
-- [ ] 게시판의 리뷰 구매자 확인(`require_purchase`)을 켠 상태인지 확인(`domains/boards/lib/boardSettings.ts`)
-- [ ] 개발용 확인 주소(`app/api/debug`)가 배포본에 없는지 확인
-- [ ] Supabase에 필요한 표·FK가 적용되었는지, 스키마 캐시를 새로 고쳤는지 확인
-- [ ] 반응형(모바일), 빈 화면 문구 점검
-
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
-
-<!-- ACKNOWLEDGMENTS -->
-
-## 참고
-
-<a id="acknowledgments"></a>
-
-- [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
-- [Next.js 문서](https://nextjs.org/docs)
-- [Supabase 문서](https://supabase.com/docs)
-- [토스페이먼츠 개발자센터](https://docs.tosspayments.com/)
-
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
-
-<!-- MARKDOWN LINKS & IMAGES -->
-
-[nextjs-shield]: https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[nextjs-url]: https://nextjs.org/
-[react-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[react-url]: https://react.dev/
-[ts-shield]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
-[ts-url]: https://www.typescriptlang.org/
-[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
-[tailwind-url]: https://tailwindcss.com/
-[supabase-shield]: https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white
-[supabase-url]: https://supabase.com/
-[toss-shield]: https://img.shields.io/badge/Toss_Payments-0064FF?style=for-the-badge&logoColor=white
-[toss-url]: https://docs.tosspayments.com/
+```tsx
+export default function Page() {
+    return null;
+}
+```
