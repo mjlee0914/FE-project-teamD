@@ -111,7 +111,8 @@ export default async function ProductsPage({
                 imageUrl:
                     item.gid == null
                         ? DEFAULT_PRODUCT_IMAGE
-                        : (imageUrls.get(item.gid) ?? DEFAULT_PRODUCT_IMAGE),
+                        : (imageUrls.get(String(item.gid)) ??
+                          DEFAULT_PRODUCT_IMAGE),
             },
         ];
     });
