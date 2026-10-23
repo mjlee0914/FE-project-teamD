@@ -1,6 +1,6 @@
 <a id="readme-top"></a>
 
-<!-- Best-README-Template(https://github.com/othneildrew/Best-README-Template) 구조를 참고해 팀 프로젝트에 맞게 만든 README -->
+<div align="center">
 
 [![Next.js][nextjs-shield]][nextjs-url]
 [![React][react-shield]][react-url]
@@ -9,14 +9,16 @@
 [![Supabase][supabase-shield]][supabase-url]
 [![Toss Payments][toss-shield]][toss-url]
 
+</div>
+
 <br />
 <div align="center">
   <h3 align="center">DN Mall</h3>
 
   <p align="center">
-    Team D(Disco Ninja)의 패션 쇼핑몰 프론트엔드 팀 프로젝트
+    KANT Agentic AI 1기 Team D의 패션 쇼핑몰 프론트엔드 팀 프로젝트
     <br />
-    상품 탐색부터 장바구니·결제, 게시판, 관리자 화면까지 한 흐름으로 만든 풀스택 쇼핑몰
+    - 상품 탐색부터 장바구니 · 결제, 게시판, 관리자 화면까지 한 흐름으로 구현 - 
     <br />
     <br />
     <a href="#getting-started">시작하기</a>
@@ -24,8 +26,6 @@
     <a href="#usage">화면과 주소</a>
     &middot;
     <a href="#team">팀과 담당</a>
-    &middot;
-    <a href="domains/boards/README.md">게시판 README</a>
   </p>
 </div>
 
@@ -58,12 +58,12 @@
 
 <a id="about-the-project"></a>
 
-DN Mall은 패션 상품을 둘러보고 장바구니에 담아 결제하는 쇼핑몰입니다. 처음에는 목업 데이터로 화면을 만들었고, 지금은 **Supabase(Postgres + 로그인)** 와 **토스페이먼츠 결제**에 연결되어 있습니다.
+DN Mall은 패션 상품을 둘러보고 장바구니에 담아 결제하는 쇼핑몰입니다. 처음에는 목업 데이터로 화면을 만들었고, 현재는 **Supabase(Postgres + 로그인)** 와 **토스페이먼츠 결제**에 연결되어 있습니다.
 
 - **상품**: 메인(이벤트 배너·인기 상품), 카테고리·검색·가격 필터·페이지네이션, 상품 상세(사이즈, 이미지)
 - **회원**: 로그인·회원가입, 마이페이지(프로필), 30분 동안 사용이 없으면 자동 로그아웃
 - **구매**: 장바구니(추천 상품), 주문서 작성(배송지), 토스 결제 → 주문 완료·실패 화면
-- **게시판**: 공지사항·이벤트·FAQ·1:1 문의·상품 리뷰·자유게시판·룩북, 상품 상세의 리뷰·문의 (자세한 설명은 [게시판 README](domains/boards/README.md))
+- **게시판**: 공지사항·이벤트·FAQ·1:1 문의·상품 리뷰·자유게시판·룩북, 상품 상세의 리뷰·문의
 - **관리자**: 카테고리·상품·주문 관리
 
 <p align="right">(<a href="#readme-top">맨 위로</a>)</p>
@@ -219,3 +219,18 @@ export default function Page() {
     return null;
 }
 ```
+
+<!-- MARKDOWN LINKS & IMAGES -->
+
+[nextjs-shield]: https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[nextjs-url]: https://nextjs.org/
+[react-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[react-url]: https://react.dev/
+[ts-shield]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
+[ts-url]: https://www.typescriptlang.org/
+[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
+[tailwind-url]: https://tailwindcss.com/
+[supabase-shield]: https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white
+[supabase-url]: https://supabase.com/
+[toss-shield]: https://img.shields.io/badge/Toss_Payments-0064FF?style=for-the-badge&logo=toss&logoColor=white
+[toss-url]: https://docs.tosspayments.com/

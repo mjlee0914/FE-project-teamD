@@ -20,7 +20,12 @@ interface KakaoPostCodeConstructor {
         height?: number;
         oncomplete: (data: KakaoPostcodeData) => void;
     }): {
-        open: () => void;
+        open: (options?: {
+            left?: number;
+            top?: number;
+            popupTitle?: string;
+            popupKey?: string;
+        }) => void;
     };
 }
 

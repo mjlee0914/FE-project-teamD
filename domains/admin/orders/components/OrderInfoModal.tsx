@@ -43,13 +43,13 @@ export default function OrderInfoModal({
 }: OrderModalProps) {
     const paymentRows = [
         ['결제 방법', order.payment_method],
-        ['상품 금액', formatPrice(order.total_price)],
+        ['상품 금액', formatPrice(order.total_price ?? 0)],
         [
             '할인 금액',
-            (order.discount_price > 0 ? '−' : '') +
-                formatPrice(order.discount_price),
+            ((order.discount_price ?? 0) > 0 ? '−' : '') +
+                formatPrice(order.discount_price ?? 0),
         ],
-        ['배송비', formatPrice(order.shipping_fee)],
+        ['배송비', formatPrice(order.shipping_fee ?? 0)],
     ];
 
     return (
@@ -134,7 +134,7 @@ export default function OrderInfoModal({
                                     최종 결제 금액
                                 </dt>
                                 <dd className="text-xl font-bold tabular-nums">
-                                    {formatPrice(order.final_price)}
+                                    {formatPrice(order.final_price ?? 0)}
                                 </dd>
                             </div>
                         </dl>
@@ -142,10 +142,10 @@ export default function OrderInfoModal({
 
                     <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <InfoField label="주문 일시">
-                            {formatDate(order.created_at)}
+                            {formatDate(order.created_at ?? '')}
                         </InfoField>
                         <InfoField label="최근 변경 일시">
-                            {formatDate(order.updated_at)}
+                            {formatDate(order.updated_at ?? '')}
                         </InfoField>
                     </dl>
                 </div>
