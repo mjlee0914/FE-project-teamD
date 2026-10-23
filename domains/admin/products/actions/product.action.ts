@@ -16,7 +16,7 @@ export async function getProductAttachments(productId: string): Promise<{
     }
 
     try {
-        const supabase = createServerClient();
+        const supabase = await createServerClient();
         const { data: product, error } = await supabase
             .from('products')
             .select('gid::text')
@@ -65,7 +65,7 @@ function readAttachments(formData: FormData) {
 }
 
 export async function getProductList(searchName?: string) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     let query = supabase.from('products').select('*, category(name)');
 
@@ -85,7 +85,7 @@ export async function addProduct(formData: FormData): Promise<ActionState> {
         return { success: false, errors: { alert: '권한이 없습니다.' } };
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     let gid: string | undefined;
     try {
         const { newFiles, deletedIds } = readAttachments(formData);
@@ -142,7 +142,7 @@ export async function updateProduct(formData: FormData): Promise<ActionState> {
         return { success: false, errors: { alert: '권한이 없습니다.' } };
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     // 폼의 gid 대신 DB에 연결된 그룹을 사용합니다.
     const { data: product, error: lookupError } = await supabase
@@ -208,7 +208,7 @@ export async function deleteProduct(id: string) {
         return { success: false, errors: { alert: '권한이 없습니다.' } };
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     // TODO : 연결된 gid나 board 삭제
 

@@ -14,7 +14,7 @@ export async function getAttachments(
         throw new Error('잘못된 파일 그룹 번호입니다.');
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('file_info')
         .select(
@@ -80,7 +80,7 @@ export async function saveAttachments({
     newFiles,
     deletedIds = [],
 }: SaveAttachmentsInput): Promise<string | undefined> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const bucket = 'attachments';
 
     if (gid !== undefined && !/^[1-9]\d*$/.test(gid)) {

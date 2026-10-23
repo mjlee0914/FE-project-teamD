@@ -27,7 +27,7 @@ export async function getProductImageUrls(
         return imageUrls;
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     // 1. 파일 그룹 조회
     const { data: groups, error: groupError } = await supabase

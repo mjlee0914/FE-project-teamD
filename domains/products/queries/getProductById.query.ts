@@ -15,7 +15,7 @@ export async function getProductById(
         return null;
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('products')

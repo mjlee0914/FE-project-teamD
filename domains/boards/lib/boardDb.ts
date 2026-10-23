@@ -9,7 +9,7 @@ export interface BoardRow {
 
 // 게시판 조회
 export async function fetchBoardRow(boardId: string): Promise<BoardRow | null> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('boards')
         .select('id, category_id')
@@ -25,7 +25,7 @@ export async function fetchBoardRow(boardId: string): Promise<BoardRow | null> {
 export async function fetchCategoryChildren(
     rootId: string,
 ): Promise<{ id: string; name: string }[]> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('category')
         .select('id, name')
@@ -120,7 +120,7 @@ function toPost(row: PostWithAnswerRow): Post {
 
 // 게시판 글 목록 보기
 export async function fetchPosts(boardId: string): Promise<Post[]> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('posts')
         .select(POST_SELECT)
@@ -138,7 +138,7 @@ export async function fetchPost(
 ): Promise<Post | null> {
     if (!UUID_REGEX.test(postId)) return null;
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('posts')
         .select(POST_SELECT)
@@ -166,7 +166,7 @@ export interface NewPostValues {
 }
 
 export async function insertPostRow(v: NewPostValues): Promise<Post> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('posts')
         .insert({
@@ -215,7 +215,7 @@ export async function updatePostRow(
     if (v.thumbnail_url) patch.thumbnail_url = v.thumbnail_url;
     if (v.rating !== undefined) patch.rating = v.rating;
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('posts')
         .update(patch)
@@ -237,7 +237,7 @@ export async function softDeletePostRow(
     if (!UUID_REGEX.test(postId)) return false;
 
     const now = new Date().toISOString();
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('posts')
         .update({ deleted_at: now, updated_at: now })
@@ -260,7 +260,7 @@ export async function saveAnswerRow(
     const post = await fetchPost(boardId, postId);
     if (!post) return false;
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     if (post.answer) {
         const { error } = await supabase
             .from('post_answers')
@@ -285,7 +285,7 @@ export async function increaseViewCountRow(
 ): Promise<void> {
     if (!UUID_REGEX.test(postId)) return;
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error: readError } = await supabase
         .from('posts')
         .select('view_count')

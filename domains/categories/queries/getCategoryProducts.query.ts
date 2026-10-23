@@ -15,7 +15,7 @@ export async function getPagedProducts({
     maxPrice,
     page = 1,
 }: GetPagedProductsParams = {}) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const pageSize = 9;
 
     const safePage = Number.isSafeInteger(page) && page > 0 ? page : 1;
@@ -70,7 +70,7 @@ export async function getPagedProducts({
 export async function getCategoryProducts({
     categoryId,
 }: { categoryId?: string } = {}) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     let query = supabase
         .from('products')

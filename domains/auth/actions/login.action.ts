@@ -14,7 +14,7 @@ export async function login(values: LoginFormValues) {
         return '비밀번호를 입력해 주세요.';
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,

@@ -34,7 +34,7 @@ export async function updateProfileAction(
         return { success: false, errors, values };
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const {
         data: { user },
     } = await supabase.auth.getUser();

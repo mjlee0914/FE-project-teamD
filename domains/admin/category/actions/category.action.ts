@@ -27,7 +27,7 @@ export async function addCategory(
     const name = (formData.get('name') as string).trim();
     const parentId = ((formData.get('parent_id') as string) ?? '').trim();
     const type = formData.get('type') as string;
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     let sortOrder = 1;
     let depth = 0;
 
@@ -90,7 +90,7 @@ export async function addCategory(
 }
 
 async function getParentCategory(parentId: string, type: string) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const result = await supabase
         .from('category')
         .select('depth')
@@ -103,7 +103,7 @@ async function getParentCategory(parentId: string, type: string) {
 }
 
 async function getLastSortOrder(parentId: string, type: string) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const result = await supabase
         .from('category')
         .select('sort_order')
@@ -126,7 +126,7 @@ export async function getCategoryList({
     searchType?: string;
     searchDepth?: number;
 } = {}) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     let query = supabase.from('category').select('*').is('deleted_at', null);
 
@@ -224,7 +224,7 @@ export async function updateCategory(
 
     const id = formData.get('id');
     const name = (formData.get('name') as string).trim();
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('category')
@@ -243,7 +243,7 @@ export async function updateCategory(
 }
 
 export async function getParentCategoryList(type: string) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     return await supabase
         .from('category')
         .select('id, parent_id, name, depth, sort_order, type')
@@ -258,7 +258,7 @@ export async function deleteCategory(category: Category): Promise<ActionState> {
         return { success: false, errors: { alert: '권한이 없습니다.' } };
     }
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     if ((await getChildCategoryCnt(category.id)) > 0) {
         return {
@@ -288,7 +288,7 @@ export async function deleteCategory(category: Category): Promise<ActionState> {
 }
 
 async function getChildCategoryCnt(id: string): Promise<number> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { count } = await supabase
         .from('category')
@@ -299,7 +299,7 @@ async function getChildCategoryCnt(id: string): Promise<number> {
 }
 
 export async function getCategoryListRaw(type?: string) {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     let query = supabase.from('category').select('*').is('deleted_at', null);
 
     if (type) query.eq('type', type);

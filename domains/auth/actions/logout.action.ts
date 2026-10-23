@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export async function logout() {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     await supabase.auth.signOut();
     const cookieStore = await cookies();
     cookieStore.delete('userName');

@@ -14,7 +14,7 @@ type ShippingInfoResult = OrderShippingInfo | null;
 export async function getLatestPaidOrderShippingInfo(
     userId: string,
 ): Promise<ShippingInfoResult> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('orders')

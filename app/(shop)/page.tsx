@@ -5,8 +5,12 @@ import MainBanner from '@/domains/home/components/MainBanner';
 import { getPosts } from '@/domains/boards/lib/boardRepository';
 import { CATEGORY_NAMES } from '@/domains/boards/lib/categoryNames';
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 
 async function EventSection() {
+    // Supabase의 인증·시간 처리가 프리렌더링 중 실행되지 않도록 합니다.
+    await connection();
+
     const { items } = await getPosts({
         boardId: 'events',
         pageSize: 20,

@@ -20,18 +20,18 @@ if (!supabaseUrl || !supabaseKey) {
 export const supabase = createBrowserClient(supabaseUrl, supabaseKey);
 
 // SSR supabse 연결 객체
-export function createServerClient(): SupabaseClient {
+export async function createServerClient(): Promise<SupabaseClient> {
+    // 인증 클라이언트가 시간·난수를 사용하기 전에 요청 경계를 확정합니다.
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+
     return createSSRServerClient(supabaseUrl, supabaseKey, {
         cookies: {
-            async getAll() {
-                const { cookies } = await import('next/headers');
-                const cookieStore = await cookies();
+            getAll() {
                 return cookieStore.getAll();
             },
-            async setAll(cookiesToSet) {
+            setAll(cookiesToSet) {
                 try {
-                    const { cookies } = await import('next/headers');
-                    const cookieStore = await cookies();
                     cookiesToSet.forEach(({ name, value, options }) => {
                         // 로그아웃처럼 지우는 쿠키(maxAge 0)는 그대로, 저장하는 쿠키는 수명을 SESSION_MAX_AGE로
                         const maxAge =

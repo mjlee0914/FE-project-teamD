@@ -7,7 +7,7 @@ function shuffle<T>(list: T[]): T[] {
 }
 
 export async function getRecommends(cartItems: CartItem[]): Promise<Product[]> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     //장바구니에 담은 상품 id들, 카테고리 id들 모으기
     const cartProductIds = cartItems.map((item) => item.product.id);

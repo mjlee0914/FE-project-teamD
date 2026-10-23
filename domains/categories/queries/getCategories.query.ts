@@ -2,7 +2,7 @@ import { createServerClient } from '@/lib/supabase';
 import type { Category } from '@/domains/categories/types/category.types';
 
 export async function getCategories(): Promise<Category[]> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('category')

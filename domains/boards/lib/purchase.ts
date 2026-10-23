@@ -9,7 +9,7 @@ export async function hasPurchasedProduct(
     userId: string,
     productId: string,
 ): Promise<boolean> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     // 1) 이 사용자의 결제 완료(DONE) 주문 id
     const { data: orders, error: orderError } = await supabase

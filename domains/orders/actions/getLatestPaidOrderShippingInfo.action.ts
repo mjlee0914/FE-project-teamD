@@ -11,7 +11,7 @@ import type { ShippingInfoActionResult } from '../types/order.types';
 // ShippingInfo client component에서 호출할 함수 정의 (배송정보 불러오기 버튼 클릭시 호출)
 export async function getLatestPaidOrderShippingInfoAction(): Promise<ShippingInfoActionResult> {
     try {
-        const supabase = createServerClient();
+        const supabase = await createServerClient();
 
         const {
             data: { user },
