@@ -6,7 +6,7 @@ import {
 } from '@/domains/products/queries/getProductImageUrls.query';
 
 export async function getPopularProducts(): Promise<Product[]> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('products')
