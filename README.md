@@ -1,157 +1,271 @@
-# FE-project-teamD 쇼핑몰
+<a id="readme-top"></a>
 
-쇼핑몰 웹 페이지 **프론트엔드** 팀 프로젝트입니다. (Next.js 16 · React 19 · TypeScript · Tailwind CSS · shadcn/ui)
-서버 없이 화면만 만들고, 데이터는 `shared/mocks/mockData.ts`의 목업 데이터를 사용합니다.
+<!-- Best-README-Template(https://github.com/othneildrew/Best-README-Template) 구조를 참고해 팀 프로젝트에 맞게 만든 README -->
 
-```bash
-npm install
-npm run dev        # http://localhost:3000
+[![Next.js][nextjs-shield]][nextjs-url]
+[![React][react-shield]][react-url]
+[![TypeScript][ts-shield]][ts-url]
+[![Tailwind CSS][tailwind-shield]][tailwind-url]
+[![Supabase][supabase-shield]][supabase-url]
+[![Toss Payments][toss-shield]][toss-url]
+
+<br />
+<div align="center">
+  <h3 align="center">DN Mall</h3>
+
+  <p align="center">
+    Team D(Disco Ninja)의 패션 쇼핑몰 프론트엔드 팀 프로젝트
+    <br />
+    상품 탐색부터 장바구니·결제, 게시판, 관리자 화면까지 한 흐름으로 만든 풀스택 쇼핑몰
+    <br />
+    <br />
+    <a href="#getting-started">시작하기</a>
+    &middot;
+    <a href="#usage">화면과 주소</a>
+    &middot;
+    <a href="#team">팀과 담당</a>
+    &middot;
+    <a href="domains/boards/README.md">게시판 README</a>
+  </p>
+</div>
+
+<details>
+  <summary>목차</summary>
+  <ol>
+    <li><a href="#about-the-project">프로젝트 소개</a>
+      <ul><li><a href="#built-with">사용 기술</a></li></ul>
+    </li>
+    <li><a href="#getting-started">시작하기</a>
+      <ul>
+        <li><a href="#prerequisites">준비물</a></li>
+        <li><a href="#installation">설치와 실행</a></li>
+        <li><a href="#scripts">명령어</a></li>
+        <li><a href="#docker">Docker</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">화면과 주소</a></li>
+    <li><a href="#structure">폴더 구조</a></li>
+    <li><a href="#team">팀과 담당</a></li>
+    <li><a href="#rules">작업 규칙</a></li>
+    <li><a href="#roadmap">배포 전 체크리스트</a></li>
+    <li><a href="#acknowledgments">참고</a></li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+
+## 프로젝트 소개
+
+<a id="about-the-project"></a>
+
+DN Mall은 패션 상품을 둘러보고 장바구니에 담아 결제하는 쇼핑몰입니다. 처음에는 목업 데이터로 화면을 만들었고, 지금은 **Supabase(Postgres + 로그인)** 와 **토스페이먼츠 결제**에 연결되어 있습니다.
+
+- **상품**: 메인(이벤트 배너·인기 상품), 카테고리·검색·가격 필터·페이지네이션, 상품 상세(사이즈, 이미지)
+- **회원**: 로그인·회원가입, 마이페이지(프로필), 30분 동안 사용이 없으면 자동 로그아웃
+- **구매**: 장바구니(추천 상품), 주문서 작성(배송지), 토스 결제 → 주문 완료·실패 화면
+- **게시판**: 공지사항·이벤트·FAQ·1:1 문의·상품 리뷰·자유게시판·룩북, 상품 상세의 리뷰·문의 (자세한 설명은 [게시판 README](domains/boards/README.md))
+- **관리자**: 카테고리·상품·주문 관리
+
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+
+### 사용 기술
+
+<a id="built-with"></a>
+
+- Next.js 16 (App Router, Server Actions, Cache Components), React 19, TypeScript
+- Tailwind CSS 4, shadcn/ui, Base UI, lucide-react, react-icons, Swiper
+- Supabase (`@supabase/ssr`, `@supabase/supabase-js`)
+- 토스페이먼츠 결제위젯 (`@tosspayments/tosspayments-sdk`)
+- Zustand(주문서 상태), ESLint, Prettier
+
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+
+<!-- GETTING STARTED -->
+
+## 시작하기
+
+<a id="getting-started"></a>
+
+### 준비물
+
+<a id="prerequisites"></a>
+
+- Node.js 22 이상, npm
+- Supabase 프로젝트 (팀 DB 접속 정보는 팀 안에서 따로 공유)
+- 토스페이먼츠 테스트 키 ([공개 테스트 키 안내](https://docs.tosspayments.com/reference/using-api/api-keys))
+
+### 설치와 실행
+
+<a id="installation"></a>
+
+1. 저장소를 받고 패키지를 설치합니다.
+    ```sh
+    git clone https://github.com/mjlee0914/FE-project-teamD.git
+    cd FE-project-teamD
+    npm install
+    ```
+2. `.env.example`을 복사해 `.env.local`을 만들고 값을 채웁니다. **`.env.local`은 git에 올리지 않습니다.**
+    ```
+    NEXT_PUBLIC_SUPABASE_URL=
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+    NEXT_PUBLIC_TOSS_CLIENT_KEY=
+    TOSS_SECRET_KEY=            # 서버에서만 사용, 절대 NEXT_PUBLIC_ 을 붙이지 않습니다
+    ```
+3. 개발 서버를 실행합니다.
+    ```sh
+    npm run dev      # http://localhost:3000
+    ```
+
+### 명령어
+
+<a id="scripts"></a>
+
+| 명령어                                    | 설명                                        |
+| ----------------------------------------- | ------------------------------------------- |
+| `npm run dev`                             | 개발 서버                                   |
+| `npm run build`                           | 운영 빌드 (`prebuild`로 테스트를 먼저 실행) |
+| `npm start`                               | 빌드한 앱 실행                              |
+| `npm test`                                | 단위 테스트 (`node --import tsx --test`)    |
+| `npm run lint`                            | ESLint                                      |
+| `npm run format` / `npm run format:check` | Prettier 정리 / 검사                        |
+| `npx tsc --noEmit`                        | 타입 검사                                   |
+
+### Docker
+
+<a id="docker"></a>
+
+`Dockerfile`과 `docker-compose.yml`이 있습니다(`.env.local`을 읽어 3000번 포트로 실행).
+
+```sh
+docker compose up --build
 ```
 
----
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 
-## 이명지 · 메인페이지 / 헤더 / 푸터
+<!-- USAGE -->
 
-- 메인페이지 (이벤트 배너, 인기 상품)
-- 헤더, 푸터
+## 화면과 주소
 
-```
-app/(shop)/
-├── layout.tsx                    # 쇼핑몰 공통 레이아웃 (Header + Footer)
-└── page.tsx                      # 메인페이지  →  /
+<a id="usage"></a>
 
-domains/home/components/
-├── EventBanner.tsx               # 이벤트 배너
-└── PopularProducts.tsx           # 인기 상품
+| 주소                                                               | 화면                                                   |
+| ------------------------------------------------------------------ | ------------------------------------------------------ |
+| `/`                                                                | 메인(배너, 인기 상품, 진행 중 이벤트)                  |
+| `/products` · `/products/[id]`                                     | 상품 목록(카테고리·검색) · 상품 상세(리뷰·문의 포함)   |
+| `/login` · `/register`                                             | 로그인 · 회원가입                                      |
+| `/cart` · `/checkout`                                              | 장바구니 · 주문서                                      |
+| `/order/success` · `/order/complete` · `/order/fail`               | 결제 승인 처리 · 주문 완료 · 결제 실패                 |
+| `/mypage`                                                          | 마이페이지                                             |
+| `/boards/support` · `/boards/community`                            | 고객센터 · 커뮤니티 랜딩                               |
+| `/boards/[boardId]`                                                | 공지사항·이벤트·FAQ·1:1 문의·상품 리뷰·자유게시판·룩북 |
+| `/admin` · `/admin/products` · `/admin/category` · `/admin/orders` | 관리자 (관리자 계정만)                                 |
 
-shared/components/
-├── Header.tsx                    # 헤더
-└── Footer.tsx                    # 푸터
-```
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 
----
+<!-- STRUCTURE -->
 
-## 정현구 · 상품 리스트
+## 폴더 구조
 
-- 좌측 메뉴
-- 상품 리스트
-- 검색 영역
+<a id="structure"></a>
 
-```
-app/(shop)/products/
-└── page.tsx                      # 상품 리스트  →  /products
-
-domains/categories/components/
-└── CategorySideMenu.tsx          # 좌측 메뉴
-
-domains/products/components/
-├── ProductSearchBar.tsx          # 검색 영역
-├── ProductGrid.tsx               # 상품 리스트
-└── ProductCard.tsx               # 상품 카드 (★ 공통 사용)
-```
-
----
-
-## 배유민 · 상품 상세
-
-- 이미지, 제목, 가격
-- 상품 소개 (사이즈)
-- 리뷰
-- 문의사항
+기능 단위는 `domains/`, 여러 곳에서 쓰는 것은 `shared/`, URL은 `app/`이 맡습니다.
 
 ```
-app/(shop)/products/[id]/
-└── page.tsx                      # 상품 상세  →  /products/1
+app/
+├── (shop)/                  # 쇼핑몰 레이아웃(헤더·푸터) 아래 모든 화면
+│   ├── page.tsx             # 메인
+│   ├── (auth)/              # login · register
+│   ├── products/            # 상품 목록 · [id] 상세
+│   ├── cart/ · checkout/ · order/   # 장바구니 · 주문서 · 결제 결과
+│   ├── mypage/
+│   └── boards/              # 게시판 (support · community · [boardId])
+└── admin/                   # 관리자 (products · category · orders)
 
-domains/products/components/
-├── ProductDetail.tsx             # 이미지, 제목, 가격
-├── ProductDescription.tsx        # 상품 소개 (사이즈)
-├── ProductReviews.tsx            # 리뷰
-└── ProductInquiries.tsx          # 문의사항
+domains/                     # 기능별 코드 (actions · components · queries · types …)
+├── home/ · products/ · categories/
+├── auth/ · cart/ · orders/
+├── boards/                  # 게시판 (README 참고)
+├── admin/ · files/
+
+shared/                      # 헤더·푸터, 공용 UI, 공용 타입·유틸
+lib/supabase.ts              # Supabase 클라이언트(브라우저·서버)
+components/                  # shadcn/ui 컴포넌트
+public/                      # 이미지(이벤트 배너 등)
 ```
 
----
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 
-## 최지훈 · 로그인 / 장바구니
+<!-- TEAM -->
 
-- 상품 목록
-- 금액, 배송지, 결제하기 버튼
-- 추천 상품
+## 팀과 담당
 
-```
-app/(shop)/(auth)/login/
-└── page.tsx                      # 로그인  →  /login
+<a id="team"></a>
 
-app/(shop)/cart/
-└── page.tsx                      # 장바구니  →  /cart
+| 이름          | 브랜치 접두사 | 주요 담당                                                                      |
+| ------------- | ------------- | ------------------------------------------------------------------------------ |
+| 정현구 (팀장) | `jhg`         | 관리자(카테고리·상품·주문), 헤더 카테고리·관리자 버튼, 파일·카테고리 구조      |
+| 이명지        | `lmj`         | 메인(이벤트 배너·인기 상품), 헤더·푸터 레이아웃, 주문서(체크아웃) 화면         |
+| 배유민        | `BYM`         | 상품 상세, 상품 검색·가격 필터·페이지네이션, 카테고리·상품 이미지 연동         |
+| 최지훈        | `cjh`         | 로그인·회원가입, 장바구니·추천 상품, 토스 결제 연결, 마이페이지, 자동 로그아웃 |
+| 이승주        | `lsj`         | 게시판(공지·이벤트·FAQ·문의·리뷰·자유·룩북), 상품 상세의 리뷰·문의             |
 
-domains/auth/components/
-└── LoginForm.tsx                 # 아이디/비밀번호 입력, 로그인 버튼
+> 담당은 커밋과 브랜치 기록을 기준으로 정리했습니다. 실제 역할과 다르면 고쳐 주세요.
 
-domains/cart/components/
-├── CartItemList.tsx              # 상품 목록
-├── CartSummary.tsx               # 금액, 결제하기 버튼
-├── ShippingAddress.tsx           # 배송지
-└── RecommendedProducts.tsx       # 추천 상품
-```
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
 
----
-
-## 이승주 · 게시판
-
-- 공지사항
-- 고객센터 (FAQ + Q&A)
-- 룩북 등 유저 게시판
-
-```
-app/(shop)/board/[id]/            # /board/notice, /board/faq, /board/qna, /board/lookbook
-├── page.tsx                      # 글 목록
-├── new/page.tsx                  # 글 작성
-└── [postId]/
-    ├── page.tsx                  # 글 상세
-    └── edit/page.tsx             # 글 수정
-
-domains/boards/components/
-├── PostList.tsx                  # 글 목록
-├── PostDetail.tsx                # 글 상세
-├── PostForm.tsx                  # 글 작성/수정
-└── FaqList.tsx                   # FAQ
-```
-
----
-
-## 공통 (모두 사용)
-
-```
-shared/
-├── components/ui/                # 버튼, 인풋, 카드 등 (새로 만들지 말고 이거 사용)
-├── mocks/mockData.ts             # 목업 데이터
-└── utils/formatPrice.ts          # 금액 표시 (12,000원)
-```
-
----
-
-## 마지막에 합칠 부분
-
-| 합칠 부분                | 누가                    | 내용                                             |
-| ------------------------ | ----------------------- | ------------------------------------------------ |
-| 헤더 ↔ 로그인/장바구니   | 이명지 + 최지훈         | 헤더에 로그인 버튼, 장바구니 아이콘 연결         |
-| 헤더 ↔ 게시판            | 이명지 + 이승주         | 헤더 메뉴에 공지사항, 고객센터 링크 연결         |
-| 상품 카드 (`ProductCard`) | 정현구 + 이명지 + 최지훈 | 상품 리스트, 메인 인기 상품, 장바구니 추천 상품에서 같이 사용 |
-| 상품 리스트 → 상품 상세  | 정현구 + 배유민         | 상품 카드 클릭 시 `/products/[id]`로 이동        |
-| 상품 상세 → 장바구니     | 배유민 + 최지훈         | 장바구니 담기 버튼 → `/cart`에 상품 추가         |
-| 목업 데이터              | 전원                    | `shared/mocks/mockData.ts` 한 곳에 모아서 사용   |
-
----
+<!-- RULES -->
 
 ## 작업 규칙
 
-- 브랜치: `feature/작업명` (예: `feature/login`) → 작업 후 `main`으로 PR
-- 커밋: `feat: 장바구니 상품 목록 추가` 처럼 `feat` / `fix` / `style` / `chore` / `docs` 사용
-- 빈 `page.tsx`는 실행 에러가 나니 최소한 아래처럼 만들어 두기
+<a id="rules"></a>
 
-```tsx
-export default function Page() {
-    return null;
-}
-```
+- **브랜치**: `feature/작업명`(예: `feature/lsj-board-product`) → 작업 후 `main`으로 PR
+- **커밋**: `feat: 장바구니 상품 목록 추가`처럼 `feat` / `fix` / `refactor` / `style` / `chore` / `docs` 중 하나로 시작
+- **보안**: `.env*`와 키 값은 올리지 않고, 서버 전용 키에는 `NEXT_PUBLIC_`을 붙이지 않습니다.
+- **서버 액션**: 폼이 보낸 값을 믿지 않고 서버에서 다시 조회·검증하며, `redirect()`는 `try/catch` 밖에서 호출합니다.
+- **다른 사람 파일**을 고칠 때는 PR 설명에 이유를 적습니다.
+
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+
+<!-- ROADMAP -->
+
+## 배포 전 체크리스트
+
+<a id="roadmap"></a>
+
+- [ ] `npm install` 후 `npm run build`가 통과하는지 확인(타입 오류·Suspense 경고 포함)
+- [ ] 환경변수 4개를 배포 환경에 등록(서버 전용 키 주의)
+- [ ] 게시판의 리뷰 구매자 확인(`require_purchase`)을 켠 상태인지 확인(`domains/boards/lib/boardSettings.ts`)
+- [ ] 개발용 확인 주소(`app/api/debug`)가 배포본에 없는지 확인
+- [ ] Supabase에 필요한 표·FK가 적용되었는지, 스키마 캐시를 새로 고쳤는지 확인
+- [ ] 반응형(모바일), 빈 화면 문구 점검
+
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+
+## 참고
+
+<a id="acknowledgments"></a>
+
+- [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
+- [Next.js 문서](https://nextjs.org/docs)
+- [Supabase 문서](https://supabase.com/docs)
+- [토스페이먼츠 개발자센터](https://docs.tosspayments.com/)
+
+<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+
+[nextjs-shield]: https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[nextjs-url]: https://nextjs.org/
+[react-shield]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[react-url]: https://react.dev/
+[ts-shield]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
+[ts-url]: https://www.typescriptlang.org/
+[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
+[tailwind-url]: https://tailwindcss.com/
+[supabase-shield]: https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white
+[supabase-url]: https://supabase.com/
+[toss-shield]: https://img.shields.io/badge/Toss_Payments-0064FF?style=for-the-badge&logoColor=white
+[toss-url]: https://docs.tosspayments.com/
