@@ -73,7 +73,7 @@ export default function CartItemList({
 
     // 주문서(체크아웃)와 같은 모양: 굵은 제목 + 테두리 카드 + 회색 금액 카드 + 검은 둥근 버튼
     return (
-        <div className="mx-auto max-w-5xl px-4 py-8 md:px-6">
+        <div>
             <h3 className="mb-6 text-2xl font-black text-gray-900">
                 장바구니 ({items.length})
             </h3>
