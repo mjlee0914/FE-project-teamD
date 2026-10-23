@@ -162,7 +162,8 @@ function buildCategoryTree(parentId: string | null = null): Category[] {
 export const MOCK_CATEGORIES: Category[] = buildCategoryTree();
 
 // 범용 파일 메타데이터 Mock Data
-export const MOCK_FILES: FileInfo[] = [
+// 그룹 번호는 file_info 컬럼이 아닌 file_group 연결 정보입니다.
+export const MOCK_FILES: (FileInfo & { gid: string })[] = [
     {
         id: 1,
         gid: 'product-mock-1',

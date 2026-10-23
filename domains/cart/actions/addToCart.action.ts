@@ -8,7 +8,7 @@ export async function addToCart(
     quantity: number,
     option: string | null,
 ): Promise<{ success: boolean; message: string }> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const {
         data: { user },

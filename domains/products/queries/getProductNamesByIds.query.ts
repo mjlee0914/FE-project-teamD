@@ -11,7 +11,7 @@ export async function getProductNamesByIds(
     const validIds = [...new Set(ids)].filter((id) => UUID_REGEX.test(id));
     if (validIds.length === 0) return {};
 
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('products')
         .select('id, name')

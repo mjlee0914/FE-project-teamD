@@ -6,7 +6,7 @@ import { createServerClient } from '@/lib/supabase';
 export async function removeCartItem(
     cartItemId: string | undefined,
 ): Promise<{ success: boolean; message: string }> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const {
         data: { user },

@@ -35,7 +35,7 @@ function fail(message: string): CreateOrderResult {
 export async function createOrder(
     input: CreateOrderInput,
 ): Promise<CreateOrderResult> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
     const {
         data: { user },
     } = await supabase.auth.getUser();

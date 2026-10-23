@@ -14,7 +14,7 @@ type ShippingInfoResult = OrderShippingInfo | null;
 export async function getLatestPaidOrderShippingInfo(
     userId: string,
 ): Promise<ShippingInfoResult> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     // orders와 payments 사이에 FK가 없으므로 관계형 조회(payments!inner)를
     // 사용할 수 없다. 먼저 로그인 사용자의 결제 완료 주문을 조회한다.

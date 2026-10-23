@@ -4,7 +4,7 @@ import type { Category } from '@/domains/categories/types/category.types';
 export type HeaderCategory = Pick<Category, 'id' | 'name'>;
 
 export async function getHeaderCategories(): Promise<HeaderCategory[]> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('category')
