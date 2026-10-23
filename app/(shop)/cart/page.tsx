@@ -14,20 +14,26 @@ async function CartContent() {
         .map((item) => `${item.id}:${item.quantity}`)
         .join(',');
 
+    // 장바구니(왼쪽)와 추천 상품(오른쪽)을 한 줄에 나란히 둔다
     return (
-        <>
-            {/* 오른쪽 추천 사이드바가 장바구니를 가리지 않게 자리를 비워 둔다 */}
-            <div className={recommends.length > 0 ? 'lg:pr-44' : ''}>
+        <div className="mx-auto flex max-w-7xl gap-8 px-4 py-8 md:px-6">
+            <div className="min-w-0 flex-1">
                 <CartItemList key={listKey} initialItems={items} />
             </div>
             <RecommendSidebar products={recommends} />
-        </>
+        </div>
     );
 }
 
 export default function Page() {
     return (
-        <Suspense fallback={<p className="text-center">불러오는 중...</p>}>
+        <Suspense
+            fallback={
+                <p className="py-20 text-center text-sm text-gray-500">
+                    장바구니를 불러오는 중...
+                </p>
+            }
+        >
             <CartContent />
         </Suspense>
     );

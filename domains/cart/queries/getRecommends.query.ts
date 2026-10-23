@@ -1,6 +1,10 @@
 import { createServerClient } from '@/lib/supabase';
 import type { CartItem } from '@/domains/cart/types/cart.types';
 import type { Product } from '@/domains/products/types/product.types';
+import {
+    getProductImageUrls,
+    DEFAULT_PRODUCT_IMAGE,
+} from '@/domains/products/queries/getProductImageUrls.query';
 
 function shuffle<T>(list: T[]): T[] {
     return [...list].sort(() => Math.random() - 0.5);
@@ -37,14 +41,18 @@ export async function getRecommends(cartItems: CartItem[]): Promise<Product[]> {
         candidates.filter((p) => !pickedIds.includes(p.id)),
     ).slice(0, 3 - sameCategory.length);
 
+    // 고른 상품들의 이미지를 한 번에 조회
+    const picked = [...sameCategory, ...random];
+    const imageUrls = await getProductImageUrls(picked.map((p) => p.gid));
+
     // ⑥ 화면에서 쓰는 Product 모양으로 바꿔서 돌려주기
-    return [...sameCategory, ...random].map((p) => ({
+    return picked.map((p) => ({
         id: p.id,
         name: p.name,
         price: p.price,
         gid: p.gid ?? '',
         category_id: p.category_id,
         description: p.description ?? '',
-        imageUrl: '',
+        imageUrl: imageUrls.get(p.gid) ?? DEFAULT_PRODUCT_IMAGE,
     }));
 }

@@ -16,53 +16,64 @@ export async function getLatestPaidOrderShippingInfo(
 ): Promise<ShippingInfoResult> {
     const supabase = await createServerClient();
 
-    const { data, error } = await supabase
+    // orders와 payments 사이에 FK가 없으므로 관계형 조회(payments!inner)를
+    // 사용할 수 없다. 먼저 로그인 사용자의 결제 완료 주문을 조회한다.
+    const { data: orders, error: orderError } = await supabase
         .from('orders')
         .select(
             `
+            id,
             recipient,
             recipient_phone,
             zipcode,
             address,
             address_detail,
-            delivery_memo,
-            payments!inner(status)  
-        `, // orders와 FK관계인 payments테이블 접근 (relation!inner(column))
+            delivery_memo
+        `,
         )
         .eq('user_id', userId)
-
-        // 연결된 Payment 테이블에서
-        // 결제 상태가 DONE인 주문만 조회
-        .eq('payments.status', 'DONE')
-
-        // 최신 주문을 판단할 created_at이 있는 주문만 조회
+        .eq('status', '결제완료')
         .not('created_at', 'is', null)
+        .order('created_at', { ascending: false });
 
-        // created_at 최신순 정렬 (내림차순)
-        .order('created_at', { ascending: false })
-        // 정렬 결과에서 첫 번째 주문 한 건만 선택
-        .limit(1)
-
-        // 결과를 객체 하나 or null로 받음
-        // 주문이 있으면 객체, 없으면 null
-        .maybeSingle();
-
-    // supabase error -> action에 전달
-    if (error) {
-        throw error;
+    if (orderError) {
+        throw orderError;
     }
 
-    // 조건에 맞는 주문이 없을 때 배송지 정보 null로 반환
-    if (!data) {
+    if (!orders || orders.length === 0) {
+        return null;
+    }
+
+    // 위 주문 중 payments.status가 DONE인 주문 ID만 확인한다.
+    const { data: payments, error: paymentError } = await supabase
+        .from('payments')
+        .select('order_id')
+        .in(
+            'order_id',
+            orders.map((order) => order.id),
+        )
+        .eq('status', 'DONE');
+
+    if (paymentError) {
+        throw paymentError;
+    }
+
+    const paidOrderIds = new Set(
+        (payments ?? []).map((payment) => payment.order_id),
+    );
+
+    const latestPaidOrder = orders.find((order) => paidOrderIds.has(order.id));
+
+    if (!latestPaidOrder) {
         return null;
     }
 
     return {
-        recipient: data.recipient,
-        recipient_phone: data.recipient_phone,
-        zipcode: data.zipcode,
-        address: data.address,
-        address_detail: data.address_detail,
-        delivery_memo: data.delivery_memo,
+        recipient: latestPaidOrder.recipient,
+        recipient_phone: latestPaidOrder.recipient_phone,
+        zipcode: latestPaidOrder.zipcode,
+        address: latestPaidOrder.address,
+        address_detail: latestPaidOrder.address_detail,
+        delivery_memo: latestPaidOrder.delivery_memo,
     };
 }

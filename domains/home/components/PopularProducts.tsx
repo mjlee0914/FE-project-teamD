@@ -1,17 +1,9 @@
 import ProductGrid from './ProductGrid';
-import { MOCK_PRODUCTS } from '@/shared/mocks/mockData';
+import { getPopularProducts } from '../queries/getPopularProducts.query';
 
-export default function PopularProducts() {
-    const productsSelected = [...MOCK_PRODUCTS];
+export default async function PopularProducts() {
+    const popularProducts = await getPopularProducts();
 
-    productsSelected.sort((a, b) => {
-        const viewsA = a.viewCount ?? 0;
-        const viewsB = b.viewCount ?? 0;
-
-        return viewsB - viewsA; // 조회수 높은 상품이 앞에 오도록
-    });
-
-    const popularProducts = productsSelected.slice(0, 3);
     return (
         <>
             <section className="p-20">
