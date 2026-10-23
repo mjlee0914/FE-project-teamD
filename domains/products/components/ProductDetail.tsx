@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { addToCart } from '@/domains/cart/actions/addToCart.action';
 import CartSuccessDialog from './CartSuccessDialog';
 import type { Product } from '@/domains/products/types/product.types';
+import useCheckoutStore from '@/domains/orders/store/useCheckoutStore';
 
 type ProductVariant = {
     color_name: string;
@@ -38,6 +40,10 @@ export default function ProductDetail({
     );
     const [popupOpen, setPopupOpen] = useState(false);
     const [isAdding, startTransition] = useTransition();
+    const router = useRouter();
+    const setCheckoutItems = useCheckoutStore(
+        (state) => state.setCheckoutItems,
+    );
 
     const colors = Array.from(
         new Map(
@@ -102,10 +108,10 @@ export default function ProductDetail({
         setSize('');
     }
 
-    function onClickCart() {
+    function validateSelection() {
         if (selectedOptions.length === 0) {
             alert('옵션을 선택해 주세요.');
-            return;
+            return false;
         }
         if (
             selectedOptions.some((option) => {
@@ -117,8 +123,31 @@ export default function ProductDetail({
             alert(
                 '품절 또는 재고 부족 옵션이 있어. 새로고침 후 다시 선택해 줘.',
             );
-            return;
+            return false;
         }
+
+        return true;
+    }
+
+    function onClickBuyNow() {
+        if (isAdding || !validateSelection()) return;
+
+        // 장바구니에 담긴 다른 상품을 섞지 않고 선택한 옵션만 주문합니다.
+        startTransition(() => {
+            setCheckoutItems(
+                selectedOptions.map((option) => ({
+                    id: option.key,
+                    product,
+                    quantity: option.quantity,
+                    option: `${option.color} / ${option.size}`,
+                })),
+            );
+            router.push('/checkout');
+        });
+    }
+
+    function onClickCart() {
+        if (isAdding || !validateSelection()) return;
 
         startTransition(async () => {
             // 기존 장바구니의 옵션 문자열 형식을 유지해.
@@ -308,7 +337,9 @@ export default function ProductDetail({
                 <div className="mt-12 grid grid-cols-3 gap-4">
                     <button
                         type="button"
-                        className="col-span-2 h-16 cursor-pointer bg-[#171717] text-base font-semibold text-white transition-colors hover:bg-[#333333] active:bg-[#555555]"
+                        onClick={onClickBuyNow}
+                        disabled={isAdding || variants.length === 0}
+                        className="col-span-2 h-16 cursor-pointer bg-[#171717] text-base font-semibold text-white transition-colors hover:bg-[#333333] active:bg-[#555555] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         BUY IT NOW
                     </button>

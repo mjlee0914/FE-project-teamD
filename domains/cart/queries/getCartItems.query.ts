@@ -36,24 +36,31 @@ export async function getCartItems() {
     );
     const imageUrls = await getProductImageUrls(products.map((p) => p?.gid));
 
-    return cart_items.map((row) => {
+    return cart_items.flatMap((row) => {
         const product = Array.isArray(row.products)
             ? row.products[0]
             : row.products;
 
-        return {
-            id: row.id,
-            quantity: row.quantity,
-            option: row.option,
-            product: {
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                gid: product.gid,
-                category_id: product.category_id,
-                description: product.description ?? '',
-                imageUrl: imageUrls.get(product.gid) ?? DEFAULT_PRODUCT_IMAGE,
+        // 삭제되었거나 현재 조회할 수 없는 상품은 주문 목록에서 제외합니다.
+        if (!product) return [];
+
+        return [
+            {
+                id: row.id,
+                quantity: row.quantity,
+                option: row.option,
+                product: {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    gid: product.gid,
+                    category_id: product.category_id,
+                    description: product.description ?? '',
+                    imageUrl:
+                        imageUrls.get(String(product.gid)) ??
+                        DEFAULT_PRODUCT_IMAGE,
+                },
             },
-        };
+        ];
     });
 }

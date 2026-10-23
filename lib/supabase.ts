@@ -2,6 +2,7 @@ import 'server-only';
 
 import { createServerClient as createSSRServerClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { connection } from 'next/server';
 
 // 로그인 유지 시간(초): 이 시간 동안 로그인·담기 같은 서버 동작이 없으면 쿠키가 사라져 자동 로그아웃
 // (@supabase/ssr 의 cookieOptions.maxAge 는 라이브러리가 400일로 덮어써서, 아래 setAll 에서 직접 바꾼다)
@@ -17,7 +18,9 @@ if (!supabaseUrl || !supabaseKey) {
 
 // SSR supabse 연결 객체
 export async function createServerClient(): Promise<SupabaseClient> {
-    // 인증 클라이언트가 시간·난수를 사용하기 전에 요청 경계를 확정합니다.
+    // cookies()만으로는 SDK 초기화의 시간·난수 사용을 프리렌더링에서
+    // 제외할 수 없으므로 모든 서버 호출에 요청 시점 경계를 보장합니다.
+    await connection();
     const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
 
