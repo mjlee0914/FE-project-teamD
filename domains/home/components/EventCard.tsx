@@ -13,8 +13,11 @@ export default function EventCard({ post }: EventCardProps) {
 
     return (
         <>
-            <div className="relative block aspect-14/6 w-200 overflow-hidden bg-white">
-                <Link href={`/boards/events/${post.id}`}>
+            <div className="relative aspect-[16/15] w-full overflow-hidden bg-white">
+                <Link
+                    href={`/boards/events/${post.id}`}
+                    className="block h-full w-full"
+                >
                     <Image
                         src={imageSrc}
                         fill

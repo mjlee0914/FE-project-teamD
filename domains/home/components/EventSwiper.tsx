@@ -18,7 +18,7 @@ export default function EventSwiper({ post }: EventSwiperProps) {
             <Suspense fallback={<div>이벤트 로딩중...</div>}>
                 <Swiper
                     slidesPerView={1}
-                    spaceBetween={16}
+                    spaceBetween={0}
                     navigation
                     loop={post.length >= 4}
                     autoplay={{
@@ -30,11 +30,11 @@ export default function EventSwiper({ post }: EventSwiperProps) {
                     breakpoints={{
                         640: {
                             slidesPerView: 2,
-                            spaceBetween: 20,
+                            spaceBetween: 0,
                         },
                         1024: {
                             slidesPerView: 3,
-                            spaceBetween: 24,
+                            spaceBetween: 0,
                         },
                     }}
                 >
