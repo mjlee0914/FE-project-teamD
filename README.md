@@ -1,13 +1,14 @@
 <a id="readme-top"></a>
 
 <!-- Best-README-Template(https://github.com/othneildrew/Best-README-Template) 구조를 참고해 팀 프로젝트에 맞게 만든 README -->
-
-[![Next.js][nextjs-shield]][nextjs-url]
-[![React][react-shield]][react-url]
-[![TypeScript][ts-shield]][ts-url]
-[![Tailwind CSS][tailwind-shield]][tailwind-url]
-[![Supabase][supabase-shield]][supabase-url]
-[![Toss Payments][toss-shield]][toss-url]
+<div align="center">
+  [![Next.js][nextjs-shield]][nextjs-url]
+  [![React][react-shield]][react-url]
+  [![TypeScript][ts-shield]][ts-url]
+  [![Tailwind CSS][tailwind-shield]][tailwind-url]
+  [![Supabase][supabase-shield]][supabase-url]
+  [![Toss Payments][toss-shield]][toss-url]
+</div>
 
 <br />
 <div align="center">
@@ -24,8 +25,6 @@
     <a href="#usage">화면과 주소</a>
     &middot;
     <a href="#team">팀과 담당</a>
-    &middot;
-    <a href="domains/boards/README.md">게시판 README</a>
   </p>
 </div>
 
