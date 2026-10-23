@@ -8,7 +8,9 @@ import {
 export async function getPopularProducts(): Promise<Product[]> {
     const supabase = createServerClient();
 
-    const { data, error } = await supabase
+    const { data, error } = await (
+        await supabase
+    )
         .from('products')
         .select(
             'id, name, price, description, category_id, gid, isNew, viewCount',
