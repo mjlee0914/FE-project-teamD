@@ -216,21 +216,10 @@ export default function ProductList({
 
                 {/* 상품 영역 */}
                 <section className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {/* 상품이 없는 카테고리는 "준비중" 카드 하나를 상품 카드 모양으로 보여준다 */}
                     {pageProducts.length === 0 && (
-                        <div className="flex w-full max-w-[300px] flex-col justify-self-center">
-                            <div className="flex aspect-[500/666] w-full flex-col items-center justify-center gap-2 bg-gray-100 text-gray-400">
-                                <span className="text-sm font-bold">
-                                    상품 준비중
-                                </span>
-                                <span className="text-xs">
-                                    곧 새로운 상품이 들어와요
-                                </span>
-                            </div>
-                            <div className="w-full text-left text-gray-400">
-                                준비중
-                            </div>
-                        </div>
+                        <p className="col-span-full py-10 text-center text-gray-500">
+                            상품이 없습니다.
+                        </p>
                     )}
 
                     {pageProducts.map((product) => (
