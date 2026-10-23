@@ -52,10 +52,10 @@ export default function OrderTable({ orders, onClick }: OrderTableProps) {
                                 <TableCell>{order.order_email}</TableCell>
                                 <TableCell>{order.order_phone}</TableCell>
                                 <TableCell>
-                                    {formatDate(order.created_at)}
+                                    {formatDate(order.created_at ?? '')}
                                 </TableCell>
                                 <TableCell>
-                                    {formatPrice(order.final_price)}
+                                    {formatPrice(order.final_price ?? 0)}
                                 </TableCell>
                                 <TableCell>
                                     <Button

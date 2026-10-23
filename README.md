@@ -1,6 +1,6 @@
 <a id="readme-top"></a>
 
-<!-- Best-README-Template(https://github.com/othneildrew/Best-README-Template) 구조를 참고해 팀 프로젝트에 맞게 만든 README -->
+<div align="center">
 
 [![Next.js][nextjs-shield]][nextjs-url]
 [![React][react-shield]][react-url]
@@ -9,14 +9,16 @@
 [![Supabase][supabase-shield]][supabase-url]
 [![Toss Payments][toss-shield]][toss-url]
 
+</div>
+
 <br />
 <div align="center">
   <h3 align="center">DN Mall</h3>
 
   <p align="center">
-    Team D(Disco Ninja)의 패션 쇼핑몰 프론트엔드 팀 프로젝트
+    KANT Agentic AI 1기 Team D의 패션 쇼핑몰 프론트엔드 팀 프로젝트
     <br />
-    상품 탐색부터 장바구니·결제, 게시판, 관리자 화면까지 한 흐름으로 만든 풀스택 쇼핑몰
+    - 상품 탐색부터 장바구니 · 결제, 게시판, 관리자 화면까지 한 흐름으로 구현 - 
     <br />
     <br />
     <a href="#getting-started">시작하기</a>
@@ -24,8 +26,6 @@
     <a href="#usage">화면과 주소</a>
     &middot;
     <a href="#team">팀과 담당</a>
-    &middot;
-    <a href="domains/boards/README.md">게시판 README</a>
   </p>
 </div>
 
@@ -58,12 +58,12 @@
 
 <a id="about-the-project"></a>
 
-DN Mall은 패션 상품을 둘러보고 장바구니에 담아 결제하는 쇼핑몰입니다. 처음에는 목업 데이터로 화면을 만들었고, 지금은 **Supabase(Postgres + 로그인)** 와 **토스페이먼츠 결제**에 연결되어 있습니다.
+DN Mall은 패션 상품을 둘러보고 장바구니에 담아 결제하는 쇼핑몰입니다. 처음에는 목업 데이터로 화면을 만들었고, 현재는 **Supabase(Postgres + 로그인)** 와 **토스페이먼츠 결제**에 연결되어 있습니다.
 
 - **상품**: 메인(이벤트 배너·인기 상품), 카테고리·검색·가격 필터·페이지네이션, 상품 상세(사이즈, 이미지)
 - **회원**: 로그인·회원가입, 마이페이지(프로필), 30분 동안 사용이 없으면 자동 로그아웃
 - **구매**: 장바구니(추천 상품), 주문서 작성(배송지), 토스 결제 → 주문 완료·실패 화면
-- **게시판**: 공지사항·이벤트·FAQ·1:1 문의·상품 리뷰·자유게시판·룩북, 상품 상세의 리뷰·문의 (자세한 설명은 [게시판 README](domains/boards/README.md))
+- **게시판**: 공지사항·이벤트·FAQ·1:1 문의·상품 리뷰·자유게시판·룩북, 상품 상세의 리뷰·문의
 - **관리자**: 카테고리·상품·주문 관리
 
 <p align="right">(<a href="#readme-top">맨 위로</a>)</p>
@@ -193,37 +193,32 @@ components/                  # shadcn/ui 컴포넌트
 public/                      # 이미지(이벤트 배너 등)
 ```
 
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+---
 
-<!-- TEAM -->
+## 마지막에 합칠 부분
 
-## 팀과 담당
+| 합칠 부분                 | 누가                     | 내용                                                          |
+| ------------------------- | ------------------------ | ------------------------------------------------------------- |
+| 헤더 ↔ 로그인/장바구니    | 이명지 + 최지훈          | 헤더에 로그인 버튼, 장바구니 아이콘 연결                      |
+| 헤더 ↔ 게시판             | 이명지 + 이승주          | 헤더 메뉴에 공지사항, 고객센터 링크 연결                      |
+| 상품 카드 (`ProductCard`) | 정현구 + 이명지 + 최지훈 | 상품 리스트, 메인 인기 상품, 장바구니 추천 상품에서 같이 사용 |
+| 상품 리스트 → 상품 상세   | 정현구 + 배유민          | 상품 카드 클릭 시 `/products/[id]`로 이동                     |
+| 상품 상세 → 장바구니      | 배유민 + 최지훈          | 장바구니 담기 버튼 → `/cart`에 상품 추가                      |
+| 목업 데이터               | 전원                     | `shared/mocks/mockData.ts` 한 곳에 모아서 사용                |
 
-<a id="team"></a>
-
-| 이름          | 주요 담당                                                                      |
-| ------------- | ------------------------------------------------------------------------------ |
-| 정현구 (팀장) | 관리자(카테고리·상품·주문), 헤더 카테고리·관리자 버튼, 파일·카테고리 구조      |
-| 이명지        | 초기 디자인·구조 기획, 메인(이벤트 배너·인기 상품), 헤더·푸터 레이아웃, 주문서(체크아웃) 화면         |
-| 배유민        | 상품 상세, 상품 검색·가격 필터·페이지네이션, 카테고리·상품 이미지 연동         |
-| 최지훈        | 로그인·회원가입, 장바구니·추천 상품, 토스 결제 연결, 마이페이지, 자동 로그아웃 |
-| 이승주        | 게시판(공지·이벤트·FAQ·문의·리뷰·자유·룩북), 상품 상세의 리뷰·문의             |
-
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
-
-<!-- RULES -->
+---
 
 ## 작업 규칙
 
-<a id="rules"></a>
+- 브랜치: `feature/작업명` (예: `feature/login`) → 작업 후 `main`으로 PR
+- 커밋: `feat: 장바구니 상품 목록 추가` 처럼 `feat` / `fix` / `style` / `chore` / `docs` 사용
+- 빈 `page.tsx`는 실행 에러가 나니 최소한 아래처럼 만들어 두기
 
-- **브랜치**: `feature/작업명`(예: `feature/lsj-board-product`) → 작업 후 `main`으로 PR
-- **커밋**: `feat: 장바구니 상품 목록 추가`처럼 `feat` / `fix` / `refactor` / `style` / `chore` / `docs` 중 하나로 시작
-- **보안**: `.env*`와 키 값은 올리지 않고, 서버 전용 키에는 `NEXT_PUBLIC_`을 붙이지 않습니다.
-- **서버 액션**: 폼이 보낸 값을 믿지 않고 서버에서 다시 조회·검증하며, `redirect()`는 `try/catch` 밖에서 호출합니다.
-- **다른 사람 파일**을 고칠 때는 PR 설명에 이유를 적습니다.
-
-<p align="right">(<a href="#readme-top">맨 위로</a>)</p>
+```tsx
+export default function Page() {
+    return null;
+}
+```
 
 <!-- MARKDOWN LINKS & IMAGES -->
 
@@ -237,5 +232,5 @@ public/                      # 이미지(이벤트 배너 등)
 [tailwind-url]: https://tailwindcss.com/
 [supabase-shield]: https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white
 [supabase-url]: https://supabase.com/
-[toss-shield]: https://img.shields.io/badge/Toss_Payments-0064FF?style=for-the-badge&logoColor=white
+[toss-shield]: https://img.shields.io/badge/Toss_Payments-0064FF?style=for-the-badge&logo=toss&logoColor=white
 [toss-url]: https://docs.tosspayments.com/
