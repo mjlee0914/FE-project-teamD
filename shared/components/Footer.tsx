@@ -56,7 +56,7 @@ export default function Footer() {
                         <ul className="flex flex-wrap gap-4 text-xs text-gray-600 md:flex-col md:gap-1.5">
                             <li>
                                 <Link
-                                    href="/boards/free"
+                                    href="/boards/community"
                                     className="hover:text-blue-600"
                                 >
                                     BOARD

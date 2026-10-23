@@ -8,6 +8,7 @@ interface BoardToolbarProps {
     category?: string; // 선택된 분류 id
     categories: CategoryOption[]; // 칩으로 보여 줄 분류 목록
     canWrite?: boolean; // 쓰기 권한이 있을 때만 글쓰기 버튼을 보여 줌 (권한 판단은 page.tsx에서)
+    extraQuery?: Record<string, string | undefined>; // 칩·검색 중에도 유지할 쿼리 (productId, photo 등)
 }
 
 export default function BoardToolbar({
@@ -16,11 +17,14 @@ export default function BoardToolbar({
     category,
     categories,
     canWrite,
+    extraQuery,
 }: BoardToolbarProps) {
     const hrefFor = (c?: string) => {
         const sp = new URLSearchParams();
         if (q) sp.set('q', q);
         if (c) sp.set('category', c);
+        for (const [k, v] of Object.entries(extraQuery ?? {}))
+            if (v) sp.set(k, v);
         const qs = sp.toString();
         return qs ? `/boards/${board.id}?${qs}` : `/boards/${board.id}`;
     };
@@ -53,11 +57,16 @@ export default function BoardToolbar({
             <div className="flex items-center gap-2">
                 <Form
                     action={`/boards/${board.id}`} // 제출하면 ?q=검색어가 붙음
-                    scroll={false} // 검색 후 맨 위로 스크롤하지 않음
+                    // scroll={false} // 검색 후 맨 위로 스크롤하지 않음
                     className="flex gap-2"
                 >
                     {category && (
                         <input type="hidden" name="category" value={category} />
+                    )}
+                    {Object.entries(extraQuery ?? {}).map(([k, v]) =>
+                        v ? (
+                            <input key={k} type="hidden" name={k} value={v} />
+                        ) : null,
                     )}
                     <input
                         name="q"

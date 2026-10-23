@@ -9,7 +9,7 @@ const SUPPORT_LINKS = [
     },
     {
         href: '/boards/qna',
-        title: '1:1 문의(Q&A)',
+        title: '1:1 문의',
         description: '그 외 궁금한 점은 직접 문의하실 수 있어요.',
     },
 ];
@@ -19,7 +19,7 @@ export default function SupportPage() {
         <div className="mx-auto max-w-5xl px-4 py-10">
             <header className="mb-8 border-b py-6">
                 <p className="text-muted-foreground text-xs tracking-widest">
-                    CUSTOMER CENTER
+                    SUPPORT
                 </p>
                 <h1 className="mt-1 text-2xl font-bold">고객센터</h1>
                 <p className="text-muted-foreground mt-2 text-sm">

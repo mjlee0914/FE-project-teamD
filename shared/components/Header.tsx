@@ -2,14 +2,22 @@
 
 import { cn } from '@/shared/utils/cn';
 import Link from 'next/link';
-import { LuShoppingCart, LuUser, LuSearch } from 'react-icons/lu';
+import { LuShoppingCart, LuUser } from 'react-icons/lu';
 import { PiListBold } from 'react-icons/pi';
-import useCartStore from '../store/useCartStore';
-import { MOCK_CATEGORIES } from '../mocks/mockData';
+import type { HeaderCategory } from '@/domains/categories/queries/getHeaderCategories.query';
 import { logout } from '@/domains/auth/actions/logout.action';
 
-export default function Header({ userName }: { userName: string | null }) {
-    const cartCount = useCartStore((state) => state.count);
+export default function Header({
+    userName,
+    cartCount,
+    categories,
+    isAdmin = false,
+}: {
+    userName: string | null;
+    cartCount: number;
+    categories: HeaderCategory[];
+    isAdmin?: boolean;
+}) {
     return (
         <>
             <header
@@ -31,7 +39,7 @@ export default function Header({ userName }: { userName: string | null }) {
                     {/* 로고 영역 */}
                     <Link
                         href="/"
-                        className="text-lg tracking-tight text-gray-900 transition-colors hover:text-blue-600 md:text-xl"
+                        className="text-lg tracking-tight text-gray-900 transition-colors md:text-xl"
                     >
                         <span className="brand-logo font-semibold tracking-wide">
                             DN Mall
@@ -40,13 +48,14 @@ export default function Header({ userName }: { userName: string | null }) {
 
                     {/* 네비게이션 영역 */}
                     <nav className="flex items-center gap-1 justify-self-end md:gap-3">
-                        <Link
-                            href="/search"
-                            aria-label="상품검색"
-                            className="flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
-                        >
-                            <LuSearch className="h-4 w-4 shrink-0"></LuSearch>
-                        </Link>
+                        {isAdmin && (
+                            <Link
+                                href="/admin"
+                                className="flex h-7 items-center rounded-full border border-gray-200 px-2.5 text-[11px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:border-gray-900 hover:text-gray-900"
+                            >
+                                관리자 페이지
+                            </Link>
+                        )}
                         {/* 장바구니 링크 */}
                         <Link
                             href="/cart"
@@ -60,25 +69,26 @@ export default function Header({ userName }: { userName: string | null }) {
                         {/* 로그인 버튼 */}
                         {userName ? (
                             <>
-                                <span className="flex h-10 items-center px-2.5 text-xs font-medium text-gray-700 md:px-3 md:text-sm">
+                                <span className="hidden h-10 items-center px-2.5 text-xs font-medium whitespace-nowrap text-gray-700 md:flex md:px-3 md:text-sm">
                                     {userName}님 환영합니다!!
                                 </span>
-                                {/* 정보수정 */}
-                                <Link
-                                    href="/mypage"
-                                    className="flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
-                                >
-                                    정보수정
-                                </Link>
-                                {/* 로그아웃 */}
-                                <form action={logout}>
-                                    <button
-                                        type="submit"
-                                        className="flex h-10 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-blue-600 md:px-3 md:text-sm"
+                                {/* 정보수정 · 로그아웃: 작은 알약 모양 버튼 */}
+                                <div className="flex items-center gap-1">
+                                    <Link
+                                        href="/mypage"
+                                        className="flex h-7 items-center rounded-full border border-gray-200 px-2.5 text-[11px] font-medium whitespace-nowrap text-gray-600 transition-colors hover:border-gray-900 hover:text-gray-900"
                                     >
-                                        로그아웃
-                                    </button>
-                                </form>
+                                        정보수정
+                                    </Link>
+                                    <form action={logout}>
+                                        <button
+                                            type="submit"
+                                            className="flex h-7 cursor-pointer items-center rounded-full bg-gray-900 px-2.5 text-[11px] font-medium whitespace-nowrap text-white transition-colors hover:bg-zinc-700"
+                                        >
+                                            로그아웃
+                                        </button>
+                                    </form>
+                                </div>
                             </>
                         ) : (
                             <Link
@@ -96,7 +106,7 @@ export default function Header({ userName }: { userName: string | null }) {
             <nav className="sticky top-0 z-50 w-full bg-white/70 p-0.5 text-base backdrop-blur-md transition-all">
                 <div>
                     <div className="max-w-auto mx-auto flex justify-center gap-10 p-3 text-sm md:px-4">
-                        {MOCK_CATEGORIES.map((category) => (
+                        {categories.map((category) => (
                             <Link
                                 key={category.id}
                                 href={{
@@ -104,7 +114,13 @@ export default function Header({ userName }: { userName: string | null }) {
                                     query: { categoryId: category.id },
                                 }}
                             >
-                                <span className="hover:text-orange-500">
+                                <span
+                                    className={
+                                        category.name === 'Sale'
+                                            ? 'text-red-400 hover:text-red-600'
+                                            : 'hover:text-zinc-500'
+                                    }
+                                >
                                     {category.name}
                                 </span>
                             </Link>

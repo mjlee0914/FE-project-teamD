@@ -36,8 +36,25 @@ export async function deletePostAction(
         return { success: false, errors: { form: '삭제 권한이 없습니다.' } };
     }
 
-    await deletePost(board.id, post.id);
+    try {
+        const ok = await deletePost(board.id, post.id);
+        if (!ok) {
+            return {
+                success: false,
+                errors: { form: '게시글을 찾을 수 없습니다.' },
+            };
+        }
+    } catch (error) {
+        console.error('글 삭제 실패:', error);
+        return {
+            success: false,
+            errors: {
+                form: '글을 삭제하지 못했습니다. 잠시 후에 다시 시도해주세요.',
+            },
+        };
+    }
 
     revalidatePath(`/boards/${board.id}`);
+    revalidatePath('/'); // 홈 배너 갱신 (이벤트 게시판일 때만 해도 됨: if (board.id === 'events'))
     redirect(`/boards/${board.id}`);
 }

@@ -1,5 +1,16 @@
 import type { BoardSetting, Post } from '../types/board.types';
-import { store } from './mockStore';
+import { BOARD_SETTINGS } from './boardSettings';
+import {
+    fetchBoardRow,
+    fetchCategoryChildren,
+    fetchPost,
+    fetchPosts,
+    saveAnswerRow,
+    softDeletePostRow,
+    updatePostRow,
+    insertPostRow,
+    increaseViewCountRow,
+} from './boardDb';
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -16,6 +27,8 @@ export interface GetPostsParams {
     // 주의: 상품페이지에 리뷰·Q&A 섹션이 같이 있으면 page 파라미터가 겹치므로
     //       섹션별로 reviewPage / qnaPage 처럼 이름을 나눠서 page props로 넘길 것
     productId?: string;
+    excludeCategoryName?: string; // 이 이름의 분류 글은 제외할 떄 사용
+    hasImage?: boolean;
 }
 
 export interface PostListResult {
@@ -50,8 +63,14 @@ const sorterFor = (board: BoardSetting | null) =>
 
 // 게시물 목록
 export async function getBoard(boardId: string): Promise<BoardSetting | null> {
-    // 조건에 맞는 첫 번째 항목을 돌려주고 없으면 undefined
-    return store.boards.find((board) => board.id === boardId) ?? null;
+    const setting = BOARD_SETTINGS.find((b) => b.id === boardId);
+    if (!setting) return null;
+
+    // DB 분류 루트 연결
+    const row = await fetchBoardRow(boardId);
+    if (!row) return null;
+
+    return { ...setting, category_id: row.category_id };
 }
 
 export async function getPosts({
@@ -61,17 +80,21 @@ export async function getPosts({
     q,
     category,
     productId,
+    excludeCategoryName,
+    hasImage,
 }: GetPostsParams): Promise<PostListResult> {
     // 게시판 확인
     const board = await getBoard(boardId);
+    const excludedId = excludeCategoryName
+        ? await findCategoryIdByName(boardId, excludeCategoryName)
+        : null;
 
     // 검색어 준비
     const keyword = q?.trim().toLowerCase();
 
     // 조건부 조회
-    const filtered = store.posts
-        // 삭제되지 않은 글
-        .filter((post) => post.board_id === boardId && post.deleted_at === null)
+    const all = await fetchPosts(boardId);
+    const filtered = all
         // 분류가 없거나(조건이 없으면 통과) 분류가 같은 글
         .filter((post) => !category || post.category_id === category)
         // 특정 상품의 글
@@ -85,6 +108,11 @@ export async function getPosts({
         //     if (!!a.is_pinned !== !!b.is_pinned) return a.is_pinned ? -1 : 1;
         //     return b.created_at.localeCompare(a.created_at);
         // });
+        .filter((post) => !excludedId || post.category_id !== excludedId)
+        .filter(
+            (post) =>
+                hasImage === undefined || !!post.thumbnail_url === hasImage,
+        )
         .sort(sorterFor(board));
 
     // 페이지 계산
@@ -106,20 +134,11 @@ export async function getPosts({
 }
 
 // 게시물 가져오기
-// 지금은 게시물을 클릭해도 조회수가 올라가지 않고
-// 나중에 Supabase로 갈 때 SQL로 올릴 예정 (지금은 정교하게 하지 않음...)
 export async function getPost(
     boardId: string,
     postId: string,
 ): Promise<Post | null> {
-    return (
-        store.posts.find(
-            (post) =>
-                post.id === postId &&
-                post.board_id === boardId &&
-                post.deleted_at === null,
-        ) ?? null
-    );
+    return fetchPost(boardId, postId);
 }
 
 // 게시물 가져오기 - 이전글 다음글 이동 구현
@@ -129,9 +148,7 @@ export async function getAdjacentPosts(
 ): Promise<{ prev: Post | null; next: Post | null }> {
     // 게시판 확인
     const board = await getBoard(boardId);
-    const list = store.posts
-        .filter((post) => post.board_id === boardId && post.deleted_at === null)
-        .sort(sorterFor(board)); // 목록과 같은 정렬이어야 이전/다음글이 어긋나지 않음
+    const list = (await fetchPosts(boardId)).sort(sorterFor(board));
 
     const index = list.findIndex((post) => post.id === postId);
 
@@ -152,35 +169,25 @@ export interface CreatePostInput {
     gid: string;
     categoryId?: string;
     isSecret?: boolean;
+    thumbnailUrl?: string;
+    rating?: number;
+    productId?: string;
 }
 
 // 새 글 등록
 export async function createPost(input: CreatePostInput): Promise<Post> {
-    // 새 아이디 부여 (DB 붙이면 uuid로 적용)
-    const maxNo = store.posts.reduce((max, p) => {
-        const n = Number(p.id.replace('post-', ''));
-        return Number.isNaN(n) ? max : Math.max(max, n);
-    }, 0);
-    const now = new Date().toISOString();
-
-    const post: Post = {
-        id: `post-${maxNo + 1}`,
+    return insertPostRow({
         board_id: input.boardId,
         category_id: input.categoryId,
         title: input.title,
         content: input.content,
         user_id: input.userId,
         author_name: input.authorName,
-        gid: input.gid,
-        view_count: 0,
         is_secret: input.isSecret,
-        created_at: now,
-        updated_at: now,
-        deleted_at: null,
-    };
-
-    store.posts.push(post);
-    return post;
+        thumbnail_url: input.thumbnailUrl,
+        rating: input.rating,
+        product_id: input.productId,
+    });
 }
 
 // 게시물 수정 가능 항목
@@ -189,26 +196,24 @@ export interface UpdatePostInput {
     content: string;
     categoryId?: string;
     isSecret?: boolean;
+    thumbnailUrl?: string;
+    rating?: number;
 }
 
-// 게시물 수정 - 나중에 supabase update로 교체 예정
+// 게시물 수정
 export async function updatePost(
     boardId: string,
     postId: string,
     input: UpdatePostInput,
 ): Promise<Post | null> {
-    const post = store.posts.find(
-        (p) =>
-            p.id === postId && p.board_id === boardId && p.deleted_at === null,
-    );
-    if (!post) return null;
-
-    post.title = input.title;
-    post.content = input.content;
-    post.category_id = input.categoryId;
-    post.is_secret = input.isSecret;
-    post.updated_at = new Date().toISOString();
-    return post;
+    return updatePostRow(boardId, postId, {
+        title: input.title,
+        content: input.content,
+        category_id: input.categoryId,
+        is_secret: input.isSecret,
+        thumbnail_url: input.thumbnailUrl,
+        rating: input.rating,
+    });
 }
 
 // 게시물 삭제
@@ -216,27 +221,41 @@ export async function deletePost(
     boardId: string,
     postId: string,
 ): Promise<boolean> {
-    const post = store.posts.find(
-        (p) =>
-            p.id === postId && p.board_id === boardId && p.deleted_at === null,
-    );
-    if (!post) return false;
-
-    const now = new Date().toISOString();
-    post.deleted_at = now;
-    post.updated_at = now;
-    return true;
+    return softDeletePostRow(boardId, postId);
 }
 
 // 게시판 분류 목록
 export async function getBoardCategories(
     boardId: string,
 ): Promise<{ id: string; name: string }[]> {
-    const board = store.boards.find((b) => b.id === boardId);
+    const board = await getBoard(boardId);
     if (!board) return [];
-    return store.categories
-        .filter((c) => c.parent_id === board.category_id)
-        .filter((c) => c.deleted_at === null) // 삭제된 분류는 제외 (글·게시판과 같은 소프트 삭제 규칙)
-        .sort((a, b) => a.sort_order - b.sort_order)
-        .map((c) => ({ id: c.id, name: c.name }));
+    return fetchCategoryChildren(board.category_id);
+}
+
+// 게시판 안에서 이름으로 분류(칩) id 찾기. 못 찾으면 null
+export async function findCategoryIdByName(
+    boardId: string,
+    name: string,
+): Promise<string | null> {
+    const chips = await getBoardCategories(boardId);
+    return chips.find((c) => c.name === name)?.id ?? null;
+}
+
+// Q&A 답변 저장 (글당 1개, 이미 글이 있으면 덮어쓰기(수정))
+export async function saveAnswer(
+    boardId: string,
+    postId: string,
+    content: string,
+    answeredBy: string,
+): Promise<boolean> {
+    return saveAnswerRow(boardId, postId, content, answeredBy);
+}
+
+// 조회수 올리기
+export async function increaseViewCount(
+    boardId: string,
+    postId: string,
+): Promise<void> {
+    return increaseViewCountRow(boardId, postId);
 }

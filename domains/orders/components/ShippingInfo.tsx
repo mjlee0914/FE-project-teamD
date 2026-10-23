@@ -15,7 +15,11 @@ interface KakaoPostcodeData {
 
 // 카카오 우편번호 검색창 타입
 interface KakaoPostCodeConstructor {
-    new (options: { oncomplete: (data: KakaoPostcodeData) => void }): {
+    new (options: {
+        width?: number;
+        height?: number;
+        oncomplete: (data: KakaoPostcodeData) => void;
+    }): {
         open: () => void;
     };
 }
@@ -119,6 +123,9 @@ export default function ShippingInfo() {
     };
 
     const handlePostcodeSearch = () => {
+        const popupWidth = 500;
+        const popupHeight = 600;
+
         const kakao = window.kakao;
 
         if (!kakao) {
@@ -129,6 +136,8 @@ export default function ShippingInfo() {
         }
 
         new kakao.Postcode({
+            width: popupWidth,
+            height: popupHeight,
             oncomplete: (data) => {
                 const selectedAddress =
                     data.userSelectedType === 'R'
@@ -139,7 +148,12 @@ export default function ShippingInfo() {
                 setAddress(selectedAddress);
                 setAddressDetail('');
             },
-        }).open();
+        }).open({
+            left: window.screen.width / 2 - popupWidth / 2,
+            top: window.screen.height / 2 - popupHeight / 2,
+            popupTitle: '우편번호 검색',
+            popupKey: 'postcodePopup',
+        });
     };
 
     return (
@@ -154,9 +168,11 @@ export default function ShippingInfo() {
             />
 
             {/* 배송지 화면 영역 */}
-            <div className="flex flex-col gap-6 rounded-xs border p-6">
+            <div className="flex flex-col gap-6 border border-gray-100 p-6 shadow-sm">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold">배송지 정보</h2>
+                    <h2 className="mb-2 text-lg font-bold text-gray-900">
+                        배송지 정보
+                    </h2>
 
                     <button
                         type="button"
@@ -167,7 +183,10 @@ export default function ShippingInfo() {
                     </button>
                 </div>
 
-                <form className="grid items-center gap-x-30 gap-y-8 md:grid-cols-[6rem_1fr]">
+                <form
+                    id="shipping-form"
+                    className="grid items-center gap-x-30 gap-y-8 md:grid-cols-[6rem_1fr]"
+                >
                     <label
                         className="text-md justify-self-end font-bold"
                         htmlFor="recipient"

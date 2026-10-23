@@ -1,7 +1,7 @@
 'use client';
 
-import { ChangeEvent, useActionState, useEffect, useState } from 'react';
-import { Product } from '@/domains/products/types/product.types';
+import { useActionState, useEffect, useState, type ChangeEvent } from 'react';
+import type { Product } from '@/domains/products/types/product.types';
 import {
     Dialog,
     DialogContent,
@@ -16,19 +16,23 @@ import {
     NativeSelect,
     NativeSelectOption,
 } from '@/shared/components/ui/native-select';
-import { Category } from '@/domains/categories/types/category.types';
+import type { Category } from '@/domains/categories/types/category.types';
 import { getCategoryListRaw } from '../../category/actions/category.action';
 import { useRouter } from 'next/navigation';
-import { ActionState, INITIAL_ACTION_STATE } from '@/shared/types/action.types';
+import {
+    type ActionState,
+    INITIAL_ACTION_STATE,
+} from '@/shared/types/action.types';
 import FileAttachment, {
     type AttachmentValue,
 } from '@/shared/components/FileAttachment';
 import { getProductAttachments } from '../actions/product.action';
+import ProductVariantsEditor from './ProductVariantsEditor';
 
 interface ProductModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    product?: Product; // 있으면 수정, 없으면 추가
+    product?: Product;
     onSave: (
         prevState: ActionState,
         formData: FormData,
@@ -43,13 +47,7 @@ export default function ProductModal({
 }: ProductModalProps) {
     const isEdit = !!product;
     const productId = product?.id;
-    const [form, setForm] = useState<{
-        name: string;
-        price: number;
-        description: string;
-        isNew: boolean;
-        category_id: string;
-    }>({
+    const [form, setForm] = useState({
         name: product?.name ?? '',
         price: product?.price ?? 0,
         description: product?.description ?? '',
@@ -73,15 +71,15 @@ export default function ProductModal({
         INITIAL_ACTION_STATE,
     );
 
-    const onChange = (
-        e: ChangeEvent<
-            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-        >,
-    ) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setForm((prev) => ({ ...prev, [name]: value }));
-    };
+    useEffect(() => {
+        setForm({
+            name: product?.name ?? '',
+            price: product?.price ?? 0,
+            description: product?.description ?? '',
+            isNew: product?.isNew ?? false,
+            category_id: product?.category_id ?? '',
+        });
+    }, [product]);
 
     useEffect(() => {
         if (state.success) {
@@ -123,18 +121,25 @@ export default function ProductModal({
     }, [open, productId, attachmentRetry]);
 
     useEffect(() => {
-        async function loadCategory() {
+        async function loadCategories() {
             const { data, error } = await getCategoryListRaw('MAIN');
-
             if (error) {
-                alert('오류가 발생하였습니다.');
+                console.error('카테고리 조회 실패:', error.message);
                 return;
             }
-
             setCategories(data ?? []);
         }
-        loadCategory();
+        void loadCategories();
     }, []);
+
+    const onChange = (
+        event: ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >,
+    ) => {
+        const { name, value } = event.target;
+        setForm((previous) => ({ ...previous, [name]: value }));
+    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -169,6 +174,9 @@ export default function ProductModal({
                         name="gid"
                         value={product?.gid ?? ''}
                     />
+                    {product && (
+                        <input type="hidden" name="id" value={product.id} />
+                    )}
                     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
                         <section
                             className="space-y-4"
@@ -255,8 +263,8 @@ export default function ProductModal({
                                         name="isNew"
                                         checked={form.isNew}
                                         onCheckedChange={(checked) =>
-                                            setForm((prev) => ({
-                                                ...prev,
+                                            setForm((previous) => ({
+                                                ...previous,
                                                 isNew: checked === true,
                                             }))
                                         }
@@ -331,6 +339,18 @@ export default function ProductModal({
                                 </div>
                             )}
                         </section>
+                        {isEdit && product && (
+                            <ProductVariantsEditor
+                                key={product.id}
+                                productId={product.id}
+                            />
+                        )}
+                        {!isEdit && (
+                            <p className="text-xs text-gray-500">
+                                신규 상품은 먼저 저장한 뒤 수정 화면에서 옵션을
+                                등록해.
+                            </p>
+                        )}
                         {state.errors?.form && (
                             <p className="text-red-600">{state.errors.form}</p>
                         )}

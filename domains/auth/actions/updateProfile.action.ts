@@ -76,5 +76,5 @@ export async function updateProfileAction(
     const cookieStore = await cookies();
     cookieStore.set('userName', name);
 
-    redirect('/mypage');
+    redirect('/mypage?saved=1');
 }

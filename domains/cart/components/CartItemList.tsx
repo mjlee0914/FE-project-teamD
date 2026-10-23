@@ -1,37 +1,61 @@
 'use client';
 
 import { formatPrice } from '@/shared/utils/formatPrice';
-import { MOCK_CART_ITEMS } from '@/shared/mocks/mockData';
 import Image from 'next/image';
 import { Button } from '@/shared/components/ui/button';
-import { useState } from 'react';
-import RecommendedProducts from '@/domains/cart/components/RecommendedProducts';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { CartItem } from '@/domains/cart/types/cart.types';
+import { useState, useTransition } from 'react';
+import { removeCartItem } from '@/domains/cart/actions/removeCartItem.action';
+import { updateCartQuantity } from '@/domains/cart/actions/updateCartQuantity.action';
+import useCheckoutStore from '@/domains/orders/store/useCheckoutStore';
 
-export default function CartItemList() {
-    const [items, setItems] = useState(MOCK_CART_ITEMS);
-    const [payMessage, setPayMessage] = useState<string | null>(null);
+export default function CartItemList({
+    initialItems,
+}: {
+    initialItems: CartItem[];
+}) {
+    const [items, setItems] = useState(initialItems);
     const router = useRouter();
+    const setCheckoutItems = useCheckoutStore(
+        (state) => state.setCheckoutItems,
+    );
 
-    function changeQuantity(id: string, amount: number) {
-        setItems(
-            items.map((item) =>
-                item.product.id === id
-                    ? {
-                          ...item,
-                          quantity: Math.min(
-                              99,
-                              Math.max(item.quantity + amount, 1),
-                          ),
-                      }
-                    : item,
-            ),
-        );
+    const [isPending, startTransition] = useTransition();
+
+    function changeQuantity(cartItemId: string, amount: number) {
+        const target = items.find((item) => item.id === cartItemId);
+        if (!target) return;
+        const newQuantity = target.quantity + amount;
+        if (newQuantity < 1 || newQuantity > 99) {
+            alert('수량은 1~99까지 선택가능합니다.');
+            return;
+        }
+        startTransition(async () => {
+            const result = await updateCartQuantity(cartItemId, newQuantity);
+            if (result.success) {
+                setItems(
+                    items.map((item) =>
+                        item.id === cartItemId
+                            ? { ...item, quantity: newQuantity }
+                            : item,
+                    ),
+                );
+            } else {
+                alert(result.message);
+            }
+        });
     }
 
-    function removeCartItem(id: string) {
-        setItems(items.filter((item) => item.product.id !== id));
+    function handleRemove(cartItemId: string) {
+        startTransition(async () => {
+            const result = await removeCartItem(cartItemId);
+            if (result.success) {
+                setItems(items.filter((item) => item.id !== cartItemId));
+            } else {
+                alert(result.message);
+            }
+        });
     }
     const totalPrice = items.reduce(
         (sum, item) => sum + item.product.price * item.quantity,
@@ -41,33 +65,10 @@ export default function CartItemList() {
     const shippingFee = totalPrice === 0 || totalPrice >= 50000 ? 0 : 3000;
     const finalPrice = totalPrice - discountPrice + shippingFee;
 
-    function handlePay(formData: FormData) {
-        const recipient = String(formData.get('recipient'));
-        const phone = String(formData.get('phone'));
-        const address = String(formData.get('address'));
-        const addressDetail = String(formData.get('addressDetail'));
-        const zipcode = String(formData.get('zipcode'));
-
-        if (
-            recipient === '' ||
-            phone === '' ||
-            address === '' ||
-            addressDetail === '' ||
-            zipcode === ''
-        ) {
-            setPayMessage('빈칸을 입력해 주세요');
-            return;
-        }
-        if (!/^\d{5}$/.test(zipcode)) {
-            setPayMessage('우편번호는 숫자 5자리로 입력해 주세요.');
-            return;
-        }
-        if (!/^010\d{8}$/.test(phone)) {
-            setPayMessage('휴대전화는 010으로 시작합니다');
-            return;
-        }
-
-        router.push('/order/complete');
+    // 주문서 작성하기: 장바구니 목록을 체크아웃 저장소에 넘기고 이동
+    function goCheckout() {
+        setCheckoutItems(items);
+        router.push('/checkout');
     }
 
     return (
@@ -85,19 +86,33 @@ export default function CartItemList() {
                     return (
                         <li
                             className="flex items-center gap-6 border-b py-4"
-                            key={item.product.id}
+                            key={item.id}
                         >
-                            <Image
-                                className="h-24 w-24 shrink-0 md:h-36 md:w-36"
-                                src={item.product.imageUrl}
-                                alt="상품이미지"
-                                width={150}
-                                height={150}
-                                unoptimized
-                            ></Image>
+                            {item.product.imageUrl ? (
+                                <Image
+                                    className="h-24 w-24 shrink-0 md:h-36 md:w-36"
+                                    src={item.product.imageUrl}
+                                    alt="상품이미지"
+                                    width={150}
+                                    height={150}
+                                    unoptimized
+                                ></Image>
+                            ) : (
+                                <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border md:h-36 md:w-36">
+                                    <span className="text-gray-400">
+                                        이미지 준비중
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-4">
                                 <p className="font-medium md:flex-1">
                                     상 품 명: {item.product.name}
+                                    {/* 옵션이 있을 때만 보여준다 */}
+                                    {item.option && (
+                                        <span className="block text-sm font-normal text-gray-500">
+                                            옵션: {item.option}
+                                        </span>
+                                    )}
                                 </p>
                                 <p className="text-sm text-gray-500">
                                     단 가: {formatPrice(item.product.price)}
@@ -107,8 +122,9 @@ export default function CartItemList() {
                                         variant="outline"
                                         size="icon-sm"
                                         type="button"
+                                        disabled={isPending}
                                         onClick={() =>
-                                            changeQuantity(item.product.id, -1)
+                                            changeQuantity(item.id, -1)
                                         }
                                     >
                                         -
@@ -120,8 +136,9 @@ export default function CartItemList() {
                                         variant="outline"
                                         size="icon-sm"
                                         type="button"
+                                        disabled={isPending}
                                         onClick={() =>
-                                            changeQuantity(item.product.id, +1)
+                                            changeQuantity(item.id, +1)
                                         }
                                     >
                                         +
@@ -138,7 +155,8 @@ export default function CartItemList() {
                                 variant="ghost"
                                 size="icon-sm"
                                 type="button"
-                                onClick={() => removeCartItem(item.product.id)}
+                                disabled={isPending}
+                                onClick={() => handleRemove(item.id)}
                             >
                                 ×
                             </Button>
@@ -147,7 +165,7 @@ export default function CartItemList() {
                 })}
             </ul>
             {items.length > 0 && (
-                <form action={handlePay} className="mt-10">
+                <div className="mt-10">
                     <div className="my-8 flex flex-wrap items-center justify-center gap-20 rounded-lg border p-10">
                         <div className="flex flex-col items-end gap-1">
                             <p className="text-sm text-gray-500">상품 금액</p>
@@ -183,19 +201,15 @@ export default function CartItemList() {
                             </p>
                         </div>
                     </div>
-                    <Link href="/checkout">
-                        <Button type="submit" className="h-12 w-full text-base">
-                            주문서 작성하기
-                        </Button>
-                    </Link>
-                    {payMessage && (
-                        <p className="py-4 text-center text-red-600">
-                            {payMessage}
-                        </p>
-                    )}
-                </form>
+                    <Button
+                        type="button"
+                        onClick={goCheckout}
+                        className="h-12 w-full text-base"
+                    >
+                        주문서 작성하기
+                    </Button>
+                </div>
             )}
-            <RecommendedProducts />
         </div>
     );
 }

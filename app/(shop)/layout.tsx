@@ -37,7 +37,11 @@ export default function RootLayout({
                 className={`${notoSansKr.className} flex min-h-screen flex-col bg-white text-gray-900 antialiased`}
             >
                 {/* 로그인 정보를 기다리는 동안은 비로그인 헤더를 먼저 보여준다 */}
-                <Suspense fallback={<Header userName={null} />}>
+                <Suspense
+                    fallback={
+                        <Header userName={null} cartCount={0} categories={[]} />
+                    }
+                >
                     <HeaderWithUser />
                 </Suspense>
                 <main className="w-full flex-1">{children}</main>

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-
-import { MOCK_CATEGORY_ROWS } from '@/shared/mocks/mockData';
+import { createServerClient } from '@/lib/supabase';
+import { getCategoryNameById } from '@/domains/categories/queries/getCategoryNameById.query';
 import { getProductById } from '@/domains/products/queries/getProductById.query';
 
 import ProductDetail from '@/domains/products/components/ProductDetail';
@@ -15,87 +15,52 @@ interface ProductPageProps {
 export default async function ProductPage({
     params,
 }: ProductPageProps): Promise<React.JSX.Element> {
-    // URL에서 상품 ID 가져오기
     const { id } = await params;
-
-    // ID에 맞는 상품 데이터 찾기
     const product = await getProductById(id);
 
-    // 해당 상품 없으면 404
-    if (!product) {
-        notFound();
-    }
+    if (!product) notFound();
 
     const categoryName =
-        MOCK_CATEGORY_ROWS.find(
-            (category) => category.id === product.category_id,
-        )?.name ?? '카테고리';
+        (await getCategoryNameById(product.category_id)) ?? '카테고리';
+
+    const { data: variants, error: variantsError } = await createServerClient()
+        .from('product_variants')
+        .select('color_name,color_hex,size,stock')
+        .eq('product_id', product.id)
+        .order('color_name')
+        .order('size');
+
+    if (variantsError) {
+        console.error('상품 옵션 조회 실패:', variantsError.message);
+    }
 
     return (
         <main className="mx-auto max-w-6xl px-6 py-12">
-            {/* 상품 이미지, 상품명, 가격, 옵션 */}
             <ProductDetail
                 key={product.id}
                 product={product}
                 categoryName={categoryName}
+                variants={variants ?? []}
             />
 
-            {/* 하단 이동 메뉴 */}
             <nav className="mt-20 grid grid-cols-4 border-b border-gray-300">
-                <a
-                    href="#detail"
-                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
-                >
-                    Detail
-                </a>
-
-                <a
-                    href="#review"
-                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
-                >
-                    Review
-                </a>
-
-                <a
-                    href="#qna"
-                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
-                >
-                    Q&A
-                </a>
-
-                <a
-                    href="#guide"
-                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
-                >
-                    Shopping Guide
-                </a>
+                <a href="#detail" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Detail</a>
+                <a href="#review" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Review</a>
+                <a href="#qna" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Q&amp;A</a>
+                <a href="#guide" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Shopping Guide</a>
             </nav>
 
-            {/* 브랜드 이미지 + 상품별 상세 이미지 */}
             <ProductDescription product={product} />
-
-            {/* 리뷰 */}
             <ProductReviews productId={product.id} />
-
-            {/* 문의사항 */}
             <ProductInquiries productId={product.id} />
 
-            {/* 모든 상품 공통 배송 및 교환 안내 */}
             <section id="guide" className="mt-24 scroll-mt-28 border-t pt-12">
                 <h2 className="mb-8 text-2xl font-semibold">SHOPPING GUIDE</h2>
-
                 <div className="border-y border-gray-200 py-10">
                     <h3 className="font-medium">배송 안내</h3>
-
-                    <p className="mt-3 text-sm text-gray-500">
-                        배송 정책은 추후 안내됩니다.
-                    </p>
-
+                    <p className="mt-3 text-sm text-gray-500">배송 정책은 추후 안내됩니다.</p>
                     <h3 className="mt-10 font-medium">교환 및 반품 안내</h3>
-
-                    <p className="mt-3 text-sm text-gray-500">
-                        교환 및 반품 정책은 추후 안내됩니다.
-                    </p>
+                    <p className="mt-3 text-sm text-gray-500">교환 및 반품 정책은 추후 안내됩니다.</p>
                 </div>
             </section>
         </main>

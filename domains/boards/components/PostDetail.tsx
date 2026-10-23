@@ -3,7 +3,10 @@ import { formatDate } from '../lib/formatDate';
 import type { BoardSetting, Post } from '../types/board.types';
 import DeleteButton from './DeleteButton';
 import QnaAnswer from './QnaAnswer';
-import { maskName, SECRET_TITLE } from '../lib/mask';
+import AnswerForm from './AnswerForm';
+import { DELETED_PRODUCT_NAME, displayAuthor, SECRET_TITLE } from '../lib/mask';
+import { toImageSrc } from '../lib/imageUpload';
+import Image from 'next/image';
 
 interface PostDetailProps {
     board: BoardSetting;
@@ -12,6 +15,8 @@ interface PostDetailProps {
     next: Post | null;
     canEdit: boolean;
     canView: boolean;
+    canAnswer: boolean;
+    productName?: string; // 상품에 연결된 글(리뷰·상품 Q&A)의 상품명
 }
 
 // 이벤트가 없어서 use client 불필요
@@ -22,10 +27,13 @@ export default function PostDetail({
     next,
     canEdit,
     canView,
+    canAnswer,
+    productName,
 }: PostDetailProps) {
     const listHref = `/boards/${board.id}`;
     const isQna = board.type === 'qna';
     const hidden = post.is_secret && !canView;
+    const src = toImageSrc(post.thumbnail_url);
 
     // 목록에서 가린 비밀글 제목이 이전/다음 글 줄에서 보이지 않게
     const showTitle = (p: Post) => (p.is_secret ? SECRET_TITLE : p.title);
@@ -44,19 +52,54 @@ export default function PostDetail({
             </p>
 
             <header className="border-t-2 border-b border-black px-1.5 py-4">
-                {/* {board.use_category && post.category && (
-                    <p className="text-xs font-bold text-stone-500">
-                        {post.category}
-                    </p>
-                )} */}
                 <h1 className="my-1 text-xl font-extrabold">
                     {hidden ? SECRET_TITLE : post.title}
                 </h1>
                 <p className="text-xs text-gray-500">
-                    {isQna ? maskName(post.author_name) : post.author_name} ·{' '}
+                    {displayAuthor(board, post.author_name)} ·{' '}
                     {formatDate(post.created_at)} · 조회수 {post.view_count}
                 </p>
+                {/* 비밀글을 못 보는 사람에게는 상품명도 가림(무슨 상품 문의인지도 비밀 정보) */}
+                {!hidden && (productName || post.rating) && (
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 text-sm">
+                        {productName &&
+                            (productName !== DELETED_PRODUCT_NAME &&
+                            post.product_id ? (
+                                <Link
+                                    href={`/products/${post.product_id}`}
+                                    className="text-xs text-gray-500 hover:underline"
+                                >
+                                    {productName}
+                                </Link>
+                            ) : (
+                                <span className="text-xs text-gray-400">
+                                    {productName}
+                                </span>
+                            ))}
+                        {productName && post.rating ? (
+                            <span className="text-gray-400">·</span>
+                        ) : null}
+                        {post.rating ? (
+                            <span className="text-amber-500">
+                                {'★'.repeat(post.rating) +
+                                    '☆'.repeat(5 - post.rating)}
+                            </span>
+                        ) : null}
+                    </div>
+                )}
             </header>
+
+            {(board.type === 'gallery' || board.use_thumbnail) && src && (
+                <div className="relative mx-auto my-6 aspect-[4/3] w-full max-w-2xl bg-stone-100">
+                    <Image
+                        src={src}
+                        alt={post.title}
+                        fill
+                        unoptimized={src.startsWith('data:')}
+                        className="object-contain"
+                    />
+                </div>
+            )}
 
             <div className="min-h-40 border-b px-1.5 py-6 text-sm whitespace-pre-wrap text-gray-700">
                 {hidden
@@ -70,6 +113,13 @@ export default function PostDetail({
                 <p className="border-b px-4 py-5 text-xs text-gray-400">
                     답변 대기 중
                 </p>
+            )}
+            {canAnswer && (
+                <AnswerForm
+                    boardId={board.id}
+                    postId={post.id}
+                    current={post.answer?.content}
+                />
             )}
 
             <ul className="border-b text-xs">

@@ -2,29 +2,32 @@
 
 import { Input } from '@/shared/components/ui/input';
 import { CiSearch } from 'react-icons/ci';
-import { MOCK_CATEGORIES } from '@/shared/mocks/mockData';
 import type { Product } from '@/domains/products/types/product.types';
 import CategoryTree from '@/domains/categories/components/CategoryTree';
-import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { formatPrice } from '@/shared/utils/formatPrice';
 import Link from 'next/link';
-import { useState, type FormEvent, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Category } from '@/domains/categories/types/category.types';
+import { useRef, type FormEvent } from 'react';
 
-export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
+export default function ProductList({
+    dbProducts,
+    dbCategories,
+    totalCount,
+    currentPage,
+}: {
+    dbProducts: Product[];
+    dbCategories: Category[];
+    totalCount: number;
+    currentPage: number;
+}) {
     const searchParams = useSearchParams();
     const categoryId = searchParams.get('categoryId');
-    const page = Number(searchParams.get('page') ?? 1);
+    const requestedPage = Number(searchParams.get('page') ?? 1);
 
-    const [searchKeyword, setSearchKeyword] = useState('');
-    const [priceRange, setPriceRange] = useState<{
-        min: number | null;
-        max: number | null;
-    }>({
-        min: null,
-        max: null,
-    });
+    const router = useRouter();
+
     const minPriceRef = useRef<HTMLInputElement>(null);
     const maxPriceRef = useRef<HTMLInputElement>(null);
 
@@ -32,9 +35,20 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const keyword = String(formData.get('searchValue') ?? '');
+        const keyword = String(formData.get('searchValue') ?? '').trim();
 
-        setSearchKeyword(keyword.trim());
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (keyword) {
+            params.set('keyword', keyword);
+        } else {
+            params.delete('keyword');
+        }
+
+        params.delete('page');
+
+        const query = params.toString();
+        router.push(query ? `/products?${query}` : '/products');
     }
 
     function handleApplyPrice() {
@@ -53,74 +67,50 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
             return;
         }
 
-        setPriceRange({ min, max });
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (min === null) {
+            params.delete('minPrice');
+        } else {
+            params.set('minPrice', String(min));
+        }
+
+        if (max === null) {
+            params.delete('maxPrice');
+        } else {
+            params.set('maxPrice', String(max));
+        }
+
+        params.delete('page');
+
+        const query = params.toString();
+        router.push(query ? `/products?${query}` : '/products');
     }
 
     function handleResetPrice() {
-        setPriceRange({ min: null, max: null });
-
         if (minPriceRef.current) minPriceRef.current.value = '';
         if (maxPriceRef.current) maxPriceRef.current.value = '';
+
+        const params = new URLSearchParams(searchParams.toString());
+
+        params.delete('minPrice');
+        params.delete('maxPrice');
+        params.delete('page');
+
+        const query = params.toString();
+        router.push(query ? `/products?${query}` : '/products');
     }
 
-    function findAllChildCategoryId(
-        parentId: string,
-        categories: Category[] = MOCK_CATEGORIES,
-    ): string[] {
-        for (const category of categories) {
-            if (category.id === parentId) {
-                const collectIds = (items: Category[]): string[] =>
-                    items.flatMap((item) => [
-                        item.id,
-                        ...collectIds(item.children ?? []),
-                    ]);
-
-                return collectIds(category.children ?? []);
-            }
-
-            const found = findAllChildCategoryId(
-                parentId,
-                category.children ?? [],
-            );
-
-            if (found.length > 0) return found;
-        }
-
-        return [];
-    }
-
-    const categoryIds = categoryId
-        ? new Set([categoryId, ...findAllChildCategoryId(categoryId)])
-        : null;
-
-    const products = categoryIds
-        ? dbProducts.filter((product) => categoryIds.has(product.category_id))
-        : dbProducts;
-
-    const searchProducts = searchKeyword
-        ? products.filter((product) =>
-              product.name.toLowerCase().includes(searchKeyword.toLowerCase()),
-          )
-        : products;
-
-    const priceProducts = searchProducts.filter(
-        (product) =>
-            (priceRange.min === null || product.price >= priceRange.min) &&
-            (priceRange.max === null || product.price <= priceRange.max),
-    );
-
-    const pageSize = 9;
-    const totalPage = Math.ceil(priceProducts.length / pageSize);
-
-    const startIndex = (page - 1) * pageSize;
-    const pageProducts = priceProducts.slice(startIndex, startIndex + pageSize);
+    const pageProducts = dbProducts;
+    const totalPage = Math.ceil(totalCount / 9);
+    const page = currentPage;
 
     return (
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 p-6 md:grid-cols-[15rem_minmax(0,1fr)]">
             {/* 좌측 메뉴 */}
             <aside>
                 <CategoryTree
-                    categories={MOCK_CATEGORIES}
+                    categories={dbCategories}
                     selectedCategoryId={categoryId ?? undefined}
                 />
                 <div className="border-t border-gray-300 pt-4">
@@ -145,6 +135,10 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
                                     inputMode="numeric"
                                     placeholder="0"
                                     className="h-11 w-full [appearance:textfield] rounded-md border border-gray-300 bg-white pr-10 pl-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-gray-500 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    key={searchParams.get('minPrice') ?? ''}
+                                    defaultValue={
+                                        searchParams.get('minPrice') ?? ''
+                                    }
                                 />
                                 <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500">
                                     원
@@ -170,6 +164,10 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
                                     inputMode="numeric"
                                     placeholder="99,000"
                                     className="h-11 w-full [appearance:textfield] rounded-md border border-gray-300 bg-white pr-10 pl-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-gray-500 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    key={searchParams.get('maxPrice') ?? ''}
+                                    defaultValue={
+                                        searchParams.get('maxPrice') ?? ''
+                                    }
                                 />
                                 <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm text-gray-500">
                                     원
@@ -206,6 +204,8 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
                                 placeholder="Search"
                                 autoComplete="off"
                                 name="searchValue"
+                                key={searchParams.get('keyword') ?? ''}
+                                defaultValue={searchParams.get('keyword') ?? ''}
                             />
                             <button type="submit" className="cursor-pointer">
                                 <CiSearch className="absolute top-1/2 right-4 size-5 -translate-y-1/2 text-gray-500" />
@@ -213,41 +213,51 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
                         </div>
                     </form>
                 </section>
+
                 {/* 상품 영역 */}
-                <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <section className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {pageProducts.length === 0 && (
                         <p className="col-span-full py-10 text-center text-gray-500">
                             상품이 없습니다.
                         </p>
                     )}
+
                     {pageProducts.map((product) => (
                         <Link
                             href={`/products/${product.id}`}
                             key={product.id}
-                            className="flex cursor-pointer flex-col items-center justify-center"
+                            className="flex w-full max-w-[300px] cursor-pointer flex-col justify-self-center"
                         >
-                            <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100">
+
+
+                            <div className="relative aspect-[500/666] w-full overflow-hidden">
                                 <Image
                                     src={product.imageUrl}
                                     alt={product.name}
                                     fill
                                     unoptimized
-                                    sizes="(min-width: 1024px) 33vw, 100vw"
-                                    className="object-cover"
+                                    sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw"
+                                    className="object-cover object-center"
                                 />
                             </div>
+
+
+
                             <div className="w-full text-left">
                                 {product.name}
                             </div>
+
                             <div className="text-bold w-full text-left text-xl">
                                 {formatPrice(product.price)}
                             </div>
+
                             <div className="w-full text-left text-xs text-gray-400">
                                 조회수 {product.viewCount}
                             </div>
                         </Link>
                     ))}
                 </section>
+
                 {/* 페이징 영역 */}
                 <nav className="mt-7.5 flex justify-center">
                     {totalPage > 0 && (
@@ -258,15 +268,17 @@ export default function ProductList({ dbProducts }: { dbProducts: Product[] }) {
                             ).map((pageNumber) => (
                                 <Link
                                     key={pageNumber}
+
                                     href={{
                                         pathname: '/products',
                                         query: {
-                                            ...(categoryId
-                                                ? { categoryId }
-                                                : {}),
+                                            ...Object.fromEntries(
+                                                searchParams.entries(),
+                                            ),
                                             page: pageNumber,
                                         },
                                     }}
+
                                     className={`rounded border px-3 py-2 ${page === pageNumber ? 'bg-black font-bold text-white' : 'bg-white text-gray-600 hover:bg-gray-100'}`}
                                 >
                                     {pageNumber}

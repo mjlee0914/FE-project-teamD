@@ -1,5 +1,9 @@
 import { createServerClient } from '@/lib/supabase';
 import type { Product } from '@/domains/products/types/product.types';
+import {
+    getProductImageUrls,
+    DEFAULT_PRODUCT_IMAGE,
+} from './getProductImageUrls.query';
 
 export async function getProductById(
     productId: string,
@@ -33,6 +37,14 @@ export async function getProductById(
         throw new Error('상품명 또는 가격이 없습니다.');
     }
 
+    // 공통 함수로 상품 이미지 조회
+    const imageUrls = await getProductImageUrls([data.gid]);
+
+    const imageUrl =
+        data.gid == null
+            ? DEFAULT_PRODUCT_IMAGE
+            : (imageUrls.get(data.gid) ?? DEFAULT_PRODUCT_IMAGE);
+
     return {
         id: data.id,
         gid: data.gid ?? '',
@@ -42,6 +54,6 @@ export async function getProductById(
         description: data.description ?? '',
         isNew: data.isNew ?? false,
         viewCount: data.viewCount ?? 0,
-        imageUrl: '/products/black-anorak.png',
+        imageUrl,
     };
 }
