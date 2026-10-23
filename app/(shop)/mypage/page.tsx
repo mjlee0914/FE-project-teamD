@@ -21,13 +21,19 @@ async function MyPageContent({ searchParams }: { searchParams: SearchParams }) {
             name={profile.username ?? ''}
             phone={profile.phone ?? ''}
             address={profile.address ?? ''}
+            role={profile.role ?? ''}
+            createdAt={profile.created_at ?? ''}
             saved={saved === '1'}
         />
     );
 }
 
 // 체크아웃(주문/결제) 페이지와 같은 레이아웃: 굵은 제목 + 카드
-export default function MyPage({ searchParams }: { searchParams: SearchParams }) {
+export default function MyPage({
+    searchParams,
+}: {
+    searchParams: SearchParams;
+}) {
     return (
         <div className="mx-auto max-w-3xl px-4 py-8 md:px-6">
             <h3 className="text-2xl font-black text-gray-900">마이페이지</h3>
