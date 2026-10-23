@@ -26,18 +26,27 @@ interface ProductDetailProps {
     variants: ProductVariant[];
 }
 
-export default function ProductDetail({ product, categoryName, variants }: ProductDetailProps) {
+export default function ProductDetail({
+    product,
+    categoryName,
+    variants,
+}: ProductDetailProps) {
     const [color, setColor] = useState('');
     const [size, setSize] = useState('');
-    const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>(
+        [],
+    );
     const [popupOpen, setPopupOpen] = useState(false);
     const [isAdding, startTransition] = useTransition();
 
     const colors = Array.from(
-        new Map(variants.map((variant) => [variant.color_name, variant.color_hex])).entries(),
+        new Map(
+            variants.map((variant) => [variant.color_name, variant.color_hex]),
+        ).entries(),
     ).map(([name, hex]) => ({ name, hex }));
 
-    const selectedColor = colors.find((item) => item.name === color) ?? colors[0];
+    const selectedColor =
+        colors.find((item) => item.name === color) ?? colors[0];
     const currentColor = selectedColor?.name ?? '';
     const sizes = Array.from(
         new Set(
@@ -50,7 +59,8 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
     const findVariant = (colorName: string, selectedSize: string) =>
         variants.find(
             (variant) =>
-                variant.color_name === colorName && variant.size === selectedSize,
+                variant.color_name === colorName &&
+                variant.size === selectedSize,
         );
 
     function handleSelectSize(newSize: string) {
@@ -61,7 +71,10 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
         setSelectedOptions((previous) =>
             previous.some((option) => option.key === key)
                 ? previous
-                : [...previous, { key, color: currentColor, size: newSize, quantity: 1 }],
+                : [
+                      ...previous,
+                      { key, color: currentColor, size: newSize, quantity: 1 },
+                  ],
         );
     }
 
@@ -69,17 +82,23 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
         setSelectedOptions((previous) =>
             previous.map((option) => {
                 if (option.key !== key) return option;
-                const stock = findVariant(option.color, option.size)?.stock ?? 0;
+                const stock =
+                    findVariant(option.color, option.size)?.stock ?? 0;
                 return {
                     ...option,
-                    quantity: Math.min(Math.max(1, stock), Math.max(1, option.quantity + change)),
+                    quantity: Math.min(
+                        Math.max(1, stock),
+                        Math.max(1, option.quantity + change),
+                    ),
                 };
             }),
         );
     }
 
     function handleRemoveOption(key: string) {
-        setSelectedOptions((previous) => previous.filter((option) => option.key !== key));
+        setSelectedOptions((previous) =>
+            previous.filter((option) => option.key !== key),
+        );
         setSize('');
     }
 
@@ -88,11 +107,16 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
             alert('옵션을 선택해 주세요.');
             return;
         }
-        if (selectedOptions.some((option) => {
-            const available = findVariant(option.color, option.size)?.stock ?? 0;
-            return available < option.quantity;
-        })) {
-            alert('품절 또는 재고 부족 옵션이 있어. 새로고침 후 다시 선택해 줘.');
+        if (
+            selectedOptions.some((option) => {
+                const available =
+                    findVariant(option.color, option.size)?.stock ?? 0;
+                return available < option.quantity;
+            })
+        ) {
+            alert(
+                '품절 또는 재고 부족 옵션이 있어. 새로고침 후 다시 선택해 줘.',
+            );
             return;
         }
 
@@ -133,26 +157,41 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
                 </div>
             </section>
             <section>
-                <p className="mb-3 text-xs text-gray-400">DN MALL / {categoryName}</p>
+                <p className="mb-3 text-xs text-gray-400">
+                    DN MALL / {categoryName}
+                </p>
                 <h1 className="text-2xl font-medium">{product.name}</h1>
                 <div className="mt-5 flex items-center gap-3">
-                    <span className="text-xl font-semibold">{product.price.toLocaleString('ko-KR')}원</span>
+                    <span className="text-xl font-semibold">
+                        {product.price.toLocaleString('ko-KR')}원
+                    </span>
                 </div>
 
                 <div className="mt-10 border-t pt-6">
                     <div>
-                        <h2 className="text-sm font-medium">색상 <span className="ml-3 text-gray-500">{currentColor || '옵션 준비 중'}</span></h2>
+                        <h2 className="text-sm font-medium">
+                            색상{' '}
+                            <span className="ml-3 text-gray-500">
+                                {currentColor || '옵션 준비 중'}
+                            </span>
+                        </h2>
                         <div className="mt-4 flex gap-3">
                             {colors.map((item) => (
                                 <button
                                     type="button"
                                     key={item.name}
-                                    onClick={() => { setColor(item.name); setSize(''); }}
+                                    onClick={() => {
+                                        setColor(item.name);
+                                        setSize('');
+                                    }}
                                     aria-label={`${item.name} 선택`}
                                     aria-pressed={currentColor === item.name}
                                     className={`h-10 w-10 rounded-full border-2 p-1 ${currentColor === item.name ? 'border-black' : 'border-transparent'}`}
                                 >
-                                    <span className="block h-full w-full rounded-full border border-gray-200" style={{ backgroundColor: item.hex }} />
+                                    <span
+                                        className="block h-full w-full rounded-full border border-gray-200"
+                                        style={{ backgroundColor: item.hex }}
+                                    />
                                 </button>
                             ))}
                         </div>
@@ -161,22 +200,32 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
                         <h2 className="mb-4 text-sm font-medium">사이즈</h2>
                         <div className="flex flex-wrap gap-2">
                             {sizes.map((item) => {
-                                const available = findVariant(currentColor, item)?.stock ?? 0;
+                                const available =
+                                    findVariant(currentColor, item)?.stock ?? 0;
                                 return (
                                     <button
                                         type="button"
                                         key={item}
                                         onClick={() => handleSelectSize(item)}
                                         disabled={available === 0}
-                                        title={available === 0 ? '품절' : `재고 ${available}개`}
+                                        title={
+                                            available === 0
+                                                ? '품절'
+                                                : '선택 가능'
+                                        }
                                         aria-pressed={size === item}
-                                        className={`h-11 min-w-12 border px-3 text-sm ${size === item ? 'border-black bg-black text-white' : 'border-gray-200 bg-gray-100'} disabled:cursor-not-allowed disabled:opacity-30`}
+                                        className={`h-11 min-w-12 border px-3 text-sm ${size === item ? 'border-black bg-black text-white' : 'border-gray-200 bg-gray-100'} disabled:cursor-not-allowed disabled:line-through disabled:opacity-40`}
                                     >
-                                        {item}{available === 0 ? ' (품절)' : ''}
+                                        {item}
+                                        {available === 0 ? ' (품절)' : ''}
                                     </button>
                                 );
                             })}
-                            {sizes.length === 0 && <p className="text-sm text-gray-400">등록된 사이즈가 없어.</p>}
+                            {sizes.length === 0 && (
+                                <p className="text-sm text-gray-400">
+                                    등록된 사이즈가 없어.
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -184,18 +233,67 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
                 {selectedOptions.length > 0 && (
                     <div className="mt-10 space-y-2">
                         {selectedOptions.map((option) => (
-                            <div key={option.key} className="flex flex-wrap items-center gap-4 bg-[#F8F7F4] px-5 py-6">
+                            <div
+                                key={option.key}
+                                className="flex flex-wrap items-center gap-4 bg-[#F8F7F4] px-5 py-6"
+                            >
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium">{product.name}</p>
-                                    <p className="mt-1 text-sm text-gray-500">- {option.color} / {option.size}</p>
+                                    <p className="text-sm font-medium">
+                                        {product.name}
+                                    </p>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        - {option.color} / {option.size}
+                                    </p>
                                 </div>
                                 <div className="flex items-center border border-gray-200 bg-white">
-                                    <button type="button" onClick={() => handleQuantityChange(option.key, -1)} className="h-10 w-10" aria-label="수량 감소">−</button>
-                                    <span className="flex h-10 w-10 items-center justify-center border-x border-gray-200">{option.quantity}</span>
-                                    <button type="button" onClick={() => handleQuantityChange(option.key, 1)} className="h-10 w-10" aria-label="수량 증가">+</button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleQuantityChange(option.key, -1)
+                                        }
+                                        disabled={option.quantity <= 1}
+                                        className="h-10 w-10 disabled:cursor-not-allowed disabled:opacity-30"
+                                        aria-label="수량 감소"
+                                    >
+                                        −
+                                    </button>
+                                    <span className="flex h-10 w-10 items-center justify-center border-x border-gray-200">
+                                        {option.quantity}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleQuantityChange(option.key, 1)
+                                        }
+                                        disabled={
+                                            option.quantity >=
+                                            (findVariant(
+                                                option.color,
+                                                option.size,
+                                            )?.stock ?? 0)
+                                        }
+                                        className="h-10 w-10 disabled:cursor-not-allowed disabled:opacity-30"
+                                        aria-label="수량 증가"
+                                    >
+                                        +
+                                    </button>
                                 </div>
-                                <button type="button" onClick={() => handleRemoveOption(option.key)} className="text-xl text-gray-400 hover:text-black" aria-label="선택 옵션 삭제">×</button>
-                                <p className="w-full text-right font-medium sm:w-28">{(product.price * option.quantity).toLocaleString('ko-KR')}원</p>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        handleRemoveOption(option.key)
+                                    }
+                                    className="text-xl text-gray-400 hover:text-black"
+                                    aria-label="선택 옵션 삭제"
+                                >
+                                    ×
+                                </button>
+                                <p className="w-full text-right font-medium sm:w-28">
+                                    {(
+                                        product.price * option.quantity
+                                    ).toLocaleString('ko-KR')}
+                                    원
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -203,19 +301,40 @@ export default function ProductDetail({ product, categoryName, variants }: Produ
 
                 <div className="mt-10 flex items-center justify-between border-t pt-6">
                     <span className="text-sm font-medium">총 상품 금액</span>
-                    <span className="text-xl font-semibold">{totalPrice.toLocaleString('ko-KR')}원</span>
+                    <span className="text-xl font-semibold">
+                        {totalPrice.toLocaleString('ko-KR')}원
+                    </span>
                 </div>
                 <div className="mt-12 grid grid-cols-3 gap-4">
-                    <button type="button" className="col-span-2 h-16 cursor-pointer bg-[#171717] text-base font-semibold text-white transition-colors hover:bg-[#333333] active:bg-[#555555]">BUY IT NOW</button>
-                    <button type="button" className="col-span-1 h-16 cursor-pointer border border-black bg-white text-base font-semibold text-black transition-colors hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50" onClick={onClickCart} disabled={isAdding || variants.length === 0}>CART</button>
+                    <button
+                        type="button"
+                        className="col-span-2 h-16 cursor-pointer bg-[#171717] text-base font-semibold text-white transition-colors hover:bg-[#333333] active:bg-[#555555]"
+                    >
+                        BUY IT NOW
+                    </button>
+                    <button
+                        type="button"
+                        className="col-span-1 h-16 cursor-pointer border border-black bg-white text-base font-semibold text-black transition-colors hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50"
+                        onClick={onClickCart}
+                        disabled={isAdding || variants.length === 0}
+                    >
+                        CART
+                    </button>
                 </div>
                 <div className="mt-8 border-t py-6 text-sm">
                     <p className="font-medium">배송 및 교환 안내</p>
-                    <a href="#guide" className="mt-2 inline-block text-gray-500 underline">배송 및 교환 안내 자세히 보기</a>
+                    <a
+                        href="#guide"
+                        className="mt-2 inline-block text-gray-500 underline"
+                    >
+                        배송 및 교환 안내 자세히 보기
+                    </a>
                 </div>
                 <div className="border-t py-8">
                     <h2 className="mb-4 font-semibold">상품 설명</h2>
-                    <p className="text-sm leading-7 text-gray-600">{product.description}</p>
+                    <p className="text-sm leading-7 text-gray-600">
+                        {product.description}
+                    </p>
                 </div>
             </section>
             <CartSuccessDialog open={popupOpen} onOpenChange={setPopupOpen} />
