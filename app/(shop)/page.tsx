@@ -7,7 +7,7 @@ import { CATEGORY_NAMES } from '@/domains/boards/lib/categoryNames';
 import { Suspense } from 'react';
 import { connection } from 'next/server';
 
-export default async function HomePage() {
+async function HomeEvents() {
     // Supabase의 인증·시간 처리가 프리렌더링 중 실행되지 않도록 합니다.
     await connection();
     // 이벤트 게시판 글 받음
@@ -17,6 +17,10 @@ export default async function HomePage() {
         excludeCategoryName: CATEGORY_NAMES.eventEnded, // 종료 이벤트 제외
     });
 
+    return <EventBanner posts={items} />;
+}
+
+export default function HomePage() {
     return (
         <>
             <MainBanner />
@@ -25,7 +29,11 @@ export default async function HomePage() {
             >
                 <PopularProducts />
             </Suspense>
-            <EventBanner posts={items} />
+            <Suspense
+                fallback={<p className="p-20">이벤트를 불러오는 중...</p>}
+            >
+                <HomeEvents />
+            </Suspense>
         </>
     );
 }

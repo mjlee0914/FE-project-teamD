@@ -53,6 +53,6 @@ export async function getRecommends(cartItems: CartItem[]): Promise<Product[]> {
         gid: p.gid ?? '',
         category_id: p.category_id,
         description: p.description ?? '',
-        imageUrl: imageUrls.get(p.gid) ?? DEFAULT_PRODUCT_IMAGE,
+        imageUrl: imageUrls.get(String(p.gid)) ?? DEFAULT_PRODUCT_IMAGE,
     }));
 }

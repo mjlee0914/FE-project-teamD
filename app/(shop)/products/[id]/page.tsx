@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
+import { connection } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { getCategoryNameById } from '@/domains/categories/queries/getCategoryNameById.query';
 import { getProductById } from '@/domains/products/queries/getProductById.query';
@@ -12,9 +14,25 @@ interface ProductPageProps {
     params: Promise<{ id: string }>;
 }
 
-export default async function ProductPage({
+export default function ProductPage(props: ProductPageProps) {
+    return (
+        <Suspense
+            fallback={
+                <div className="mx-auto max-w-6xl px-6 py-12" role="status">
+                    상품 상세를 불러오는 중...
+                </div>
+            }
+        >
+            <ProductContent {...props} />
+        </Suspense>
+    );
+}
+
+async function ProductContent({
     params,
 }: ProductPageProps): Promise<React.JSX.Element> {
+    // params와 인증·상품·이미지 조회를 모두 요청 시점에 실행합니다.
+    await connection();
     const { id } = await params;
     const product = await getProductById(id);
 
@@ -45,10 +63,30 @@ export default async function ProductPage({
             />
 
             <nav className="mt-20 grid grid-cols-4 border-b border-gray-300">
-                <a href="#detail" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Detail</a>
-                <a href="#review" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Review</a>
-                <a href="#qna" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Q&amp;A</a>
-                <a href="#guide" className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg">Shopping Guide</a>
+                <a
+                    href="#detail"
+                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
+                >
+                    Detail
+                </a>
+                <a
+                    href="#review"
+                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
+                >
+                    Review
+                </a>
+                <a
+                    href="#qna"
+                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
+                >
+                    Q&amp;A
+                </a>
+                <a
+                    href="#guide"
+                    className="border-b-2 border-transparent py-5 text-center text-sm hover:border-black md:text-lg"
+                >
+                    Shopping Guide
+                </a>
             </nav>
 
             <ProductDescription product={product} />
@@ -59,9 +97,13 @@ export default async function ProductPage({
                 <h2 className="mb-8 text-2xl font-semibold">SHOPPING GUIDE</h2>
                 <div className="border-y border-gray-200 py-10">
                     <h3 className="font-medium">배송 안내</h3>
-                    <p className="mt-3 text-sm text-gray-500">배송 정책은 추후 안내됩니다.</p>
+                    <p className="mt-3 text-sm text-gray-500">
+                        배송 정책은 추후 안내됩니다.
+                    </p>
                     <h3 className="mt-10 font-medium">교환 및 반품 안내</h3>
-                    <p className="mt-3 text-sm text-gray-500">교환 및 반품 정책은 추후 안내됩니다.</p>
+                    <p className="mt-3 text-sm text-gray-500">
+                        교환 및 반품 정책은 추후 안내됩니다.
+                    </p>
                 </div>
             </section>
         </main>

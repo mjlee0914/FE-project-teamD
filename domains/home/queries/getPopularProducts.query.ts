@@ -6,7 +6,7 @@ import {
 } from '@/domains/products/queries/getProductImageUrls.query';
 
 export async function getPopularProducts(): Promise<Product[]> {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const { data, error } = await supabase
         .from('products')
@@ -37,6 +37,6 @@ export async function getPopularProducts(): Promise<Product[]> {
         imageUrl:
             item.gid == null
                 ? DEFAULT_PRODUCT_IMAGE
-                : (imageUrls.get(item.gid) ?? DEFAULT_PRODUCT_IMAGE),
+                : (imageUrls.get(String(item.gid)) ?? DEFAULT_PRODUCT_IMAGE),
     }));
 }
