@@ -1,4 +1,5 @@
 // main landing page
+import { Suspense } from 'react';
 import EventBanner from '@/domains/home/components/EventBanner';
 import PopularProducts from '@/domains/home/components/PopularProducts';
 import MainBanner from '@/domains/home/components/MainBanner';
@@ -19,10 +20,12 @@ export default function HomePage() {
     return (
         <>
             <MainBanner />
-            <PopularProducts />
-            <Suspense fallback={null}>
-                <EventSection />
+            <Suspense
+                fallback={<p className="p-20">인기상품을 불러오는 중...</p>}
+            >
+                <PopularProducts />
             </Suspense>
+            <EventBanner posts={items} />
         </>
     );
 }
